@@ -20,13 +20,13 @@ library("tools")
 
 # # # Fn files
 # source(file = "module00_database_s01_excel.R")
-source(file = "fn000_database.R")
-source(file = "fn001_anova.R")
+source(file = "R/fn000_database.R")
+source(file = "R/fn001_anova.R")
 
 # # # Module files
-source(file = "module000_database_s001_excel.R")
-source(file = "module000_database_s002_example.R")
-source(file = "module001_anova.R")
+source(file = "R/module000_database_s001_excel.R")
+source(file = "R/module000_database_s002_example.R")
+source(file = "R/module001_anova.R")
 
 
 
