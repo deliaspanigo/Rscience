@@ -1,6 +1,4 @@
 
-
-
 # # # Test 001 anova - gen01
 test001_anova_full_gen01 <- function(database, vr_var_name, factor_var_name, alpha_value){
 
@@ -390,59 +388,6 @@ test001_anova_full_gen01 <- function(database, vr_var_name, factor_var_name, alp
 
 
 }
-
-
-# # # Test 001 anova - gen02
-test001_anova_full_gen02 <- function(database, pos_var_vr, pos_var_factor, alpha_value){
-
-
-
-  results_gen01 <- test001_anova_full_gen01(database, pos_var_vr, pos_var_factor, alpha_value)
-
-  # Los objetos estan ordenados alfabeticamente,y no por el orden de aparicion
-  # para el usuario.
-  # Vamos a tomar retomar el orden de aparicion y de paso
-  # ocultamos algunos objetos:
-  # - Los que empiezan con 'hide_'
-  # - Los que terminan el "_ok".
-
-
-  # Obtiene el código fuente de la función
-  codigo_fuente <- deparse(body(test001_anova_full_gen01))
-
-  # Busca y selecciona las líneas que contienen "<- data.frame("
-  lineas_seleccionadas <- codigo_fuente
-  lineas_seleccionadas <- grep("<-", lineas_seleccionadas, value = TRUE)
-  lineas_seleccionadas <- grep("\\$.*<-", lineas_seleccionadas, value = TRUE, invert = TRUE)
-
-
-  #  lineas_seleccionadas <- gsub(" ", "", lineas_seleccionadas)
-  lineas_seleccionadas <- trimws(lineas_seleccionadas)
-
-  lineas_seleccionadas <- grep("\\).*<-", lineas_seleccionadas, value = TRUE, invert = TRUE)
-  lineas_seleccionadas <- grep("\\].*<-", lineas_seleccionadas, value = TRUE, invert = TRUE)
-
-  #  lineas_seleccionadas <- grep("\\$", lineas_seleccionadas, value = TRUE, invert = TRUE)
-  lineas_seleccionadas <- sub(" <-.*", "", lineas_seleccionadas)
-  lineas_seleccionadas <- grep("^hide_", lineas_seleccionadas, value = TRUE, invert = TRUE)
-
-
-
-  #lineas_seleccionadas <- grep("dt_rows_database_ok", lineas_seleccionadas, value = TRUE, invert = TRUE)
-  #lineas_seleccionadas <- grep("minibase_mod", lineas_seleccionadas, value = TRUE, invert = TRUE)
-  # lineas_seleccionadas <- grep("_ok$", lineas_seleccionadas, value = TRUE, invert = TRUE)
-  # lineas_seleccionadas <- grep("_dif_", lineas_seleccionadas, value = TRUE, invert = TRUE)
-  # lineas_seleccionadas <- grep("_point_", lineas_seleccionadas, value = TRUE, invert = TRUE)
-  # lineas_seleccionadas <- grep("_intercept_", lineas_seleccionadas, value = TRUE, invert = TRUE)
-  # lineas_seleccionadas <- grep("slope_", lineas_seleccionadas, value = TRUE, invert = TRUE)
-  # lineas_seleccionadas <- grep("vector_interaction", lineas_seleccionadas, value = TRUE, invert = TRUE)
-
-  results_gen02 <- results_gen01[lineas_seleccionadas]
-
-  return(results_gen02)
-
-}
-
 
 
 

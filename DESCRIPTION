@@ -1,0 +1,25 @@
+Package: Rscience
+Type: Package
+Title: R for Science
+Version: 0.0.1.0
+Author: David Elias Panigo
+Maintainer: David <david.elias949@gmail.com>
+Description: asdasd
+License: MIT License
+Encoding: UTF-8
+RoxygenNote: 7.3.1
+Imports:
+  bslib,
+  dplyr,
+  Hmisc,
+  openxlsx,
+  plotly,
+  rclipboard,
+  rmarkdown,
+  shiny,
+  shinycssloaders,
+  shinydashboard,
+  shinyjs,
+  shinyWidgets,
+  stringr,
+  tools

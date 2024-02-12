@@ -1,10 +1,10 @@
 
+library("Rscience")
+#rm(list = ls())
+#source("global.R")
 
-rm(list = ls())
-source("global.R")
 
-
-
+app_01_anova_v02 <- function(){
 ui <- dashboardPage(
 
   # # # Dashboard title
@@ -234,3 +234,8 @@ server <- function(input, output, session) {
 
 
 shinyApp(ui, server)
+
+}
+
+
+
