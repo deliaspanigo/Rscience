@@ -8,5 +8,13 @@ https://rstudio.github.io/rstudioaddins/
 # Codigo para ver en github
 https://github.com/rstudio/addinexamples/blob/master/inst/rstudio/addins.dcf
 
+###############
 
+
+remotes::install_github("deliaspanigo/Rscience")
+
+library("Rscience")
+
+
+Rscience::app_01
 

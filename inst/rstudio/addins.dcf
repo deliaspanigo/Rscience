@@ -1,5 +1,11 @@
-Name: Rscience_v02
+Name: Rscience
 Description: R for Science.
-Binding: app_01_anova_v02
+Binding: app01_RScience
 Interactive: true
 
+
+
+Name: Rscience_UNT
+Description: R for Science.
+Binding: app02_UNT
+Interactive: true
