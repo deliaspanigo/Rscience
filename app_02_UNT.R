@@ -1,52 +1,35 @@
 
-# library("Rscience")
-# rm(list = ls())
-# source("global.R")
+library("Rscience")
+#rm(list = ls())
+#source("global.R")
 
 
 app_01_anova_v02 <- function(){
-
-
-  library("bslib")
-  library("dplyr")
-  library("Hmisc")
-  library("openxlsx")  # Para archivos XLSX
-  library("plotly")
-  library("rclipboard")
-  library("rmarkdown")
-  library("shiny")
-  library("shinycssloaders")
-  library("shinydashboard")
-  library("shinyjs")
-  library("shinyWidgets")
-  library("stringr")
-  library("tools")
-
-ui <- shinydashboard::dashboardPage(
+ui <- dashboardPage(
 
   # # # Dashboard title
-  shinydashboard::dashboardHeader(title = "R-Science"),
+  dashboardHeader(title = "R-Science"),
 
   # # # Sidebar content
-  shinydashboard::dashboardSidebar(
+  dashboardSidebar(
     width = "300px",
-    shinydashboard::sidebarMenu(
-      shinydashboard::menuItem(text = "database", tabName = "tab01_database", icon = shiny::icon("th")),
-      shinydashboard::menuItem(text = "Anova 1 way", tabName = "tab02_anova", icon = shiny::icon("th"))
+    sidebarMenu(
+      menuItem(text = "database", tabName = "tab01_database", icon = icon("th")),
+      menuItem(text = "Anova 1 way", tabName = "tab02_anova", icon = icon("th"))
     )
   ),
 
   # # # Body content
-  shinydashboard::dashboardBody(
+  dashboardBody(
 
     # # # Selected tab on sidebar
     tags$style(
-      shiny::HTML('/* active selected tab in the sidebarmenu */  /*La elegida del menu lateral*/
+      HTML('/* active selected tab in the sidebarmenu */  /*La elegida del menu lateral*/
             .skin-blue .main-sidebar .sidebar .sidebar-menu .active a{
             background-color: green;
             }'),
-      shiny::HTML('.sidebar-menu { font-size: 28px; }'),
-      shiny::HTML('.treeview-menu > li > a { font-size: 28px; }')
+      HTML('.sidebar-menu { font-size: 28px; }'),
+      HTML('.treeview-menu > li > a { font-size: 28px; }')
     ),
 
 
@@ -104,22 +87,22 @@ ui <- shinydashboard::dashboardPage(
     tags$style(
       #HTML('.custom-h2 { font-weight: bold; }') # Estilos CSS para aplicar negrita solo a la clase custom-h2
       #HTML('.custom-h2 { font-weight: bold; }') # Estilos CSS para aplicar negrita solo a la clase custom-h2
-      shiny::HTML(" h2 { font-weight: bold; }")
+    HTML(" h2 { font-weight: bold; }")
     ),
 
 
     # # # SelectInput settings...
-    tags$style(shiny::HTML('.selectize-input { font-size: 32px; line-height: 32px;}')), # Estilos CSS para aumentar el tamaño de letra
-    tags$style(shiny::HTML('.selectize-dropdown { font-size: 28px; line-height: 28px; }')), # Estilos CSS para aumentar el tamaño de letra
-    tags$style(shiny::HTML('.control-label { font-size: 28px; }')), # Estilos CSS para cambiar el tamaño de letra del label
+    tags$style(HTML('.selectize-input { font-size: 32px; line-height: 32px;}')), # Estilos CSS para aumentar el tamaño de letra
+    tags$style(HTML('.selectize-dropdown { font-size: 28px; line-height: 28px; }')), # Estilos CSS para aumentar el tamaño de letra
+    tags$style(HTML('.control-label { font-size: 28px; }')), # Estilos CSS para cambiar el tamaño de letra del label
 
     # # # fileInput settings...
-    tags$style(shiny::HTML('.btn-file { font-size: 28px; }')), # Estilos CSS para cambiar el tamaño de letra del botón adjunto
+    tags$style(HTML('.btn-file { font-size: 28px; }')), # Estilos CSS para cambiar el tamaño de letra del botón adjunto
 
 
     # # # TabPanel settings...
     tags$style(
-      shiny::HTML(".tabbable > .nav > li > a    {background-color: orange;  color:black; font-size: 30px;}
+      HTML(".tabbable > .nav > li > a    {background-color: orange;  color:black; font-size: 30px;}
             .tabbable > .nav > li[class=active]    > a {background-color: green; color:white}")
     ),
 
@@ -157,35 +140,35 @@ ui <- shinydashboard::dashboardPage(
       }
     ")),
 
-    tags$style(shiny::HTML("
+    tags$style(HTML("
     .shiny-output-error-validation {
       font-size: 28px; /* Cambia el tamaño de letra de los mensajes de validación */
     }
   ")),
 
     # # # Tab items
-    shinydashboard::tabItems(
+    tabItems(
       # 1) Data base selection
-      shinydashboard::tabItem(tabName = "tab01_database",
+      tabItem(tabName = "tab01_database",
               h1("Import database"),
-              shiny::selectInput(inputId = "file_source",
+              selectInput(inputId = "file_source",
                           label = "File source...",
                           choices = c("Select one..." = "",
                                       "R examples" = "R_example",
                                       "xlsx" = "xlsx")),
               br(),br(),br(),
 
-              shiny::conditionalPanel(condition = 'input.file_source == "xlsx"',
+              conditionalPanel(condition = 'input.file_source == "xlsx"',
                 module01_database_s01_excel_ui(id = "data_excel")
                 ),
 
-              shiny::conditionalPanel(condition = 'input.file_source == "R_example"',
+        conditionalPanel(condition = 'input.file_source == "R_example"',
                          module01_database_s02_example_ui(id = "data_example")
                          )
         ),
 
       # 2) ANOVA
-      shinydashboard::tabItem(tabName = "tab02_anova",
+      tabItem(tabName = "tab02_anova",
               module02_anova_s01_varselection_ui(id = "anova01"),
               br(), br(), br(),
               module02_anova_s02_rscience_ui(id = "anova02")

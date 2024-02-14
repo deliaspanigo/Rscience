@@ -1,11 +1,12 @@
 Name: Rscience
 Description: R for Science.
-Binding: app01_RScience
+Binding: app_01_Rscience
 Interactive: true
 
 
-
-Name: Rscience_UNT
+Name: Rscience - UNT
 Description: R for Science.
-Binding: app02_UNT
+Binding: app_02_UNT
 Interactive: true
+
+

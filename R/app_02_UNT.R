@@ -4,7 +4,7 @@
 # source("global.R")
 
 
-app_01_anova_v02 <- function(){
+app_02_UNT <- function(){
 
 
   library("bslib")
@@ -99,6 +99,16 @@ ui <- shinydashboard::dashboardPage(
     #                             }
     #
     #                             '))),
+
+    tags$style(HTML('
+                                /* logo - Donde va R-science*/
+                                .skin-blue .main-header .logo {
+                                background-color: orange;
+                                font-size: 20px
+                                }'
+    )
+    ),
+
 
     # # # Super h2()
     tags$style(
