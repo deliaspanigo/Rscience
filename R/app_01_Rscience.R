@@ -102,7 +102,6 @@ ui <- shinydashboard::dashboardPage(
     tags$style(HTML('
                                 /* logo - Donde va R-science*/
                                 .skin-blue .main-header .logo {
-                                background-color: orange;
                                 font-size: 32px
                                 }'
     )

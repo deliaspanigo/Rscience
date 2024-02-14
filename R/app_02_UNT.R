@@ -25,7 +25,7 @@ app_02_UNT <- function(){
 ui <- shinydashboard::dashboardPage(
 
   # # # Dashboard title
-  shinydashboard::dashboardHeader(title = "R-Science UTN"),
+  shinydashboard::dashboardHeader(title = "R-Science UNT"),
 
   # # # Sidebar content
   shinydashboard::dashboardSidebar(
@@ -103,7 +103,6 @@ ui <- shinydashboard::dashboardPage(
     tags$style(HTML('
                                 /* logo - Donde va R-science*/
                                 .skin-blue .main-header .logo {
-                                background-color: orange;
                                 font-size: 20px
                                 }'
     )
