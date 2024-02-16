@@ -423,10 +423,11 @@ take_code_test001_anova <- function(selected_fn){
 
 
   test_code <- capture.output(selected_fn)
+
+  test_code <- test_code[-1]
+  test_code <- test_code[-length(test_code)]
   test_code <- grep("bytecode:", test_code, value = TRUE, invert = TRUE)
   test_code <- grep("function", test_code, value = TRUE, invert = TRUE)
-  #test_code <- test_code[-1]
-  #test_code <- test_code[-length(test_code)]
   test_code <- test_code[-length(test_code)]
   test_code <- grep("hide_", test_code, value = TRUE, invert = TRUE)
   test_code <- grep("# hide", test_code, value = TRUE, invert = TRUE)
@@ -528,6 +529,8 @@ showme_your_code_test001_anova <- function(intro_source_database,
   code_plot003 <- take_code_test001_anova(selected_fn = test001_anova_plot003)
   code_plot004 <- take_code_test001_anova(selected_fn = test001_anova_plot004)
   code_plot005 <- take_code_test001_anova(selected_fn = test001_anova_plot005)
+  code_plot006 <- take_code_test001_anova(selected_fn = test001_anova_plot006)
+  code_plot007 <- take_code_test001_anova(selected_fn = test001_anova_plot007)
 
   # # # # # Section 14 - Plots ---------------------------------------------------
 
@@ -535,13 +538,16 @@ showme_your_code_test001_anova <- function(intro_source_database,
                    section02_SELECTED,
                    section03_varselection,
                    test_code,
-                   "# # # # # Section 14 - Plots ---------------------------------------------------",
+                   " # # # # # Section 14 - Plots ---------------------------------------------------",
                    code_plot001,
                    code_plot002,
                    code_plot003,
                    code_plot004,
-                   code_plot005)
+                   code_plot005,
+                   code_plot006,
+                   code_plot007)
 
+  output_code <- paste0(output_code)
 
   return(output_code)
 
@@ -734,13 +740,6 @@ test001_anova_plot001 <- function(minibase_mod, df_factor_info){
 
 
 test001_anova_plot002 <- function(df_plot002_table){
-
-
-
-
-  df_new <- cbind.data.frame(rep(df_plot002_table$level, nrow(df_plot002_table)),
-                             c(df_plot002_table$mean, df_plot002_table$inferior_limit,
-                               df_plot002_table$superior_limit))
 
 
   # # # Create a new plot...

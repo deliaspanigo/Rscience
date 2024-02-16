@@ -610,6 +610,7 @@ module02_anova_s02_rscience_server <- function(id, input_general, input_01_anova
                                                    factor_var_name = input_01_anova()$factor_var_name,
                                                    alpha_value = input_01_anova()$alpha_value)
 
+        #cat(the_code)
         the_code
 
       })
@@ -655,14 +656,39 @@ module02_anova_s02_rscience_server <- function(id, input_general, input_01_anova
       })
 
 
+      # # # DOWNLOAD file
+      color_button_download <- reactiveVal("orange")
+
+
+      observeEvent(input$downloadBtn,{
+
+        if(input$downloadBtn == 0) color_button_download("orange") else color_button_download("green")
+      })
+
+
+
+      output$downloadBtn <- downloadHandler(
+        filename = function() {
+          # Nombre del archivo a descargar
+          paste0("script_anova_", Sys.Date(), "_descargado.R")
+        },
+        content = function(file) {
+          # Escribir el contenido de texto en el archivo
+          writeLines(THE_CODE(), file)
+        }
+      )
+
+
+
+
       output$tab05_code <- renderText({
 
         req(control_user_02())
 
 
-
         THE_CODE()
-      })
+
+        })
 
       ##########################################################################
 
@@ -732,7 +758,10 @@ module02_anova_s02_rscience_server <- function(id, input_general, input_01_anova
                                                h2("Anova 1 way"),
                                                verbatimTextOutput(ns("tab05_code"))
                                         ),
-                                        column(2, uiOutput(ns("clip")))
+                                        column(2, uiOutput(ns("clip"))#,
+                                               #br(),
+                                               #downloadButton(ns("downloadBtn"), "Descargar Texto")
+                                               )
                                       )
                              )
 
