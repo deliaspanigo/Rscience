@@ -184,19 +184,19 @@ test001_anova_full_gen01 <- function(database, vr_var_name, factor_var_name, alp
 
 
 
-  # # # Original table from R about Tukey
+  # # Original table from R about Tukey
   df_tukey_original_table <- tukey01_full_groups$groups
   df_tukey_original_table
 
 
 
   # # # New table about Tukey
-  df_tukey_new_table <- data.frame(
+  df_tukey_table <- data.frame(
     "level" = rownames(tukey01_full_groups$groups),
     "mean" = tukey01_full_groups$groups[,1],
     "group" = tukey01_full_groups$groups[,2]
   )
-  df_tukey_new_table
+  df_tukey_table
 
 
 
@@ -209,11 +209,12 @@ test001_anova_full_gen01 <- function(database, vr_var_name, factor_var_name, alp
     "level" = levels(minibase[,2]),
     "min" = tapply(minibase[,1], minibase[,2], min),
     "mean" = tapply(minibase[,1], minibase[,2], mean),
+    "Q1" = tapply(minibase[,1], minibase[,2], quantile, 0.25),
     "median" = tapply(minibase[,1], minibase[,2], median),
+    "Q3" = tapply(minibase[,1], minibase[,2], quantile, 0.75),
     "max" = tapply(minibase[,1], minibase[,2], max),
     "n" = tapply(minibase[,1], minibase[,2], length)
   )
-  df_vr_position_levels
 
 
 
@@ -378,6 +379,14 @@ test001_anova_full_gen01 <- function(database, vr_var_name, factor_var_name, alp
   df_plot002_table
 
 
+
+  # # # Table for plot003
+  df_plot003_table <- df_vr_position_levels
+  df_plot003_table["color"] <- df_factor_info$color
+
+  # # # Table for plot003
+  df_plot004_table <- df_vr_position_levels
+  df_plot004_table["color"] <- df_factor_info$color
 
   # --- # hide_: Proccesing objects order
   hide_correct_order <- ObjNames_ProcOrder_test001_anova()
@@ -734,27 +743,33 @@ test001_anova_plot002 <- function(df_plot002_table){
                                df_plot002_table$superior_limit))
 
 
-  colnames(df_new) <- c("FACTOR", "VR")
+  # # # Create a new plot...
+  plot002_anova <- plot_ly(data = df_plot002_table)
 
 
-  # # # Plot002 - Mean and standard error from model *****************************
-  plot002_anova <- plotly::plot_ly(data = df_new,
-                                   x = ~FACTOR, y = ~VR, color = ~FACTOR,
-                                   type = "scatter", mode = "markers",
-                                   colors = df_plot002_table$color,
-                                   marker = list(size = 15, opacity = 0.7))
+  # # # Adding errors...
+  plot002_anova <-   add_trace(p = plot002_anova,
+                               x = ~level, y = ~mean,
+                               type = "scatter", mode = "markers",
+                               color = ~level, colors = ~color,
+                               marker = list(symbol = "line-ew-open",
+                                             size = 50,
+                                             opacity = 1,
+                                             line = list(width = 5)),
+                               error_y = list(value = ~model_standard_error)
+  )
+
 
   # # # Title and settings...
-  plot002_anova <- plot002_anova %>%
-    plotly::layout(title = "Plot 002 - Mean and standard error from model",
-                   font = list(size = 20),
-                   margin = list(t = 100))
-
+  plot002_anova <- plotly::layout(p = plot002_anova,
+                                  title = "Plot 002 - Media y error standard del modelo",
+                                  font = list(size = 20),
+                                  margin = list(t = 100))
 
   # # # Without zerolines
-  plot002_anova <- plot002_anova %>%
-    plotly::layout(xaxis = list(zeroline = FALSE),
-                   yaxis = list(zeroline = FALSE))
+  plot002_anova <-plotly::layout(p = plot002_anova,
+                                 xaxis = list(zeroline = FALSE),
+                                 yaxis = list(zeroline = FALSE))
 
   # # # Plot output
   plot002_anova
@@ -766,29 +781,34 @@ test001_anova_plot002 <- function(df_plot002_table){
 
 
 
-test001_anova_plot003 <- function(minibase_mod, df_factor_info){
+test001_anova_plot003 <- function(df_plot003_table){
 
 
-  # # # Plot003 - Boxplot ********************************************************
-  plot003_anova <- plotly::plot_ly(data = minibase_mod,
-                                   x = ~FACTOR, y = ~VR, color = ~FACTOR,
-                                   type = "box", boxpoints = FALSE, boxmean = FALSE,
-                                   colors = df_factor_info$color)
+  # # # New plotly...
+  plot003_anova <- plot_ly(data = df_plot003_table)
+
+  # # # Boxplot and info...
+  plot003_anova <- add_trace(p = plot003_anova, type = "box",
+                             x = ~level ,
+                             color = ~level, colors = ~color,
+                             lowerfence = ~min, q1 = ~Q1, median = ~median,
+                             q3 = ~Q3, upperfence = ~max,
+                             boxmean = FALSE, boxpoints = FALSE
+  )
 
   # # # Title and settings...
-  plot003_anova <- plot003_anova %>%
-    plotly::layout(title = "Plot 003 - Boxplot",
-                   font = list(size = 20),
-                   margin = list(t = 100))
+  plot003_anova <- plotly::layout(p = plot003_anova,
+                                  title = "Plot 003 - Boxplot",
+                                  font = list(size = 20),
+                                  margin = list(t = 100))
 
 
-  # # # Without zerolines
-  plot003_anova <- plot003_anova %>%
-    plotly::layout(xaxis = list(zeroline = FALSE),
-                   yaxis = list(zeroline = FALSE))
+  # # # Without zerolines...
+  plot003_anova <- plotly::layout(p = plot003_anova,
+                                  xaxis = list(zeroline = FALSE),
+                                  yaxis = list(zeroline = FALSE))
 
-
-  # # # Plot output
+  # # # Output plot003_anova...
   plot003_anova
 }
 
@@ -797,32 +817,36 @@ test001_anova_plot003 <- function(minibase_mod, df_factor_info){
 
 
 
-test001_anova_plot004 <- function(minibase_mod, df_factor_info){
+
+test001_anova_plot004 <- function(df_plot004_table){
 
 
+  # # # New plotly...
+  plot004_anova <- plot_ly(data = df_plot004_table)
 
-  # # # Plot004 - Boxplot with means *********************************************
-  plot004_anova <- plot_ly(data = minibase_mod,
-                           x = ~FACTOR, y = ~VR, color = ~FACTOR,
-                           type = "box", boxpoints = FALSE, boxmean = TRUE,
-                           colors = df_factor_info$color)
-
+  # # # Boxplot and info...
+  plot004_anova <- add_trace(p = plot004_anova, type = "box",
+                             x = ~level ,
+                             color = ~level, colors = ~color,
+                             lowerfence = ~min, q1 = ~Q1, median = ~median,
+                             q3 = ~Q3, upperfence = ~max,
+                             boxmean = TRUE, boxpoints = FALSE
+  )
 
   # # # Title and settings...
-  plot004_anova <- plot004_anova %>%
-    plotly::layout(title = "Plot 004 - Boxplot with means",
-                   font = list(size = 20),
-                   margin = list(t = 100))
+  plot004_anova <- plotly::layout(p = plot004_anova,
+                                  title = "Plot 004 - Boxplot with means",
+                                  font = list(size = 20),
+                                  margin = list(t = 100))
 
 
-  # # # Without zerolines
-  plot004_anova <- plot004_anova %>%
-    plotly::layout(xaxis = list(zeroline = FALSE),
-                   yaxis = list(zeroline = FALSE))
+  # # # Without zerolines...
+  plot003_anova <- plotly::layout(p = plot004_anova,
+                                  xaxis = list(zeroline = FALSE),
+                                  yaxis = list(zeroline = FALSE))
 
-
-  # # # Plot output
-  plot004_anova
+  # # # Output plot003_anova...
+  plot003_anova
 }
 
 
@@ -843,7 +867,7 @@ test001_anova_plot005 <- function(minibase_mod, df_factor_info){
 
   # # # Title and settings...
   plot005_anova <- plot005_anova %>%
-    plotly::layout(title = "Plot 005 - Violinplot",
+    plotly::layout(title = "Plot 005 - Violinplot (de R - Automático)",
                    font = list(size = 20),
                    margin = list(t = 100))
 
@@ -857,6 +881,137 @@ test001_anova_plot005 <- function(minibase_mod, df_factor_info){
   # # # Plot output
   plot005_anova
 }
+
+
+
+
+test001_anova_plot006 <- function(minibase_mod, df_plot003_table){
+
+
+
+  all_levels <- levels(minibase_mod[,2])
+  n_levels <- length(all_levels)
+  all_color <- rainbow(length(all_levels))
+
+
+
+  fig <- plot_ly()
+
+  # Violinplot
+  for (k in 1:n_levels){
+
+    # Selected values
+    selected_level <- all_levels[k]
+    selected_color <- all_color[k]
+    dt_filas <- minibase_mod[,2] == selected_level
+
+    # Plotting selected violinplot
+    fig <- fig %>%
+      add_trace(x = minibase_mod[,2][dt_filas],
+                y = minibase_mod[,1][dt_filas],
+                type = "violin",
+                name = paste0("violin", k),
+                points = "all",
+                marker = list(color = selected_color),
+                line = list(color = selected_color),
+                fillcolor = I(selected_color)
+
+      )
+
+
+  }
+
+
+
+
+  # Boxplot
+  fig <- add_trace(p = fig, type = "box",
+                   name = "boxplot",
+                   x = df_plot003_table$level ,
+                   color = df_plot003_table$level ,
+                   lowerfence = df_plot003_table$min,
+                   q1 = df_plot003_table$Q1,
+                   median = df_plot003_table$median,
+                   q3 = df_plot003_table$Q3,
+                   upperfence = df_plot003_table$max,
+                   boxmean = TRUE,
+                   boxpoints = TRUE,
+                   fillcolor = df_plot003_table$color,
+                   line = list(color = "black", width = 3),
+                   opacity = 0.5,
+                   #line = list(color = selected_color, width = 2),
+                   width = 0.2
+
+  )
+
+
+  # # # Title and settings...
+  fig <- plotly::layout(p = fig,
+                                  title = "Plot 006 - Violinplot ARTESANAL!",
+                                  font = list(size = 20),
+                                  margin = list(t = 100))
+
+
+  # # # Without zerolines...
+  fig <- plotly::layout(p = fig,
+                                  xaxis = list(zeroline = FALSE),
+                                  yaxis = list(zeroline = FALSE))
+
+  # # # Output plot003_anova...
+  fig
+
+
+}
+
+
+
+test001_anova_plot007 <- function(minibase_mod, df_plot003_table){
+
+
+
+  #library(plotly)
+
+  fig <- plot_ly()
+  # Add traces
+  fig <- fig %>%
+    add_trace(data = minibase_mod,
+              #showlegend = FALSE,
+              side = "positive",
+              #data = violinplot_data,
+              type = "violin",
+              points = "all",
+              y = ~VR,
+              x = ~FACTOR,
+              #split = minibase_mod$FACTOR,
+              name = "Violinplot",
+              color = ~FACTOR,
+              colors = df_plot003_table$color
+
+    )%>%
+    layout(
+      showlegend = TRUE
+    )
+
+
+  # # # Title and settings...
+  fig <- plotly::layout(p = fig,
+                        title = "Plot 007 - Scatter plot Jitter +  Suavizado",
+                        font = list(size = 20),
+                        margin = list(t = 100))
+
+
+  # # # Without zerolines...
+  fig <- plotly::layout(p = fig,
+                        xaxis = list(zeroline = FALSE),
+                        yaxis = list(zeroline = FALSE))
+
+  # # # Output plot003_anova...
+  fig
+
+
+}
+
+
 
 
 

@@ -440,8 +440,7 @@ module02_anova_s02_rscience_server <- function(id, input_general, input_01_anova
         # Vector con nombres de elementos a ver
         nombres_a_ver <- c("df_selected_vars",
                            "df_table_anova", "df_factor_info", "check_unbalanced_reps",
-                           "df_tukey_original_table",
-                           "df_tukey_new_table")
+                           "df_tukey_table")
         # nombres_a_ver <- c("df_selected_vars", "df_factor", "dt_unbalanced_reps", "lm_ancova_with",
         #                    "test_normality_residuals", "test_homogeneity_residuals",
         #                    "sum_residuos", "table_ancova_with",
@@ -493,8 +492,7 @@ module02_anova_s02_rscience_server <- function(id, input_general, input_01_anova
         req(control_user_02())
 
 
-        anova_plot003 <- test001_anova_plot003(minibase_mod = results_test001_anova()$minibase_mod,
-                              df_factor_info = results_test001_anova()$df_factor_info)
+        anova_plot003 <- test001_anova_plot003(df_plot003_table = results_test001_anova()$df_plot003_table)
 
         anova_plot003
 
@@ -510,8 +508,7 @@ module02_anova_s02_rscience_server <- function(id, input_general, input_01_anova
 
 
 
-        anova_plot004 <- test001_anova_plot004(minibase_mod   = results_test001_anova()$minibase_mod,
-                                               df_factor_info = results_test001_anova()$df_factor_info)
+        anova_plot004 <- test001_anova_plot004(df_plot004_table = results_test001_anova()$df_plot004_table)
 
 
         anova_plot004
@@ -536,6 +533,40 @@ module02_anova_s02_rscience_server <- function(id, input_general, input_01_anova
 
 
 
+
+      output$plot006 <- renderPlotly({
+
+        req(control_user_02())
+
+
+        anova_plot006 <- test001_anova_plot006(minibase_mod   = results_test001_anova()$minibase_mod,
+                                               df_plot003_table = results_test001_anova()$df_plot003_table)
+        anova_plot006
+
+
+
+
+      })
+
+
+
+      output$plot007 <- renderPlotly({
+
+        req(control_user_02())
+
+
+        anova_plot007 <- test001_anova_plot007(minibase_mod   = results_test001_anova()$minibase_mod,
+                                               df_plot003_table = results_test001_anova()$df_plot003_table)
+        anova_plot007
+
+
+
+
+      })
+
+
+
+
       output$tab_04_all_plotly <- renderUI({
 
         ns <- shiny::NS(id)
@@ -553,7 +584,16 @@ module02_anova_s02_rscience_server <- function(id, input_general, input_01_anova
           plotlyOutput(ns("plot004")),
           br(),
           br(),
-          plotlyOutput(ns("plot005"))
+          plotlyOutput(ns("plot005")),
+          br(),
+          br(),
+          plotlyOutput(ns("plot006")),
+          br(),
+          br(),
+          plotlyOutput(ns("plot007")),
+          br(),
+          br()
+
         )
 
       })
