@@ -473,6 +473,15 @@ module02_anova_s02_rscience_server <- function(id, input_general, input_01_anova
       })
 
 
+      output$plot008 <- plotly::renderPlotly({
+
+        req(control_user_02())
+
+        anova_plot008 <- test001_anova_plot008(df_plot008_table = results_test001_anova()$df_plot008_table)
+        anova_plot008
+      })
+
+
       # Boxplot
       output$plot002 <- plotly::renderPlotly({
 
@@ -575,18 +584,21 @@ module02_anova_s02_rscience_server <- function(id, input_general, input_01_anova
           plotlyOutput(ns("plot001")),
           br(),
           br(),
+          plotlyOutput(ns("plot008")),
+          br(),
+          br(),
           plotlyOutput(ns("plot002")),
           br(),
           br(),
-          plotlyOutput(ns("plot003")),
-          br(),
-          br(),
+          # plotlyOutput(ns("plot003")),
+          # br(),
+          # br(),
           plotlyOutput(ns("plot004")),
           br(),
           br(),
-          plotlyOutput(ns("plot005")),
-          br(),
-          br(),
+          # plotlyOutput(ns("plot005")),
+          # br(),
+          # br(),
           plotlyOutput(ns("plot006")),
           br(),
           br(),

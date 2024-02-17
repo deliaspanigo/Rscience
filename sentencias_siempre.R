@@ -20,5 +20,5 @@ remove.packages("Rscience")
 library(remotes)
 
 # Instalar la librería desde GitHub
-install_github("deliaspanigo/Rscience", force = T)
+remotes::install_github("deliaspanigo/Rscience", force = T)
 

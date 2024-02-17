@@ -366,6 +366,20 @@ test001_anova_full_gen01 <- function(database, vr_var_name, factor_var_name, alp
 
   # # # # # Section 13 - Special table to plots ----------------------------------
   # # # Table for plot002
+
+  df_plot008_table <- data.frame(
+    "order" = df_factor_info$order,
+    "level" = df_factor_info$level,
+    "n" = df_factor_info$n,
+    "mean" = tapply(minibase[,1], minibase[,2], mean),
+    "model_standard_deviance" = df_model_error$model_standard_deviance
+  )
+  df_plot008_table["inferior_limit"] <- df_plot008_table$mean - df_plot008_table$model_standard_deviance
+  df_plot008_table["superior_limit"] <- df_plot008_table$mean + df_plot008_table$model_standard_deviance
+  df_plot008_table["color"] <- df_factor_info$color
+  df_plot008_table
+
+
   df_plot002_table <- data.frame(
     "order" = df_factor_info$order,
     "level" = df_factor_info$level,
@@ -424,21 +438,34 @@ take_code_test001_anova <- function(selected_fn){
 
   test_code <- capture.output(selected_fn)
 
-  test_code <- test_code[-1]
-  test_code <- test_code[-length(test_code)]
-  test_code <- grep("bytecode:", test_code, value = TRUE, invert = TRUE)
-  test_code <- grep("function", test_code, value = TRUE, invert = TRUE)
-  test_code <- test_code[-length(test_code)]
-  test_code <- grep("hide_", test_code, value = TRUE, invert = TRUE)
-  test_code <- grep("# hide", test_code, value = TRUE, invert = TRUE)
-  test_code <- paste0(test_code , collapse = "\n")
-  test_code
+  # Fist "{" - Its the function beggining
+  pos_first_key <- grep("\\{", test_code)[1]
+
+  # Last "{" - Its the function end
+  pos_last_key <- tail(grep("\\}", test_code), 1)
+
+  # Seleccion
+  vector_output_code <- test_code[(pos_first_key + 1):(pos_last_key - 1)]
+
+  # Eliminamos los return y los "hide" que hemos colocado.
+  vector_output_code <- grep("return\\(", vector_output_code, value = TRUE, invert = TRUE)
+  vector_output_code <- grep("hide_", vector_output_code, value = TRUE, invert = TRUE)
+  vector_output_code <- grep("# hide_", vector_output_code, value = TRUE, invert = TRUE)
+
+  text_output_code <- paste(vector_output_code, collapse = "\n")
+  # test_code <- test_code[-1]
+  # test_code <- test_code[-length(test_code)]
+  # test_code <- grep("bytecode:", test_code, value = TRUE, invert = TRUE)
+  # test_code <- grep("function", test_code, value = TRUE, invert = TRUE)
+  # test_code <- test_code[-length(test_code)]
+  # test_code <- grep("hide_", test_code, value = TRUE, invert = TRUE)
+  # test_code <- grep("# hide", test_code, value = TRUE, invert = TRUE)
+  text_output_code
+
 }
 
 # # # Show me your code
-showme_your_code_test001_anova <- function(intro_source_database,
-                                           vr_var_name, factor_var_name,
-                                           alpha_value){
+showme_your_code_test001_anova <- function(intro_source_database, vr_var_name, factor_var_name, alpha_value){
 
   original_file_source <- intro_source_database$file_source
 
@@ -558,9 +585,7 @@ showme_your_code_test001_anova <- function(intro_source_database,
 
 
 # ANOVA
-anova_general_section01_to_03 <- function(file_source, alpha_value,
-                                          selected_path, name_database,
-                                          selected_pos_vars, all_colnames){
+anova_general_section01_to_03 <- function(file_source, alpha_value, selected_path, name_database, selected_pos_vars, all_colnames){
 
   if(is.null(file_source)) return(NULL)
   if(file_source == "") return(NULL)
@@ -739,6 +764,9 @@ test001_anova_plot001 <- function(minibase_mod, df_factor_info){
 
 
 
+
+
+
 test001_anova_plot002 <- function(df_plot002_table){
 
 
@@ -761,7 +789,7 @@ test001_anova_plot002 <- function(df_plot002_table){
 
   # # # Title and settings...
   plot002_anova <- plotly::layout(p = plot002_anova,
-                                  title = "Plot 002 - Media y error standard del modelo",
+                                  title = "Plot 003 - Mean y model standard error",
                                   font = list(size = 20),
                                   margin = list(t = 100))
 
@@ -829,12 +857,13 @@ test001_anova_plot004 <- function(df_plot004_table){
                              color = ~level, colors = ~color,
                              lowerfence = ~min, q1 = ~Q1, median = ~median,
                              q3 = ~Q3, upperfence = ~max,
-                             boxmean = TRUE, boxpoints = FALSE
+                             boxmean = TRUE, boxpoints = FALSE,
+                             line = list(color = "black", width = 3)
   )
 
   # # # Title and settings...
   plot004_anova <- plotly::layout(p = plot004_anova,
-                                  title = "Plot 004 - Boxplot with means",
+                                  title = "Plot 004 - Boxplot and means",
                                   font = list(size = 20),
                                   margin = list(t = 100))
 
@@ -946,7 +975,7 @@ test001_anova_plot006 <- function(minibase_mod, df_plot003_table){
 
   # # # Title and settings...
   fig <- plotly::layout(p = fig,
-                                  title = "Plot 006 - Violinplot ARTESANAL!",
+                                  title = "Plot 005 - Violinplot",
                                   font = list(size = 20),
                                   margin = list(t = 100))
 
@@ -994,7 +1023,7 @@ test001_anova_plot007 <- function(minibase_mod, df_plot003_table){
 
   # # # Title and settings...
   fig <- plotly::layout(p = fig,
-                        title = "Plot 007 - Scatter plot Jitter +  Suavizado",
+                        title = "Plot 006 - Scatterplot + Jitter +  Smoothed",
                         font = list(size = 20),
                         margin = list(t = 100))
 
@@ -1010,6 +1039,42 @@ test001_anova_plot007 <- function(minibase_mod, df_plot003_table){
 
 }
 
+
+
+test001_anova_plot008 <- function(df_plot008_table){
+
+
+  # # # Create a new plot...
+  plot008_anova <- plot_ly(data = df_plot008_table)
+
+
+  # # # Adding errors...
+  plot008_anova <-   add_trace(p = plot008_anova,
+                               x = ~level, y = ~mean,
+                               type = "scatter", mode = "markers",
+                               color = ~level, colors = ~color,
+                               marker = list(symbol = "line-ew-open",
+                                             size = 50,
+                                             opacity = 1,
+                                             line = list(width = 5)),
+                               error_y = list(value = ~model_standard_deviance)
+  )
+
+
+  # # # Title and settings...
+  plot008_anova <- plotly::layout(p = plot008_anova,
+                                  title = "Plot 002 - Mean and model standard deviance",
+                                  font = list(size = 20),
+                                  margin = list(t = 100))
+
+  # # # Without zerolines
+  plot008_anova <-plotly::layout(p = plot008_anova,
+                                 xaxis = list(zeroline = FALSE),
+                                 yaxis = list(zeroline = FALSE))
+
+  # # # Plot output
+  plot008_anova
+}
 
 
 
