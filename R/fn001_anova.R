@@ -565,13 +565,20 @@ showme_your_code_test001_anova <- function(intro_source_database, vr_var_name, f
                    section02_SELECTED,
                    section03_varselection,
                    test_code,
+                   "\n\n\n\n\n",
                    " # # # # # Section 14 - Plots ---------------------------------------------------",
                    code_plot001,
+                   "\n\n\n\n\n",
                    code_plot002,
+                   "\n\n\n\n\n",
                    code_plot003,
+                   "\n\n\n\n\n",
                    code_plot004,
+                   "\n\n\n\n\n",
                    code_plot005,
+                   "\n\n\n\n\n",
                    code_plot006,
+                   "\n\n\n\n\n",
                    code_plot007)
 
   output_code <- paste0(output_code)
