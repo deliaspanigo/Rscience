@@ -926,14 +926,14 @@ test001_anova_plot005 <- function(minibase_mod, df_factor_info){
 
 
   # # # Title and settings...
-  plot005_anova <- plotly::plot_ly(p = plot005_anova,
+  plot005_anova <- plotly::add_trace(p = plot005_anova,
                                    title = "Plot 005 - Violinplot (de R - Automático)",
                                    font = list(size = 20),
                                    margin = list(t = 100))
 
 
   # # # Without zerolines
-  plot005_anova <- plotly::plot_ly(p = plot005_anova,
+  plot005_anova <- plotly::add_trace(p = plot005_anova,
                                    xaxis = list(zeroline = FALSE),
                                    yaxis = list(zeroline = FALSE))
 
