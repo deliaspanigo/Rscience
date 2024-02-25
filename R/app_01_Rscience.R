@@ -9,6 +9,7 @@ app_01_Rscience <- function(){
 
   library("bslib")
   library("dplyr")
+  library("DT")
   library("Hmisc")
   library("openxlsx")  # Para archivos XLSX
   library("plotly")
@@ -21,6 +22,7 @@ app_01_Rscience <- function(){
   library("shinyWidgets")
   library("stringr")
   library("tools")
+
 
 ui <- shinydashboard::dashboardPage(
 

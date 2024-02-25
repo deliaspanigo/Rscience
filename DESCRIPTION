@@ -22,4 +22,5 @@ Imports:
   shinyjs,
   shinyWidgets,
   stringr,
-  tools
+  tools,
+  DT

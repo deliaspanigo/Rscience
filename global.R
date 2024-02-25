@@ -3,6 +3,7 @@
 # # # Libraries
 library("bslib")
 library("dplyr")
+library("DT")
 library("Hmisc")
 library("openxlsx")  # Para archivos XLSX
 library("plotly")
