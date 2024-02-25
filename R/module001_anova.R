@@ -720,7 +720,7 @@ module02_anova_s02_rscience_server <- function(id, input_general, input_01_anova
       output$table_plot005_v02 <- renderDataTable({
 
         req(control_user_02())
-        output_table <- results_test001_anova()$df_plot005_table
+        output_table <- results_test001_anova()$df_plot004_table
 
         datatable(output_table, rownames = F,
                   options = list(
@@ -788,7 +788,7 @@ module02_anova_s02_rscience_server <- function(id, input_general, input_01_anova
       output$table_plot006_v02 <- renderDataTable({
 
         req(control_user_02())
-        output_table <- results_test001_anova()$df_plot006_table
+        output_table <- results_test001_anova()$df_plot004_table
 
         datatable(output_table, rownames = F,
                   options = list(
@@ -840,6 +840,7 @@ module02_anova_s02_rscience_server <- function(id, input_general, input_01_anova
 
       })
 
+      ################################################################
       # Plot001 - Scatterplot
       output$plot007 <- plotly::renderPlotly({
 
@@ -931,6 +932,20 @@ module02_anova_s02_rscience_server <- function(id, input_general, input_01_anova
       output$table_plot010_v01 <- renderPrint({
 
 
+
+
+        req(control_user_02())
+
+        my_lista <- results_test001_anova()
+        vector_search <- "df_plot001_table"
+
+        # Filtered list
+        filtered_list <- my_lista[vector_search]
+
+        filtered_list
+
+      })
+
       output$plot011 <- renderPlotly({
 
         req(control_user_02())
@@ -986,17 +1001,6 @@ module02_anova_s02_rscience_server <- function(id, input_general, input_01_anova
 
       })
 
-        req(control_user_02())
-
-        my_lista <- results_test001_anova()
-        vector_search <- "df_plot001_table"
-
-        # Filtered list
-        filtered_list <- my_lista[vector_search]
-
-        filtered_list
-
-      })
 
 
       # All plot v01
@@ -1048,7 +1052,18 @@ module02_anova_s02_rscience_server <- function(id, input_general, input_01_anova
           br(),
           br(),
           br(),
-          br(),
+          br()
+
+        )
+
+      })
+
+      # All plot v01
+      output$tab_05_all_plotly_residuals_v01 <- renderUI({
+
+        ns <- shiny::NS(id)
+
+        div(
           h2("NUEVOS GRAFICOS"),
           fluidRow(
             column(6, plotlyOutput(ns("plot007"))),
@@ -1084,6 +1099,8 @@ module02_anova_s02_rscience_server <- function(id, input_general, input_01_anova
             column(6, plotlyOutput(ns("plot012"))),
             column(6, verbatimTextOutput(ns("table_plot012_v01")))
           ),
+          br(),
+          br(),
           br(),
           br()
 
@@ -1273,7 +1290,7 @@ module02_anova_s02_rscience_server <- function(id, input_general, input_01_anova
                                         )
                                       )
                              ),
-                             tabPanel("Plots",  # 05,
+                             tabPanel("Plots - Factor",  # 05,
                                       fluidRow(h2("Anova 1 way")),
                                       fluidRow(
                                         #column(1),
@@ -1286,17 +1303,30 @@ module02_anova_s02_rscience_server <- function(id, input_general, input_01_anova
                                         )
                                       )
                              ),
-                             tabPanel("Plots2",  # 05,
+                             tabPanel("Plots - Residuals",  # 05,
                                       fluidRow(h2("Anova 1 way")),
                                       fluidRow(
                                         #column(1),
                                         column(12,
                                                #plotOutput(ns("tab04_plots")),
                                                br(),
-                                               shinycssloaders::withSpinner(uiOutput(ns("tab_04_all_plotly_v02"))),
+                                               #br()
+
+                                               shinycssloaders::withSpinner(uiOutput(ns("tab_05_all_plotly_residuals_v01"))),
                                         )
                                       )
                              ),
+                             # tabPanel("Plots2",  # 05,
+                             #          fluidRow(h2("Anova 1 way")),
+                             #          fluidRow(
+                             #            #column(1),
+                             #            column(12,
+                             #                   #plotOutput(ns("tab04_plots")),
+                             #                   br(),
+                             #                   shinycssloaders::withSpinner(uiOutput(ns("tab_04_all_plotly_v02"))),
+                             #            )
+                             #          )
+                             # ),
                              tabPanel("Full Results",  # 05
                                       fluidRow(
                                         column(12,
