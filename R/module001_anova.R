@@ -361,17 +361,26 @@ module02_anova_s02_rscience_server <- function(id, input_general, input_01_anova
       })
 
 
+      ####################################################################################
+
+      # RR - Control - Previous
+      RR_control_previous <- reactive({
+        check_previous <- cpiA001_anova1way_control_previous(database = input_general()$database,
+                                                             vr_var_name = input_01_anova()$vr_var_name,
+                                                             factor_var_name = input_01_anova()$factor_var_name,
+                                                             alpha_value = input_01_anova()$alpha_value)
+
+      })
+
       # # # All anova results
-      results_test001_anova <- reactive({
+      RR_general <- reactive({
 
         req(control_user_01())
 
-        the_output <- test001_anova_full_gen01(database = input_general()$database,
-                                       vr_var_name = input_01_anova()$vr_var_name,
-                                       factor_var_name = input_01_anova()$factor_var_name,
-                                       alpha_value = input_01_anova()$alpha_value)
-
-
+        the_output <- cpiA001_anova1way_results(database = input_general()$database,
+                                                vr_var_name = input_01_anova()$vr_var_name,
+                                                factor_var_name = input_01_anova()$factor_var_name,
+                                                alpha_value = input_01_anova()$alpha_value)
 
 
         the_output
@@ -379,25 +388,184 @@ module02_anova_s02_rscience_server <- function(id, input_general, input_01_anova
       })
 
 
+      # RR - Control - Post
+      RR_control_post <- reactive({
+        req(RR_general())
+        check_post <- cpiA001_anova1way_control_post(list_results_from_cpiA001_anova1way = RR_general())
+
+
+      })
+
+
+      # RR - Tables
+      RR_g01_tables <- reactive({
+
+        req(RR_general())
+        all_tables_g01 <- cpiA001_anova1way_recruit_g01_Tables(list_results_from_cpiA001_anova1way = RR_general())
+        all_tables_g01
+      })
+
+
+      # RR - Plots
+      RR_g01_plots <- reactive({
+
+        req(RR_general())
+        all_plots_g01 <- cpiA001_anova1way_recruit_g01_FactorPlots(list_results_from_cpiA001_anova1way = RR_general())
+        all_plots_g01
+      })
+
+
+
+
+      # RR - Tables
+      RR_g02_tables <- reactive({
+
+        req(RR_general())
+        all_tables_g02 <- cpiA001_anova1way_recruit_g02_Tables(list_results_from_cpiA001_anova1way = RR_general())
+        all_tables_g02
+      })
+
+
+      # RR - Plots
+      RR_g02_plots <- reactive({
+
+        req(RR_general())
+        all_plots_g02 <- cpiA001_anova1way_recruit_g02_ResidualsPlots(list_results_from_cpiA001_anova1way = RR_general())
+        all_plots_g02
+      })
+
+      RR_code <- reactive({
+
+        # intro_source_database <- list("file_source" = "R_example",
+        #                               "file_name" = "mtcars")
+        # The code
+        the_code <- cpiA001_anova1way_code_sectionALL(intro_source_database = input_01_anova()$intro_source_database,
+                                                      vr_var_name = input_01_anova()$vr_var_name,
+                                                      factor_var_name = input_01_anova()$factor_var_name,
+                                                      alpha_value = input_01_anova()$alpha_value)
+        the_code
+      })
+
+      ####################################################################################
       # # # Control for anova results object
       control_user_02 <- reactive({
 
         req(control_user_01())
 
         validate(
-          need(!is.null(results_test001_anova()), "Error 03: Module anova s02 - results_test001_anova() can not be NULL.")        )
+          need(!is.null(RR_general()), "Error 03: Module anova s02 - RR_general() can not be NULL.")        )
 
         return(TRUE)
 
       })
 
+      observe({
+      for (i in 1:length(RR_g01_plots())) {
+        # Need local so that each item gets its own number. Without it, the value
+        # of i in the renderPlot() will be the same across all instances, because
+        # of when the expression is evaluated.
+        local({
+          my_i <- i
+          plot_name <- paste("plotA", my_i, sep="")
+          table_name <- paste("tableA", my_i, sep="")
+
+          output[[plot_name]] <- plotly::renderPlotly({
+            RR_g01_plots()[[my_i]]
+          })
+
+          output[[table_name]] <- renderPrint({
+
+            req(control_user_02())
+
+            my_lista <-RR_g01_tables()
+            vector_search <- names(my_lista)[my_i]
+
+            # Filtered list
+            filtered_list <- my_lista[vector_search]
+
+            filtered_list
+
+          })
+
+        })
+      }
+      })
+
+      output$plot_outputs33 <- renderUI({
+        ns <- shiny::NS(id)
+        plot_output_list <- lapply(1:length(RR_g01_plots()), function(i) {
+          plot_name <- paste("plotA", i, sep="")
+          table_name <- paste("tableA", i, sep="")
+
+
+          div(
+          fluidRow(
+          column(6, plotlyOutput(ns(plot_name), height = "100%", width = "100%")),
+          column(6, verbatimTextOutput(ns(table_name)))
+          ), br(), br(), br()
+          )
+        })
+        })
+
+      ######################################################################
+
+
+      observe({
+        for (i in 1:length(RR_g02_plots())) {
+          # Need local so that each item gets its own number. Without it, the value
+          # of i in the renderPlot() will be the same across all instances, because
+          # of when the expression is evaluated.
+          local({
+            my_i <- i
+            plot_name <- paste("plotB", my_i, sep="")
+            table_name <- paste("tableB", my_i, sep="")
+
+            output[[plot_name]] <- plotly::renderPlotly({
+              RR_g02_plots()[[my_i]]
+            })
+
+            output[[table_name]] <- renderPrint({
+
+              req(control_user_02())
+
+              my_lista <-RR_g02_tables()
+              vector_search <- names(my_lista)[my_i]
+
+              # Filtered list
+              filtered_list <- my_lista[vector_search]
+
+              filtered_list
+
+            })
+
+          })
+        }
+      })
+
+      output$plot_outputs66 <- renderUI({
+        ns <- shiny::NS(id)
+        plot_output_list <- lapply(1:length(RR_g02_plots()), function(i) {
+          plot_name <- paste("plotB", i, sep="")
+          table_name <- paste("tableB", i, sep="")
+
+
+          div(
+            fluidRow(
+              column(6, plotlyOutput(ns(plot_name), height = "100%", width = "100%")),
+              column(6, verbatimTextOutput(ns(table_name)))
+            ), br(), br(), br()
+          )
+        })
+      })
+
+      ######################################################################
 
       # # # Tab01 - Anova Results
       output$tab01_all_anova_results <- renderPrint({
 
         req(control_user_02())
 
-        results_test001_anova()
+        RR_general()
       })
 
       ##########################################################################
@@ -408,7 +576,7 @@ module02_anova_s02_rscience_server <- function(id, input_general, input_01_anova
         req(control_user_02())
 
 
-        mi_lista <- results_test001_anova()
+        mi_lista <- RR_general()
 
 
 
@@ -432,7 +600,7 @@ module02_anova_s02_rscience_server <- function(id, input_general, input_01_anova
 
         req(control_user_02())
 
-        mi_lista <- results_test001_anova()
+        mi_lista <- RR_general()
 
 
 
@@ -466,8 +634,8 @@ module02_anova_s02_rscience_server <- function(id, input_general, input_01_anova
 
         req(control_user_02())
 
-        anova_plot001 <- test001_anova_plot001(minibase_mod = results_test001_anova()$minibase_mod,
-                               df_factor_info = results_test001_anova()$df_factor_info)
+        anova_plot001 <- test001_anova_plot001(minibase_mod = RR_general()$minibase_mod,
+                               df_factor_info = RR_general()$df_factor_info)
 
         anova_plot001
 
@@ -476,7 +644,7 @@ module02_anova_s02_rscience_server <- function(id, input_general, input_01_anova
 
         req(control_user_02())
 
-        my_lista <- results_test001_anova()
+        my_lista <- RR_general()
         vector_search <- "df_plot001_table"
 
         # Filtered list
@@ -489,7 +657,7 @@ module02_anova_s02_rscience_server <- function(id, input_general, input_01_anova
 
         req(control_user_02())
 
-        selected_table <- results_test001_anova()$df_plot001_table
+        selected_table <- RR_general()$df_plot001_table
 
 
         # Crear la tabla inicial con plotly
@@ -526,8 +694,8 @@ module02_anova_s02_rscience_server <- function(id, input_general, input_01_anova
 
         req(control_user_02())
 
-        anova_plot001 <- test001_anova_plot001(minibase_mod = results_test001_anova()$minibase_mod,
-                                               df_factor_info = results_test001_anova()$df_factor_info)
+        anova_plot001 <- test001_anova_plot001(minibase_mod = RR_general()$minibase_mod,
+                                               df_factor_info = RR_general()$df_factor_info)
 
         anova_plot001
 
@@ -538,14 +706,14 @@ module02_anova_s02_rscience_server <- function(id, input_general, input_01_anova
 
         req(control_user_02())
 
-        anova_plot002 <- test001_anova_plot002(df_plot002_table = results_test001_anova()$df_plot002_table)
+        anova_plot002 <- test001_anova_plot002(df_plot002_table = RR_general()$df_plot002_table)
         anova_plot002
       })
       output$table_plot002_v01 <- renderPrint({
 
         req(control_user_02())
 
-        my_lista <- results_test001_anova()
+        my_lista <- RR_general()
         vector_search <- "df_plot002_table"
 
         # Filtered list
@@ -560,7 +728,7 @@ module02_anova_s02_rscience_server <- function(id, input_general, input_01_anova
 
         req(control_user_02())
 
-        selected_table <- results_test001_anova()$df_plot002_table
+        selected_table <- RR_general()$df_plot002_table
 
         # Crear la tabla inicial con plotly
         table_plot001 <- plot_ly(
@@ -603,7 +771,7 @@ module02_anova_s02_rscience_server <- function(id, input_general, input_01_anova
 
         req(control_user_02())
 
-        anova_plot002 <- test001_anova_plot002(df_plot002_table = results_test001_anova()$df_plot002_table)
+        anova_plot002 <- test001_anova_plot002(df_plot002_table = RR_general()$df_plot002_table)
         anova_plot002
       })
 
@@ -612,13 +780,13 @@ module02_anova_s02_rscience_server <- function(id, input_general, input_01_anova
 
         req(control_user_02())
 
-        anova_plot003 <- test001_anova_plot003(df_plot003_table = results_test001_anova()$df_plot003_table)
+        anova_plot003 <- test001_anova_plot003(df_plot003_table = RR_general()$df_plot003_table)
         anova_plot003
       })
       output$table_plot003_v01 <- renderPrint({
 
         req(control_user_02())
-        my_lista <- results_test001_anova()
+        my_lista <- RR_general()
         vector_search <- "df_plot003_table"
 
         # Filtered list
@@ -631,14 +799,14 @@ module02_anova_s02_rscience_server <- function(id, input_general, input_01_anova
       output$table_plot003_v02 <- renderPrint({
 
          req(control_user_02())
-        results_test001_anova()$df_plot003_table
+        RR_general()$df_plot003_table
 
       })
       output$plot003_v02 <- plotly::renderPlotly({
 
         req(control_user_02())
 
-        anova_plot003 <- test001_anova_plot003(df_plot003_table = results_test001_anova()$df_plot003_table)
+        anova_plot003 <- test001_anova_plot003(df_plot003_table = RR_general()$df_plot003_table)
         anova_plot003
       })
 
@@ -652,7 +820,7 @@ module02_anova_s02_rscience_server <- function(id, input_general, input_01_anova
 
 
 
-        anova_plot004 <- test001_anova_plot004(df_plot004_table = results_test001_anova()$df_plot004_table)
+        anova_plot004 <- test001_anova_plot004(df_plot004_table = RR_general()$df_plot004_table)
 
 
         anova_plot004
@@ -661,7 +829,7 @@ module02_anova_s02_rscience_server <- function(id, input_general, input_01_anova
       output$table_plot004_v01 <- renderPrint({
 
         req(control_user_02())
-        my_lista <- results_test001_anova()
+        my_lista <- RR_general()
         vector_search <- "df_plot004_table"
 
         # Filtered list
@@ -674,7 +842,7 @@ module02_anova_s02_rscience_server <- function(id, input_general, input_01_anova
       output$table_plot004_v02 <- renderTable({
 
         req(control_user_02())
-        results_test001_anova()$df_plot004_table
+        RR_general()$df_plot004_table
 
       })
       output$plot004_v02 <- renderPlotly({
@@ -683,7 +851,7 @@ module02_anova_s02_rscience_server <- function(id, input_general, input_01_anova
 
 
 
-        anova_plot004 <- test001_anova_plot004(df_plot004_table = results_test001_anova()$df_plot004_table)
+        anova_plot004 <- test001_anova_plot004(df_plot004_table = RR_general()$df_plot004_table)
 
 
         anova_plot004
@@ -696,8 +864,8 @@ module02_anova_s02_rscience_server <- function(id, input_general, input_01_anova
         req(control_user_02())
 
 
-        anova_plot005 <- test001_anova_plot005(minibase_mod   = results_test001_anova()$minibase_mod,
-                                               df_plot005_table = results_test001_anova()$df_plot005_table)
+        anova_plot005 <- test001_anova_plot005(minibase_mod   = RR_general()$minibase_mod,
+                                               df_plot005_table = RR_general()$df_plot005_table)
         anova_plot005
 
 
@@ -707,7 +875,7 @@ module02_anova_s02_rscience_server <- function(id, input_general, input_01_anova
       output$table_plot005_v01 <- renderPrint({
 
         req(control_user_02())
-        my_lista <- results_test001_anova()
+        my_lista <- RR_general()
         vector_search <- "df_plot005_table"
 
         # Filtered list
@@ -720,7 +888,7 @@ module02_anova_s02_rscience_server <- function(id, input_general, input_01_anova
       output$table_plot005_v02 <- renderDataTable({
 
         req(control_user_02())
-        output_table <- results_test001_anova()$df_plot004_table
+        output_table <- RR_general()$df_plot004_table
 
         datatable(output_table, rownames = F,
                   options = list(
@@ -749,8 +917,8 @@ module02_anova_s02_rscience_server <- function(id, input_general, input_01_anova
         req(control_user_02())
 
 
-        anova_plot005 <- test001_anova_plot005(minibase_mod   = results_test001_anova()$minibase_mod,
-                                               df_plot005_table = results_test001_anova()$df_plot005_table)
+        anova_plot005 <- test001_anova_plot005(minibase_mod   = RR_general()$minibase_mod,
+                                               df_plot005_table = RR_general()$df_plot005_table)
         anova_plot005
 
 
@@ -764,8 +932,8 @@ module02_anova_s02_rscience_server <- function(id, input_general, input_01_anova
         req(control_user_02())
 
 
-        anova_plot006 <- test001_anova_plot006(minibase_mod   = results_test001_anova()$minibase_mod,
-                                               df_plot006_table = results_test001_anova()$df_plot006_table)
+        anova_plot006 <- test001_anova_plot006(minibase_mod   = RR_general()$minibase_mod,
+                                               df_plot006_table = RR_general()$df_plot006_table)
         anova_plot006
 
 
@@ -775,7 +943,7 @@ module02_anova_s02_rscience_server <- function(id, input_general, input_01_anova
       output$table_plot006_v01 <- renderPrint({
 
         req(control_user_02())
-        my_lista <- results_test001_anova()
+        my_lista <- RR_general()
         vector_search <- "df_plot006_table"
 
         # Filtered list
@@ -788,7 +956,7 @@ module02_anova_s02_rscience_server <- function(id, input_general, input_01_anova
       output$table_plot006_v02 <- renderDataTable({
 
         req(control_user_02())
-        output_table <- results_test001_anova()$df_plot004_table
+        output_table <- RR_general()$df_plot004_table
 
         datatable(output_table, rownames = F,
                   options = list(
@@ -831,8 +999,8 @@ module02_anova_s02_rscience_server <- function(id, input_general, input_01_anova
         req(control_user_02())
 
 
-        anova_plot006 <- test001_anova_plot006(minibase_mod   = results_test001_anova()$minibase_mod,
-                                               df_plot006_table = results_test001_anova()$df_plot006_table)
+        anova_plot006 <- test001_anova_plot006(minibase_mod   = RR_general()$minibase_mod,
+                                               df_plot006_table = RR_general()$df_plot006_table)
         anova_plot006
 
 
@@ -846,8 +1014,8 @@ module02_anova_s02_rscience_server <- function(id, input_general, input_01_anova
 
         req(control_user_02())
 
-        anova_plot007 <- test001_anova_plot007(minibase_mod = results_test001_anova()$minibase_mod,
-                                               df_factor_info = results_test001_anova()$df_factor_info)
+        anova_plot007 <- test001_anova_plot007(minibase_mod = RR_general()$minibase_mod,
+                                               df_factor_info = RR_general()$df_factor_info)
 
         anova_plot007
 
@@ -856,7 +1024,7 @@ module02_anova_s02_rscience_server <- function(id, input_general, input_01_anova
 
         req(control_user_02())
 
-        my_lista <- results_test001_anova()
+        my_lista <- RR_general()
         vector_search <- "df_plot001_table"
 
         # Filtered list
@@ -871,8 +1039,8 @@ module02_anova_s02_rscience_server <- function(id, input_general, input_01_anova
         req(control_user_02())
 
 
-        anova_plot008 <- test001_anova_plot008(minibase_mod   = results_test001_anova()$minibase_mod,
-                                               df_plot006_table = results_test001_anova()$df_plot006_table)
+        anova_plot008 <- test001_anova_plot008(minibase_mod   = RR_general()$minibase_mod,
+                                               df_plot006_table = RR_general()$df_plot006_table)
         anova_plot008
 
 
@@ -882,7 +1050,7 @@ module02_anova_s02_rscience_server <- function(id, input_general, input_01_anova
       output$table_plot008_v01 <- renderPrint({
 
         req(control_user_02())
-        my_lista <- results_test001_anova()
+        my_lista <- RR_general()
         vector_search <- "df_plot006_table"
 
         # Filtered list
@@ -898,8 +1066,8 @@ module02_anova_s02_rscience_server <- function(id, input_general, input_01_anova
 
         req(control_user_02())
 
-        anova_plot009 <- test001_anova_plot009(minibase_mod = results_test001_anova()$minibase_mod,
-                                               df_factor_info = results_test001_anova()$df_factor_info)
+        anova_plot009 <- test001_anova_plot009(minibase_mod = RR_general()$minibase_mod,
+                                               df_factor_info = RR_general()$df_factor_info)
 
         anova_plot009
 
@@ -908,7 +1076,7 @@ module02_anova_s02_rscience_server <- function(id, input_general, input_01_anova
 
         req(control_user_02())
 
-        my_lista <- results_test001_anova()
+        my_lista <- RR_general()
         vector_search <- "df_plot001_table"
 
         # Filtered list
@@ -923,8 +1091,8 @@ module02_anova_s02_rscience_server <- function(id, input_general, input_01_anova
 
         req(control_user_02())
 
-        anova_plot007 <- test001_anova_plot010(minibase_mod = results_test001_anova()$minibase_mod,
-                                               df_factor_info = results_test001_anova()$df_factor_info)
+        anova_plot007 <- test001_anova_plot010(minibase_mod = RR_general()$minibase_mod,
+                                               df_factor_info = RR_general()$df_factor_info)
 
         anova_plot007
 
@@ -936,7 +1104,7 @@ module02_anova_s02_rscience_server <- function(id, input_general, input_01_anova
 
         req(control_user_02())
 
-        my_lista <- results_test001_anova()
+        my_lista <- RR_general()
         vector_search <- "df_plot001_table"
 
         # Filtered list
@@ -951,8 +1119,8 @@ module02_anova_s02_rscience_server <- function(id, input_general, input_01_anova
         req(control_user_02())
 
 
-        anova_plot008 <- test001_anova_plot011(minibase_mod   = results_test001_anova()$minibase_mod,
-                                               df_plot006_table = results_test001_anova()$df_plot006_table)
+        anova_plot008 <- test001_anova_plot011(minibase_mod   = RR_general()$minibase_mod,
+                                               df_plot006_table = RR_general()$df_plot006_table)
         anova_plot008
 
 
@@ -962,7 +1130,7 @@ module02_anova_s02_rscience_server <- function(id, input_general, input_01_anova
       output$table_plot011_v01 <- renderPrint({
 
         req(control_user_02())
-        my_lista <- results_test001_anova()
+        my_lista <- RR_general()
         vector_search <- "df_plot006_table"
 
         # Filtered list
@@ -979,8 +1147,8 @@ module02_anova_s02_rscience_server <- function(id, input_general, input_01_anova
         req(control_user_02())
 
 
-        anova_plot008 <- test001_anova_plot012(minibase_mod   = results_test001_anova()$minibase_mod,
-                                               df_plot006_table = results_test001_anova()$df_plot006_table)
+        anova_plot008 <- test001_anova_plot012(minibase_mod   = RR_general()$minibase_mod,
+                                               df_plot006_table = RR_general()$df_plot006_table)
         anova_plot008
 
 
@@ -990,7 +1158,7 @@ module02_anova_s02_rscience_server <- function(id, input_general, input_01_anova
       output$table_plot012_v01 <- renderPrint({
 
         req(control_user_02())
-        my_lista <- results_test001_anova()
+        my_lista <- RR_general()
         vector_search <- "df_plot006_table"
 
         # Filtered list
@@ -1161,20 +1329,6 @@ module02_anova_s02_rscience_server <- function(id, input_general, input_01_anova
 
 
 
-      # # # Tab 05 - Analysis...
-      THE_CODE <- reactive({
-        req(control_user_02())
-
-        the_code <- showme_your_code_test001_anova(intro_source_database = input_01_anova()$intro_source_database,
-                                                   vr_var_name = input_01_anova()$vr_var_name,
-                                                   factor_var_name = input_01_anova()$factor_var_name,
-                                                   alpha_value = input_01_anova()$alpha_value)
-
-        #cat(the_code)
-        the_code
-
-      })
-
 
       #observe(print(input$clipbtn))
 
@@ -1185,7 +1339,7 @@ module02_anova_s02_rscience_server <- function(id, input_general, input_01_anova
 
         ns <- shiny::NS(id)
 
-        req(THE_CODE())
+        req(RR_code())
 
         standard_style_button_clip <- "color: white; background-color: _color_;width: 150px; height: 50px; font-size: 20px;"
         output_style_button_clip <- gsub(pattern = "_color_",
@@ -1196,7 +1350,7 @@ module02_anova_s02_rscience_server <- function(id, input_general, input_01_anova
         rclipButton(
           inputId = ns("clipbtn"),
           label = "Copy Code",
-          clipText = THE_CODE(),
+          clipText = RR_code(),
           icon = icon("clipboard"),
           tooltip = "Click me to copy the content of the text field to the clipboard!",
           options = list(delay = list(show = 800, hide = 100), trigger = "hover"),
@@ -1211,7 +1365,7 @@ module02_anova_s02_rscience_server <- function(id, input_general, input_01_anova
       })
 
 
-      observeEvent(results_test001_anova(),{
+      observeEvent(RR_general(),{
         color_button_copy("orange")
       })
 
@@ -1234,7 +1388,7 @@ module02_anova_s02_rscience_server <- function(id, input_general, input_01_anova
         },
         content = function(file) {
           # Escribir el contenido de texto en el archivo
-          writeLines(THE_CODE(), file)
+          writeLines(RR_code(), file)
         }
       )
 
@@ -1246,7 +1400,7 @@ module02_anova_s02_rscience_server <- function(id, input_general, input_01_anova
         req(control_user_02())
 
 
-        THE_CODE()
+        RR_code()
 
         })
 
@@ -1299,7 +1453,7 @@ module02_anova_s02_rscience_server <- function(id, input_general, input_01_anova
                                                br(),
                                                #br()
 
-                                               shinycssloaders::withSpinner(uiOutput(ns("tab_04_all_plotly_v01"))),
+                                               shinycssloaders::withSpinner(uiOutput(ns("plot_outputs33"))),
                                         )
                                       )
                              ),
@@ -1312,10 +1466,36 @@ module02_anova_s02_rscience_server <- function(id, input_general, input_01_anova
                                                br(),
                                                #br()
 
-                                               shinycssloaders::withSpinner(uiOutput(ns("tab_05_all_plotly_residuals_v01"))),
+                                               shinycssloaders::withSpinner(uiOutput(ns("plot_outputs66"))),
                                         )
                                       )
                              ),
+                             # tabPanel("Plots - Factor",  # 05,
+                             #          fluidRow(h2("Anova 1 way")),
+                             #          fluidRow(
+                             #            #column(1),
+                             #            column(12,
+                             #                   #plotOutput(ns("tab04_plots")),
+                             #                   br(),
+                             #                   #br()
+                             #
+                             #                   shinycssloaders::withSpinner(uiOutput(ns("tab_04_all_plotly_v01"))),
+                             #            )
+                             #          )
+                             # ),
+                             # tabPanel("Plots - Residuals",  # 05,
+                             #          fluidRow(h2("Anova 1 way")),
+                             #          fluidRow(
+                             #            #column(1),
+                             #            column(12,
+                             #                   #plotOutput(ns("tab04_plots")),
+                             #                   br(),
+                             #                   #br()
+                             #
+                             #                   shinycssloaders::withSpinner(uiOutput(ns("tab_05_all_plotly_residuals_v01"))),
+                             #            )
+                             #          )
+                             # ),
                              # tabPanel("Plots2",  # 05,
                              #          fluidRow(h2("Anova 1 way")),
                              #          fluidRow(

@@ -1,6 +1,521 @@
 
-# # # Test 001 anova - gen01
-test001_anova_full_gen01 <- function(database, vr_var_name, factor_var_name, alpha_value){
+
+# # # # Special Functions
+# Take the original code from a function
+cpiA001_anova1way_TakeCode <- function(selected_fn){
+
+
+  test_code <- capture.output(selected_fn)
+
+  # Fist "{" - Its the function beggining
+  pos_first_key <- grep("\\{", test_code)[1]
+
+  # Last "{" - Its the function end
+  pos_last_key <- tail(grep("\\}", test_code), 1)
+
+  # Seleccion
+  vector_output_code <- test_code[(pos_first_key + 1):(pos_last_key - 1)]
+
+  # Eliminamos los return y los "hide" que hemos colocado.
+  vector_output_code <- grep("return\\(", vector_output_code, value = TRUE, invert = TRUE)
+  vector_output_code <- grep("hide_", vector_output_code, value = TRUE, invert = TRUE)
+  vector_output_code <- grep("# hide_", vector_output_code, value = TRUE, invert = TRUE)
+
+  text_output_code <- paste(vector_output_code, collapse = "\n")
+  # test_code <- test_code[-1]
+  # test_code <- test_code[-length(test_code)]
+  # test_code <- grep("bytecode:", test_code, value = TRUE, invert = TRUE)
+  # test_code <- grep("function", test_code, value = TRUE, invert = TRUE)
+  # test_code <- test_code[-length(test_code)]
+  # test_code <- grep("hide_", test_code, value = TRUE, invert = TRUE)
+  # test_code <- grep("# hide", test_code, value = TRUE, invert = TRUE)
+  text_output_code
+
+}
+
+
+# List the cronologic order for objects in a function
+cpiA001_anova1way_ObjNamesInOrder <- function(selected_fn){
+
+  selected_code <- deparse(body(selected_fn))
+  selected_code <- grep("<-", selected_code, value = TRUE)
+  selected_code <- trimws(selected_code)
+  selected_code <- gsub("\\s", "", selected_code)
+  selected_code <- sub("<-.*", "", selected_code)
+  selected_code <- grep("^[a-zA-Z0-9._]*$", selected_code, value = TRUE)
+  selected_code <- grep("^hide", selected_code, value = TRUE, invert = TRUE)
+  selected_code <- unique(selected_code)
+
+  return(selected_code)
+
+}
+
+
+# # # # Control funcitons
+# Control previous
+cpiA001_anova1way_control_previous <- function(database, vr_var_name, factor_var_name, alpha_value){
+
+
+  # # # # # # Database
+  # 1) Database can not be NULL
+  if(is.null(database)){
+    stop("Error pre 001: Object 'database' can not be a NULL.")
+  }
+
+  # 2) Database must be a dataframe
+  if(!is.data.frame(database)){
+    stop("Error pre 002: Object 'database' must be a dataframe.")
+  }
+
+  # 3) Database must has at least 2 columns
+  if(!(ncol(database) >= 2)){
+    stop("Error pre 003: Object 'database' must has al least 2 columns.")
+  }
+
+
+  # 4) Database must has at least 2 rows
+  if(!(nrow(database) >= 2)){
+    stop("Error pre 004: Object 'database' must has al least 2 rows.")
+  }
+
+
+
+
+  # # # # # # # # vr_var_name
+  # 5) vr_var_name is not NULL
+  if(is.null(vr_var_name)){
+    stop("Error pre 005: Object 'vr_var_name' can not be NULL.")
+  }
+
+  # 6) vr_var_name is a vector
+  if(!is.vector(vr_var_name)){
+    stop("Error pre 006: Object 'vr_var_name' must be vector.")
+  }
+
+  # 7) vr_var_name is a vector
+  if(!(length(vr_var_name) == 1)){
+    stop("Error pre 007: Object 'vr_var_name' must be vector of length 1.")
+  }
+
+  # 8) vr_var_name is not NA
+  if(is.na(vr_var_name)){
+    stop("Error pre 008: Object 'vr_var_name' can not be NA.")
+  }
+
+  # 9) vr_var_name is character
+  if(!is.character(vr_var_name)){
+    stop("Error pre 009: Object 'vr_var_name' must be character.")
+  }
+
+  # 15) factor_var_name is a colname from database
+  if(!(vr_var_name %in% colnames(database))){
+    stop("Error pre 015: Object 'vr_var_name' must be a colname from database.")
+  }
+
+
+  # # # # # # # # factor_var_name
+  # 10) factor_var_name is not NULL
+  if(is.null(factor_var_name)){
+    stop("Error pre 010: Object 'factor_var_name' can not be NULL.")
+  }
+
+  # 11) factor_var_name is a vector
+  if(!is.vector(factor_var_name)){
+    stop("Error pre 011: Object 'factor_var_name' must be vector.")
+  }
+
+  # 12) factor_var_name is a vector
+  if(!(length(factor_var_name) == 1)){
+    stop("Error pre 012: Object 'factor_var_name' must be vector of length 1.")
+  }
+
+  # 13) factor_var_name is not NA
+  if(is.na(factor_var_name)){
+    stop("Error pre 013: Object 'factor_var_name' can not be NA.")
+  }
+
+  # 14) factor_var_name is character
+  if(!is.character(factor_var_name)){
+    stop("Error pre 014: Object 'factor_var_name' must be character.")
+  }
+
+
+  # 15) factor_var_name is a colname from database
+  if(!(factor_var_name %in% colnames(database))){
+    stop("Error pre 015: Object 'factor_var_name' must be a colname from database.")
+  }
+
+
+
+
+  # # # # # # # # alpha_value
+  # 16) alpha_value is not NULL
+  if(is.null(alpha_value)){
+    stop("Error pre 016: Object 'alpha_value' can not be NULL.")
+  }
+
+  # 17) alpha_value is a vector
+  if(!is.vector(alpha_value)){
+    stop("Error pre 017: Object 'alpha_value' must be vector.")
+  }
+
+  # 18) alpha_value is a vector
+  if(!(length(alpha_value) == 1)){
+    stop("Error pre 018: Object 'alpha_value' must be vector of length 1.")
+  }
+
+  # 19) alpha_value is not NA
+  if(is.na(alpha_value)){
+    stop("Error pre 019: Object 'alpha_value' can not be NA.")
+  }
+
+  # 20) alpha_value is numeric
+  if(!is.numeric(alpha_value)){
+    stop("Error pre 014: Object 'alpha_value' must be numeric.")
+  }
+
+
+  # 20) alpha_value is between 0 and 1
+  if(!(alpha_value >= 0 && alpha_value <= 1)){
+    stop("Error pre 014: Object 'alpha_value' must be a number between 0 and 1.")
+  }
+
+
+
+  # # # # # # # # factor_var_name and vr_var_name
+  # 15) factor_var_name is not NULL
+  if(vr_var_name == factor_var_name){
+    stop("Error pre 015: Objects 'vr_var_name' and 'factor_var_name' can not be equal.")
+  }
+
+
+  # New object
+  vector_var_names <- c(vr_var_name, factor_var_name)
+
+  if(sum(vector_var_names %in% colnames(database)) != 2){
+    stop("Error pre 015: Objects 'vr_var_name' and 'factor_var_name' must be colnames from database.")
+  }
+
+
+
+  # # # # # # # # # # # minibase
+  minibase <- na.omit(database[vector_var_names])
+  minibase[,2] <- as.factor(minibase[,2])
+  colnames(minibase) <- c("VR", "FACTOR")
+
+
+
+  # # # # # # minibase
+  # 1) minibase can not be NULL
+  if(is.null(minibase)){
+    stop("Error pre 001: Object 'minibase' can not be a NULL.")
+  }
+
+  # 2) minibase must be a dataframe
+  if(!is.data.frame(minibase)){
+    stop("Error pre 002: Object 'minibase' must be a dataframe.")
+  }
+
+  # 3) minibase must has at exactly 2 columns
+  if(!(ncol(minibase) == 2)){
+    stop("Error pre 003: Object 'minibase' must has exactly 2 columns.")
+  }
+
+
+  # 4) minibase must has at least 2 rows
+  if(!(nrow(minibase) >= 2)){
+    stop("Error pre 004: Object 'database' must has al least 2 rows.")
+  }
+
+
+  # 4) minibase$VR can not be constant
+  if(var(minibase$VR) == 0){
+    stop("Error pre 004: Object 'minibase$VR' can not be constant.")
+  }
+
+  # 4) minibase$VR can not be constant
+  if(length(unique(as.character(minibase$VR))) == 1){
+    stop("Error pre 004: Object 'minibase$VR' can not be constant.")
+  }
+
+
+  # 4) minibase$VR can not be constant
+  if(length(unique(as.character(minibase$VR))) == 1){
+    stop("Error pre 004: Object 'minibase$VR' can not be constant.")
+  }
+
+
+  # Al least 2 levels in minibase$FACTOR
+  if(!(nlevels(minibase$FACTOR) >= 2)){
+    stop("Error pre 004: FACTOR must has al least 2 levels.")
+  }
+
+
+
+  # Al least 2 reps in each level
+  reps_level <- tapply(minibase$VR, minibase$FACTOR, length)
+  dt_reps_level <- reps_level >= 2
+  check_01 <- sum(dt_reps_level) == length(dt_reps_level)
+  if(!check_01){
+    stop("Error pre 004: On minibase from FACTOR each level must has al least 2 reps.")
+  }
+
+
+  # var greater than zero from each level
+  vars_level <- tapply(minibase$VR, minibase$FACTOR, var)
+  dt_vars_level <- reps_level > 0
+  check_02 <- sum(dt_vars_level) ==  length(dt_vars_level)
+  if(!check_02){
+    stop("Error pre 004: On minibase from FACTOR each level can not be constant.
+         On each level variance must be greater than zero.")
+  }
+
+
+  # At least 2 differents values from each level
+  ndata_level <- tapply(minibase$VR, minibase$FACTOR, function(x){
+    length(unique(as.character(x)))
+  })
+  dt_ndata_level <- ndata_level >= 2
+  check_03 <- sum(dt_ndata_level) == length(dt_ndata_level)
+  if(!check_03){
+    stop("Error pre 004: On minibase from FACTOR each level must not be constant.")
+  }
+
+
+  return(TRUE)
+
+
+}
+
+
+# Control post
+cpiA001_anova1way_control_post <- function(list_results_from_cpiA001_anova1way){
+
+  if(is.null(list_results_from_cpiA001_anova1way)){
+    stop("Error post 001: Object 'list_results_from_cpiA001_anova1way' can not be NULL.")
+  }
+
+
+
+  obj_name01 <- "df_table_anova"
+  spected_col_names <- c("Df", "Sum Sq", "Mean Sq", "F value", "Pr(>F)")
+
+
+  if(!(obj_name01 %in% names(list_results_from_cpiA001_anova1way))){
+    stop("Error post 001: Object 'df_table_anova' doesn't exist in 'list_results_from_cpiA001_anova1way'.")
+  }
+
+
+  # # # 1) About the table
+  if(is.null(list_results_from_cpiA001_anova1way[obj_name01])){
+    text_output <- "Error post 001: Object '_obj_name01_' can not be NULL."
+    text_output <- gsub("_obj_name01_", "obj_name01", text_output)
+    stop(text_output)
+  }
+
+
+  selected_obj01 <- list_results_from_cpiA001_anova1way[[obj_name01]]
+
+
+  if(!identical(spected_col_names, colnames(selected_obj01))){
+    text_output <- "Error post 002: Object '_obj_name01_' has unexpected column names."
+    text_output <- gsub("_obj_name01_", "obj_name01", text_output)
+    stop(text_output)
+  }
+
+
+  if(!is.data.frame(selected_obj01)){
+    text_output <- "Error post 002: Object '_obj_name01_' must be a data.frame."
+    text_output <- gsub("_obj_name01_", "obj_name01", text_output)
+    stop(text_output)
+  }
+
+
+  if(nrow(selected_obj01) != 2){
+    text_output <- "Error post 002: Object '_obj_name01_' must has 2 rows."
+    text_output <- gsub("_obj_name01_", "obj_name01", text_output)
+    stop(text_output)
+  }
+
+
+  if(ncol(selected_obj01) != 5){
+    text_output <- "Error post 002: Object '_obj_name01_' must has 5 cols."
+    text_output <- gsub("_obj_name01_", "obj_name01", text_output)
+    stop(text_output)
+  }
+
+
+
+
+  # # # 2) About Degree of Fredom
+  vector_df <- selected_obj01$Df
+  if(!is.vector(vector_df)){
+    text_output <- "Error post 002: internal object 'vector_df' must be vector."
+    stop(text_output)
+  }
+
+
+  if(!is.numeric(vector_df)){
+    text_output <- "Error post 002: Column 'Df' must contain only numbers."
+    stop(text_output)
+  }
+
+
+  if(sum(is.na(vector_df)) != 0){
+    text_output <- "Error post 002: Column 'Df' cannot contain NA values."
+    stop(text_output)
+  }
+
+
+  if(sum(vector_df == 0) != 0){
+    text_output <- "Error post 002: Column 'Df' cannot contain 0 as value."
+    stop(text_output)
+  }
+
+
+
+
+
+  # # # 3) Sum Sq
+  vector_sum_sq <- selected_obj01$`Sum Sq`
+
+  if(!is.vector(vector_sum_sq)){
+    text_output <- "Error post 002: internal object 'vector_sum_sq' must be vector."
+    stop(text_output)
+  }
+
+
+  if(!is.numeric(vector_sum_sq)){
+    text_output <- "Error post 002: Column 'Sum Sq' must contain only numbers."
+    stop(text_output)
+  }
+
+
+  if(sum(is.na(vector_sum_sq)) != 0){
+    text_output <- "Error post 002: Column 'Sum Sq' cannot contain NA values."
+    stop(text_output)
+  }
+
+
+  if(sum(vector_sum_sq == 0) != 0){
+    text_output <- "Error post 002: Column 'Sum Sq' cannot contain 0 as value."
+    stop(text_output)
+  }
+
+
+
+  # # # 4) Mean Sq
+  vector_mean_sq <- selected_obj01$`Mean Sq`
+
+  if(!is.vector(vector_mean_sq)){
+    text_output <- "Error post 002: internal object 'vector_mean_sq' must be vector."
+    stop(text_output)
+  }
+
+  if(!is.numeric(vector_mean_sq)){
+    text_output <- "Error post 002: Column 'Mean Sq' must contain only numbers."
+    stop(text_output)
+  }
+
+  if(sum(is.na(vector_mean_sq)) != 0){
+    text_output <- "Error post 002: Column 'Mean Sq' cannot contain NA values."
+    stop(text_output)
+  }
+
+
+  if(sum(vector_mean_sq == 0) != 0){
+    text_output <- "Error post 002: Column 'Mean Sq' cannot contain 0 as value."
+    stop(text_output)
+  }
+
+
+
+  # # # 4) F value
+  vector_f_value <- selected_obj01$`F value`
+
+  if(!is.vector(vector_f_value)){
+    text_output <- "Error post 002: internal object 'vector_f_value' must has vector."
+    stop(text_output)
+  }
+
+  if(!is.numeric(vector_f_value)){
+    text_output <- "Error post 002: Column 'F value' must be numeric."
+    stop(text_output)
+  }
+
+  if(sum(!is.na(vector_f_value)) != 1){
+    text_output <- "Error post 002: Column 'F value' must contain only 1 pvalue."
+    stop(text_output)
+  }
+
+  if(is.na(vector_f_value[1])){
+    text_output <- "Error post 002: Column 'F value', for FACTOR cannot be NA."
+    stop(text_output)
+  }
+
+  if(!(vector_f_value[1] > 0)){
+    text_output <- "Error post 002: Column 'F value', for FACTOR f value must be a number greater than zero."
+    stop(text_output)
+  }
+
+
+
+  if(!is.na(vector_f_value[2])){
+    text_output <- "Error post 002: Column 'F value', for Residuals f value must be NA."
+    stop(text_output)
+  }
+
+
+
+  # # # 5) p values
+  vector_p_value <- selected_obj01$`Pr(>F)`
+
+  if(!is.vector(vector_p_value)){
+    text_output <- "Error post 002: internal object 'vector_p_value' must has vector."
+    stop(text_output)
+  }
+
+  if(!is.numeric(vector_p_value)){
+    text_output <- "Error post 002: Column 'Pr(>F)' must be numeric."
+    stop(text_output)
+  }
+
+  if(sum(!is.na(vector_p_value)) != 1){
+    text_output <- "Error post 002: Column 'Pr(>F)' must contain only 1 pvalue."
+    text_output <- gsub("_obj_name01_", "obj_name01", text_output)
+    stop(text_output)
+  }
+
+  if(is.na(vector_p_value[1])){
+    text_output <- "Error post 002: Column 'Pr(>F)', for FACTOR cannot be NA."
+    stop(text_output)
+  }
+
+  if(!(vector_p_value[1] >= 0 && vector_p_value[1] <= 1)){
+    text_output <- "Error post 002: Column 'Pr(>F)', for FACTOR pvalue must be a number between 0 and 1."
+    stop(text_output)
+  }
+
+
+
+  if(!is.na(vector_p_value[2])){
+    text_output <- "Error post 002: Column 'Pr(>F)', for Residuals pvalue must be NA."
+    text_output <- gsub("_obj_name01_", "obj_name01", text_output)
+    stop(text_output)
+  }
+
+
+
+  return(TRUE)
+
+}
+
+
+# # # # Actions for sections
+# # For sections 01 to 03 there are no action in R. The actions its on Shiny.
+# # We need the input objects from shiny to.
+
+cpiA001_anova1way_results <- function(database, vr_var_name, factor_var_name, alpha_value){
 
   # # # # # Section 04 - Var rols and minibase -----------------------------------
   # # # Selected vars
@@ -91,18 +606,18 @@ test001_anova_full_gen01 <- function(database, vr_var_name, factor_var_name, alp
 
 
   # # # Standard error from model for each level
-model_error_var <- df_table_anova$`Mean Sq`[2]
-model_error_sd <- sqrt(model_error_var)
+  model_error_var <- df_table_anova$`Mean Sq`[2]
+  model_error_sd <- sqrt(model_error_var)
 
-df_model_error <- data.frame(
-  "order" = df_factor_info$order,
-  "level" = df_factor_info$level,
-  "n" = df_factor_info$n,
-  "model_error_var" = model_error_var,
-  "model_error_sd" = model_error_sd
-)
-df_model_error["model_error_se"] <- df_model_error["model_error_sd"]/sqrt(df_model_error$n)
-df_model_error
+  df_model_error <- data.frame(
+    "order" = df_factor_info$order,
+    "level" = df_factor_info$level,
+    "n" = df_factor_info$n,
+    "model_error_var" = model_error_var,
+    "model_error_sd" = model_error_sd
+  )
+  df_model_error["model_error_se"] <- df_model_error["model_error_sd"]/sqrt(df_model_error$n)
+  df_model_error
 
 
 
@@ -344,25 +859,25 @@ df_model_error
 
 
   # # # Long model information on dataframe
-  df_anova_model_long <- data.frame(
+  df_anova1way_model_long <- data.frame(
     "order" = df_factor_info$order,
     "level" = df_factor_info$level,
     "n" = df_factor_info$n,
     "est_mu" = vector_est_mu,
     "est_tau_i" = vector_est_tau_i
   )
-  df_anova_model_long
+  df_anova1way_model_long
 
 
 
   # # # Short model information on dataframe
-  df_anova_model_short <- data.frame(
+  df_anova1way_model_short <- data.frame(
     "order" = df_factor_info$order,
     "level" = df_factor_info$level,
     "n" = df_factor_info$n,
     "est_mu_i" = vector_est_mu_i
   )
-  df_anova_model_short
+  df_anova1way_model_short
 
 
 
@@ -395,6 +910,7 @@ df_model_error
   df_plot002_table
 
 
+
   df_plot003_table <- data.frame(
     "order" = df_factor_info$order,
     "level" = df_factor_info$level,
@@ -419,8 +935,41 @@ df_model_error
   # # # Table for plot006
   df_plot006_table <- df_plot004_table
 
+  # # # Table for plot006
+  df_plot007_table <- df_plot004_table
+
+  # # # Table for plot006
+  df_plot008_table <- df_plot004_table
+
+  # # # Table for plot006
+  df_plot009_table <- df_plot004_table
+
+  # # # Table for plot006
+  df_plot010_table <- df_plot004_table
+
+  # # # Table for plot006
+  df_plot011_table <- df_plot004_table
+
+  # # # Table for plot006
+  df_plot012_table <- df_plot004_table
+
+  df_factor_table_plot001 <- df_plot001_table
+  df_factor_table_plot002 <- df_plot002_table
+  df_factor_table_plot003 <- df_plot003_table
+  df_factor_table_plot004 <- df_plot004_table
+  df_factor_table_plot005 <- df_plot005_table
+  df_factor_table_plot006 <- df_plot006_table
+
+
+  df_residuals_table_plot001 <- df_plot007_table
+  df_residuals_table_plot002 <- df_plot008_table
+  df_residuals_table_plot003 <- df_plot009_table
+  df_residuals_table_plot004 <- df_plot010_table
+  df_residuals_table_plot005 <- df_plot011_table
+  df_residuals_table_plot006 <- df_plot012_table
+
   # --- # hide_: Proccesing objects order
-  hide_correct_order <- ObjNames_ProcOrder_test001_anova()
+  hide_correct_order <- cpiA001_anova1way_ObjNamesInOrder(selected_fn = cpiA001_anova1way_results)
   hide_output_list_objects <- mget(hide_correct_order)
 
   # --- # hide_: return!
@@ -431,60 +980,9 @@ df_model_error
 
 
 
-
-# # # Object names exactly in proccesing order
-ObjNames_ProcOrder_test001_anova <- function(selected_fn = test001_anova_full_gen01){
-
-  selected_code <- deparse(body(selected_fn))
-  selected_code <- grep("<-", selected_code, value = TRUE)
-  selected_code <- trimws(selected_code)
-  selected_code <- gsub("\\s", "", selected_code)
-  selected_code <- sub("<-.*", "", selected_code)
-  selected_code <- grep("^[a-zA-Z0-9._]*$", selected_code, value = TRUE)
-  selected_code <- grep("^hide", selected_code, value = TRUE, invert = TRUE)
-  selected_code <- unique(selected_code)
-
-  return(selected_code)
-
-}
-
-
-
-take_code_test001_anova <- function(selected_fn){
-
-
-  test_code <- capture.output(selected_fn)
-
-  # Fist "{" - Its the function beggining
-  pos_first_key <- grep("\\{", test_code)[1]
-
-  # Last "{" - Its the function end
-  pos_last_key <- tail(grep("\\}", test_code), 1)
-
-  # Seleccion
-  vector_output_code <- test_code[(pos_first_key + 1):(pos_last_key - 1)]
-
-  # Eliminamos los return y los "hide" que hemos colocado.
-  vector_output_code <- grep("return\\(", vector_output_code, value = TRUE, invert = TRUE)
-  vector_output_code <- grep("hide_", vector_output_code, value = TRUE, invert = TRUE)
-  vector_output_code <- grep("# hide_", vector_output_code, value = TRUE, invert = TRUE)
-
-  text_output_code <- paste(vector_output_code, collapse = "\n")
-  # test_code <- test_code[-1]
-  # test_code <- test_code[-length(test_code)]
-  # test_code <- grep("bytecode:", test_code, value = TRUE, invert = TRUE)
-  # test_code <- grep("function", test_code, value = TRUE, invert = TRUE)
-  # test_code <- test_code[-length(test_code)]
-  # test_code <- grep("hide_", test_code, value = TRUE, invert = TRUE)
-  # test_code <- grep("# hide", test_code, value = TRUE, invert = TRUE)
-  text_output_code
-
-}
-
-# # # Show me your code
-showme_your_code_test001_anova <- function(intro_source_database, vr_var_name, factor_var_name, alpha_value){
-
-  original_file_source <- intro_source_database$file_source
+# # # # Code
+# # To put all the code together, we need the items that Shiny provides.
+cpiA001_anova1way_code_section01_Libreries <- function(){
 
   #--- Librerias
   section01_general_libreries <- '
@@ -495,6 +993,15 @@ showme_your_code_test001_anova <- function(intro_source_database, vr_var_name, f
   library("plotly")    # Advanced graphical functions
 '
 
+  return(section01_general_libreries)
+
+}
+
+
+cpiA001_anova1way_code_section02_FileSource <- function(intro_source_database){
+
+
+  file_source <- intro_source_database$file_source
 
   #--- Import database from excel
   section02_database_s01_import_excel_files <- '
@@ -503,7 +1010,7 @@ showme_your_code_test001_anova <- function(intro_source_database, vr_var_name, f
   selected_sheet <- _selected_sheet_
   database <- openxlsx::read.xlsx(xlsxFile = selected_xlsx_file, sheet = selected_sheet)
   database
-'
+  '
 
 
   #--- Import database from R example
@@ -511,11 +1018,11 @@ showme_your_code_test001_anova <- function(intro_source_database, vr_var_name, f
   # # # # # Section 02 - R example as database------------------------------------
   database <- _selected_R_database_
   database
-'
+  '
 
   ##############################################################################
   section02_SELECTED <- ""
-  if(original_file_source == "xlsx"){
+  if(file_source == "xlsx"){
     section02_SELECTED <- section02_database_s01_import_excel_files
 
     section02_SELECTED <- gsub(pattern = "_selected_xlsx_file_" ,
@@ -528,7 +1035,7 @@ showme_your_code_test001_anova <- function(intro_source_database, vr_var_name, f
 
   }
 
-  if(original_file_source == "R_example"){
+  if(file_source == "R_example"){
 
     section02_SELECTED <- section02_database_s02_R_example
 
@@ -537,18 +1044,24 @@ showme_your_code_test001_anova <- function(intro_source_database, vr_var_name, f
                                x = section02_SELECTED)
 
   }
-  ##############################################################################
 
 
+  return(section02_SELECTED)
+}
+
+
+cpiA001_anova1way_code_section03_VarSelection <- function(vr_var_name, factor_var_name, alpha_value){
 
 
   #--- Var selection
   section03_varselection <- '
-  # # # # # Section 03 - Import database from excel file -------------------------
+  # # # # # Section 03 - Var selection, alpha value and confidence value -------------------------
   vr_var_name <- "_selected_vr_var_name_"
   factor_var_name <- "_selected_factor_var_name_"
   alpha_value <- _selected_alpha_value_
-'
+  confidence_value <- 1 - alpha_value
+  '
+
   section03_varselection <- gsub(pattern = "_selected_vr_var_name_" ,
                                  replacement =  vr_var_name,
                                  x = section03_varselection)
@@ -561,202 +1074,111 @@ showme_your_code_test001_anova <- function(intro_source_database, vr_var_name, f
                                  replacement =  alpha_value,
                                  x = section03_varselection)
 
-
-  #--- Original test code
-  test_code <- take_code_test001_anova(selected_fn = test001_anova_full_gen01)
-
-
-
-
-  code_plot001 <- take_code_test001_anova(selected_fn = test001_anova_plot001)
-  code_plot002 <- take_code_test001_anova(selected_fn = test001_anova_plot002)
-  code_plot003 <- take_code_test001_anova(selected_fn = test001_anova_plot003)
-  code_plot004 <- take_code_test001_anova(selected_fn = test001_anova_plot004)
-  code_plot005 <- take_code_test001_anova(selected_fn = test001_anova_plot005)
-  code_plot006 <- take_code_test001_anova(selected_fn = test001_anova_plot006)
-
-
-  # # # # # Section 14 - Plots ---------------------------------------------------
-
-  output_code <- c(section01_general_libreries,
-                   section02_SELECTED,
-                   section03_varselection,
-                   test_code,
-                   "\n\n\n\n\n",
-                   " # # # # # Section 14 - Plots ---------------------------------------------------\n",
-                   "",
-                   code_plot001,
-                   "\n\n\n\n\n",
-                   code_plot002,
-                   "\n\n\n\n\n",
-                   code_plot003,
-                   "\n\n\n\n\n",
-                   code_plot004,
-                   "\n\n\n\n\n",
-                   code_plot005,
-                   "\n\n\n\n\n",
-                   code_plot006,
-                   "\n\n\n\n\n")
-
-  output_code <- paste0(output_code)
-
-  return(output_code)
+  return(section03_varselection)
 
 }
 
 
+cpiA001_anova1way_code_section04_UntilTheEnd <- function(){
 
 
-
-# ANOVA
-anova_general_section01_to_03 <- function(file_source, alpha_value, selected_path, name_database, selected_pos_vars, all_colnames){
-
-  if(is.null(file_source)) return(NULL)
-  if(file_source == "") return(NULL)
-  if(is.null(alpha_value)) return(NULL)
-  if(is.null(selected_pos_vars)) return(NULL)
-  if(is.null(all_colnames)) return(NULL)
-
-  section01_general_libreries <- '
-# # # Section 01 - Libraries --------------------------------------------------------
-  library(stats)     # Statistics and graphical functions
-  library(openxlsx)  # Import files from xlsx
-  library(agricolae) # Tukey test
-  library(plotly)    # Advanced graphical functions
-  '
-
-  the_code <- section01_general_libreries
+  the_code <- cpiA001_anova1way_TakeCode(selected_fn = cpiA001_anova1way_results)
 
   return(the_code)
-  if (FALSE){
-    if(file_source == "xlsx"){
-
-      if(is.null(selected_path)) return(NULL)
-
-      list_code_xlsx <- list()
-      list_code_xlsx[[1]] <- section01_general_libreries
-
-      list_code_xlsx[[2]] <- '
-# # # Section 02 - Operator specifications ------------------------------------------
-  # Alpha value
-  alpha_value <- _alpha_value_
-
-  # Full file path for Excel
-  xlsx_path <- _selected_path_
-  xlsx_file_name <- tail(strsplit(xlsx_path, "/")[[1]], n = -1)
-  xlsx_file_name
-'
-
-      list_code_xlsx[[3]] <- '
-# # # Seccion 03 - Inport database from Excel file ----------------------------------
-  # Import database
-  database <- openxlsx::read.xlsx(xlsxFile =  xlsx_file_name, sheet = 1)
-'
-
-      the_code_xlsx <- paste0(unlist(list_code_xlsx), "\n\n\n")
-
-
-      the_code_xlsx <- gsub(pattern = "_alpha_value_",   replacement = alpha_value,   x = the_code_xlsx)
-      the_code_xlsx <- gsub(pattern = "_selected_path_", replacement = selected_path, x = the_code_xlsx)
-      return(the_code_xlsx)
-    }
-
-
-    if(file_source == "example"){
-
-      if(is.null(name_database)) return(NULL)
-
-      list_code_example <- list()
-      list_code_example[[1]] <- section01_general_libreries
-
-      list_code_example[[2]] <- '
-# # # Section 02 - Operator specifications ------------------------------------------
-  # Alpha value
-  alpha_value <- _alpha_value_
-'
-
-      list_code_example[[3]] <- '
-# # # Seccion 03 - Inport database from Excel file ----------------------------------
-  # Import database
-  database <- _name_database_
-'
-
-      list_code_example[[4]] <- '
-# # # Seccion 04 - Role and var selection -------------------------------------------
-  # Import database
-    _text_var_vr_
-    _text_var_factor_
-    _text_var_cov_
-
-  # All selected pos vars on specific order (VR, FACTOR, COV)
-    selected_pos_vars <- c(pos_var_vr, pos_var_factor, pos_var_cov)
-'
-      new_objects <- c("pos_var_vr <- ", "pos_var_factor <- ", "pos_var_cov <- ")
-      selected_name_vars <- all_colnames[selected_pos_vars]
-      selected_pos_vars <- match(selected_name_vars, all_colnames)
-      selected_letter_vars <- openxlsx::int2col(selected_pos_vars)
-      selected_role_vars <- c("VR", "FACTOR", "COV")
-
-      step01_1 <- paste0(new_objects, selected_pos_vars)
-      n_len1 <- max(nchar(step01_1)) + 2
-      step01_2 <- stringr::str_pad(step01_1, width = n_len1, side = "right", pad = " ")
-
-
-      step02_1 <- paste0("  #'", selected_name_vars, "'")
-      n_len2 <- max(nchar(step02_1)) + 2
-      step02_2 <- stringr::str_pad(step02_1, width = n_len2, side = "right", pad = " ")
-
-      step03_1 <- paste0(" - Column ", selected_letter_vars)
-
-      all_text <- paste0(step01_2,  step02_2, step03_1)
-      names(all_text) <- selected_role_vars
-
-      ###
-
-      the_code_example <- paste0(unlist(list_code_example), "\n\n\n")
-      the_code_example <- gsub(pattern = "_alpha_value_",   replacement = alpha_value,   x = the_code_example)
-      the_code_example <- gsub(pattern = "_name_database_", replacement = name_database, x = the_code_example)
-      the_code_example <- gsub(pattern = "_text_var_vr_", replacement = all_text["VR"], x = the_code_example)
-      the_code_example <- gsub(pattern = "_text_var_factor_", replacement = all_text["FACTOR"], x = the_code_example)
-      the_code_example <- gsub(pattern = "_text_var_cov_", replacement = all_text["COV"], x = the_code_example)
-      the_code_example <- gsub(pattern = "_name_database_", replacement = name_database, x = the_code_example)
-      the_code_example <- gsub(pattern = "_name_database_", replacement = name_database, x = the_code_example)
-      return(the_code_example)
-    }
-  }
-
-
-  #################################################################################
-
-  if (FALSE){
-    the_code_02_example <- '
-# # # Section 02 - Operator specifications ------------------------------------------
-  # Alpha value
-  alpha_value <- _alpha_value_
-
-
-
-# # # Seccion 03 - Importar la base de datos Excel ----------------------------------
-  # Importar base
-  database <- _name_database_
-'
-    the_code <- section01_general_libreries
-    the_code <- paste0(the_code, collapse = "\n\n\n")
-    the_code <- gsub(pattern = "_alpha_value_", replacement = alpha_value, x = the_code)
-    the_code <- gsub(pattern = "_selected_path_", replacement = selected_path, x = the_code)
-
-    return(the_code)
-
-  }
 }
 
 
+cpiA001_anova1way_code_sectionXX_Plots <- function(){
+
+  objetos <- ls("package:Rscience", pattern = "^cpiA001_anova1way_plot[0-9]+")
 
 
 
+  # Filtrar solo las funciones que coinciden con el patrón
+  #list_plot <- objetos[grep("^cpiA001_anova1way_plot[0-9]+", objetos)]
+  list_plot <- objetos
+  list_plot <- sort(list_plot)
+
+  all_code <- sapply(list_plot, function(x){
 
 
-test001_anova_plot001 <- function(minibase_mod, df_factor_info){
+
+      selected_code <- paste0("cpiA001_anova1way_TakeCode(", x, ")")
+      code_new_plot <- eval(parse(text = selected_code))
+      code_new_plot
+
+  }, simplify = F)
+
+  all_code <- unlist(all_code)
+  all_code <- paste0(all_code, collapse = "\n\n\n")
+
+
+  return(all_code)
+
+}
+
+
+cpiA001_anova1way_code_sectionALL <- function(intro_source_database, vr_var_name, factor_var_name, alpha_value){
+
+  # objetos <- ls()
+  #
+  # # Filtrar solo las funciones que coinciden con el patrón
+  # selected_fun <- objetos[grep("^cpiA001_anova1way_code_section[0-9]+_[a-zA-Z]", objetos)]
+  # selected_fun <- sort(selected_fun)
+
+  vector_code <- list()
+
+  vector_code[1] <- cpiA001_anova1way_code_section01_Libreries()
+  vector_code[2] <- cpiA001_anova1way_code_section02_FileSource(intro_source_database)
+  vector_code[3] <- cpiA001_anova1way_code_section03_VarSelection(vr_var_name, factor_var_name, alpha_value)
+  vector_code[4] <- cpiA001_anova1way_code_section04_UntilTheEnd()
+  vector_code[5] <- cpiA001_anova1way_code_sectionXX_Plots()
+
+  vector_code <- paste0(vector_code, collapse = "\n\n\n\n\n")
+  return(vector_code)
+}
+
+
+# # # Tables
+
+cpiA001_anova1way_recruit_g01_Tables <- function(list_results_from_cpiA001_anova1way){
+
+
+  all_tables <- with(list_results_from_cpiA001_anova1way, {
+
+    objetos <- ls()
+    vector_obj_name <- objetos[grep("^df_factor_table_plot+[0-9]", objetos)]
+    vector_obj_name <- sort(vector_obj_name)
+    list_tables <- lapply(vector_obj_name, function(x) get(x))
+    names(list_tables) <- vector_obj_name
+    list_tables
+  })
+
+  return(all_tables)
+
+}
+
+
+cpiA001_anova1way_recruit_g02_Tables <- function(list_results_from_cpiA001_anova1way){
+
+
+  all_tables <- with(list_results_from_cpiA001_anova1way, {
+
+    objetos <- ls()
+    vector_obj_name <- objetos[grep("^df_residuals_table_plot+[0-9]", objetos)]
+    vector_obj_name <- sort(vector_obj_name)
+    list_tables <- lapply(vector_obj_name, function(x) get(x))
+    names(list_tables) <- vector_obj_name
+    list_tables
+  })
+
+  return(all_tables)
+
+}
+
+
+# # # Plots FACTOR
+cpiA001_anova1way_factor_plot001 <- function(...){
 
   # # # Create a new plot...
   plot001_anova <- plotly::plot_ly()
@@ -793,7 +1215,7 @@ test001_anova_plot001 <- function(minibase_mod, df_factor_info){
 
 
 
-test001_anova_plot002 <- function(df_plot002_table){
+cpiA001_anova1way_factor_plot002 <- function(df_plot002_table){
 
 
   # # # Create a new plot...
@@ -836,7 +1258,7 @@ test001_anova_plot002 <- function(df_plot002_table){
 
 
 
-test001_anova_plot003 <- function(df_plot003_table){
+cpiA001_anova1way_factor_plot003 <- function(df_plot003_table){
 
 
   # # # Create a new plot...
@@ -856,7 +1278,7 @@ test001_anova_plot003 <- function(df_plot003_table){
                                                      opacity = 1,
                                                      line = list(width = 5)),
                                        error_y = list(value = df_plot003_table$model_error_se)
-          )
+  )
 
 
   # # # Title and settings...
@@ -883,7 +1305,7 @@ test001_anova_plot003 <- function(df_plot003_table){
 
 
 
-test001_anova_plot004 <- function(df_plot004_table){
+cpiA001_anova1way_factor_plot004 <- function(df_plot004_table){
 
 
   # # # New plotly...
@@ -923,7 +1345,7 @@ test001_anova_plot004 <- function(df_plot004_table){
 
 
 
-test001_anova_plot005 <- function(minibase_mod, df_plot005_table){
+cpiA001_anova1way_factor_plot005 <- function(minibase_mod, df_plot005_table){
 
 
 
@@ -1000,7 +1422,7 @@ test001_anova_plot005 <- function(minibase_mod, df_plot005_table){
 }
 
 
-test001_anova_plot006 <- function(minibase_mod, df_plot006_table){
+cpiA001_anova1way_factor_plot006 <- function(minibase_mod, df_plot006_table){
 
 
 
@@ -1024,9 +1446,9 @@ test001_anova_plot006 <- function(minibase_mod, df_plot006_table){
 
   # # # Title and settings...
   plot006_anova <- plotly::layout(p = plot006_anova,
-                                title = "Plot 006 - Scatterplot + Jitter +  Smoothed",
-                                font = list(size = 20),
-                                margin = list(t = 100))
+                                  title = "Plot 006 - Scatterplot + Jitter +  Smoothed",
+                                  font = list(size = 20),
+                                  margin = list(t = 100))
 
 
   # # # Without zerolines...
@@ -1043,8 +1465,48 @@ test001_anova_plot006 <- function(minibase_mod, df_plot006_table){
 
 
 
+cpiA001_anova1way_recruit_g01_FactorPlots <- function(list_results_from_cpiA001_anova1way){
 
-test001_anova_plot007 <- function(minibase_mod, df_factor_info){
+
+  #objetos <- ls(envir = globalenv())
+  objetos <- ls("package:Rscience", pattern = "^cpiA001_anova1way_factor_plot+[0-9]")
+
+  # Filtrar solo las funciones que coinciden con el patrón
+  #list_plot <- objetos[grep("^cpiA001_anova1way_plot[0-9]+", objetos)]
+  list_plot <- objetos
+  list_plot <- sort(list_plot)
+
+  all_plots <- sapply(list_plot, function(x){
+
+    with(list_results_from_cpiA001_anova1way, {
+
+      selected_code <- paste0("cpiA001_anova1way_TakeCode(", x, ")")
+      code_new_plot <- eval(parse(text = selected_code))
+      new_plot <- eval(parse(text = code_new_plot))
+      new_plot
+    })
+  }, simplify = F)
+
+
+
+
+  return(all_plots)
+
+
+}
+
+
+
+
+##############################################################################################
+
+
+
+# # # Plots Residuals
+
+
+
+cpiA001_anova1way_residuals_plot007 <- function(minibase_mod, df_factor_info){
 
   # # # Create a new plot...
   plot007_anova <- plotly::plot_ly()
@@ -1078,7 +1540,7 @@ test001_anova_plot007 <- function(minibase_mod, df_factor_info){
 }
 
 
-test001_anova_plot008 <- function(minibase_mod, df_plot006_table){
+cpiA001_anova1way_residuals_plot008 <- function(minibase_mod, df_plot006_table){
 
 
 
@@ -1119,7 +1581,7 @@ test001_anova_plot008 <- function(minibase_mod, df_plot006_table){
 }
 
 
-test001_anova_plot009 <- function(minibase_mod, df_factor_info){
+cpiA001_anova1way_residuals_plot009 <- function(minibase_mod, df_factor_info){
 
   # # # Create a new plot...
   plot007_anova <- plotly::plot_ly()
@@ -1154,7 +1616,7 @@ test001_anova_plot009 <- function(minibase_mod, df_factor_info){
 
 
 
-test001_anova_plot010 <- function(minibase_mod, df_factor_info){
+cpiA001_anova1way_residuals_plot010 <- function(minibase_mod, df_factor_info){
 
   # # # Create a new plot...
   plot007_anova <- plotly::plot_ly()
@@ -1189,7 +1651,7 @@ test001_anova_plot010 <- function(minibase_mod, df_factor_info){
 
 
 
-test001_anova_plot011 <- function(minibase_mod, df_plot006_table){
+cpiA001_anova1way_residuals_plot011 <- function(minibase_mod, df_plot006_table){
 
 
 
@@ -1206,8 +1668,8 @@ test001_anova_plot011 <- function(minibase_mod, df_plot006_table){
                                      side = "positive",
                                      points = "all",
                                      name = "Violinplot")#
-                                     #color = minibase_mod$FACTOR,
-                                     #colors = df_plot006_table$color)
+  #color = minibase_mod$FACTOR,
+  #colors = df_plot006_table$color)
 
 
 
@@ -1231,7 +1693,7 @@ test001_anova_plot011 <- function(minibase_mod, df_plot006_table){
 
 
 
-test001_anova_plot012 <- function(minibase_mod, df_plot006_table){
+cpiA001_anova1way_residuals_plot012 <- function(minibase_mod, df_plot006_table){
 
 
 
@@ -1270,6 +1732,573 @@ test001_anova_plot012 <- function(minibase_mod, df_plot006_table){
 
 
 }
+
+
+
+
+
+
+cpiA001_anova1way_recruit_g02_ResidualsPlots <- function(list_results_from_cpiA001_anova1way){
+
+
+  #objetos <- ls(envir = globalenv())
+  objetos <- ls("package:Rscience", pattern = "^cpiA001_anova1way_residuals_plot+[0-9]")
+
+  # Filtrar solo las funciones que coinciden con el patrón
+  #list_plot <- objetos[grep("^cpiA001_anova1way_plot[0-9]+", objetos)]
+  list_plot <- objetos
+  list_plot <- sort(list_plot)
+
+  all_plots <- sapply(list_plot, function(x){
+
+    with(list_results_from_cpiA001_anova1way, {
+
+      selected_code <- paste0("cpiA001_anova1way_TakeCode(", x, ")")
+      code_new_plot <- eval(parse(text = selected_code))
+      new_plot <- eval(parse(text = code_new_plot))
+      new_plot
+    })
+  }, simplify = F)
+
+
+
+
+  return(all_plots)
+
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+cpiA001_anova1way_plot001 <- function(...){
+
+  # # # Create a new plot...
+  plot001_anova <- plotly::plot_ly()
+
+  # # # Plot001 - Scatter plot for VR and FACTOR on minibase_mod *****************
+  plot001_anova <- plotly::add_trace(p = plot001_anova,
+                                     type = "scatter",
+                                     mode = "markers",
+                                     x = minibase_mod$FACTOR,
+                                     y = minibase_mod$VR,
+                                     color = minibase_mod$FACTOR,
+                                     colors = df_factor_info$color,
+                                     marker = list(size = 15, opacity = 0.7))
+
+  # # # Title and settings...
+  plot001_anova <-   plotly::layout(p = plot001_anova,
+                                    title = "Plot 001 - Scatterplot",
+                                    font = list(size = 20),
+                                    margin = list(t = 100))
+
+
+  # # # Without zerolines
+  plot001_anova <-   plotly::layout(p = plot001_anova,
+                                    xaxis = list(zeroline = FALSE),
+                                    yaxis = list(zeroline = FALSE))
+
+
+  # # # Plot output
+  plot001_anova
+
+}
+
+
+
+
+
+cpiA001_anova1way_plot002 <- function(df_plot002_table){
+
+
+  # # # Create a new plot...
+  plot002_anova <- plot_ly()
+
+
+  # # # Adding errors...
+  plot002_anova <-   add_trace(p = plot002_anova,
+                               type = "scatter",
+                               mode = "markers",
+                               x = df_plot002_table$level,
+                               y = df_plot002_table$mean,
+                               color = df_plot002_table$level,
+                               colors = df_plot002_table$color,
+                               marker = list(symbol = "line-ew-open",
+                                             size = 50,
+                                             opacity = 1,
+                                             line = list(width = 5)),
+                               error_y = list(value = df_plot002_table$model_error_sd)
+  )
+
+
+  # # # Title and settings...
+  plot002_anova <- plotly::layout(p = plot002_anova,
+                                  title = "Plot 002 - Mean and model standard deviation",
+                                  font = list(size = 20),
+                                  margin = list(t = 100))
+
+  # # # Without zerolines
+  plot002_anova <-plotly::layout(p = plot002_anova,
+                                 xaxis = list(zeroline = FALSE),
+                                 yaxis = list(zeroline = FALSE))
+
+  # # # Plot output
+  plot002_anova
+}
+
+
+
+
+
+
+cpiA001_anova1way_plot003 <- function(df_plot003_table){
+
+
+  # # # Create a new plot...
+  plot003_anova <- plotly::plot_ly()
+
+
+  # # # Adding errors...
+  plot003_anova <-   plotly::add_trace(p = plot003_anova,
+                                       type = "scatter",
+                                       mode = "markers",
+                                       x = df_plot003_table$level,
+                                       y = df_plot003_table$mean,
+                                       color = df_plot003_table$level,
+                                       colors = df_plot003_table$color,
+                                       marker = list(symbol = "line-ew-open",
+                                                     size = 50,
+                                                     opacity = 1,
+                                                     line = list(width = 5)),
+                                       error_y = list(value = df_plot003_table$model_error_se)
+  )
+
+
+  # # # Title and settings...
+  plot003_anova <- plotly::layout(p = plot003_anova,
+                                  title = "Plot 003 - Mean y model standard error",
+                                  font = list(size = 20),
+                                  margin = list(t = 100))
+
+  # # # Without zerolines
+  plot003_anova <-plotly::layout(p = plot003_anova,
+                                 xaxis = list(zeroline = FALSE),
+                                 yaxis = list(zeroline = FALSE))
+
+  # # # Plot output
+  plot003_anova
+}
+
+
+
+
+
+
+
+
+
+
+cpiA001_anova1way_plot004 <- function(df_plot004_table){
+
+
+  # # # New plotly...
+  plot004_anova <- plotly::plot_ly()
+
+  # # # Boxplot and info...
+  plot004_anova <- plotly::add_trace(p = plot004_anova,
+                                     type = "box",
+                                     x = df_plot004_table$level ,
+                                     color = df_plot004_table$level,
+                                     colors = df_plot004_table$color,
+                                     lowerfence = df_plot004_table$min,
+                                     q1 = df_plot004_table$Q1,
+                                     median = df_plot004_table$median,
+                                     q3 = df_plot004_table$Q3,
+                                     upperfence = df_plot004_table$max,
+                                     boxmean = TRUE,
+                                     boxpoints = FALSE,
+                                     line = list(color = "black", width = 3)
+  )
+
+  # # # Title and settings...
+  plot004_anova <- plotly::layout(p = plot004_anova,
+                                  title = "Plot 004 - Boxplot and means",
+                                  font = list(size = 20),
+                                  margin = list(t = 100))
+
+
+  # # # Without zerolines...
+  plot004_anova <- plotly::layout(p = plot004_anova,
+                                  xaxis = list(zeroline = FALSE),
+                                  yaxis = list(zeroline = FALSE))
+
+  # # # Output plot003_anova...
+  plot004_anova
+}
+
+
+
+cpiA001_anova1way_plot005 <- function(minibase_mod, df_plot005_table){
+
+
+
+  all_levels <- levels(minibase_mod[,2])
+  n_levels <- length(all_levels)
+  all_color <- rainbow(length(all_levels))
+
+
+
+  plot005_anova <- plot_ly()
+
+  # Violinplot
+  for (k in 1:n_levels){
+
+    # Selected values
+    selected_level <- all_levels[k]
+    selected_color <- all_color[k]
+    dt_filas <- minibase_mod[,2] == selected_level
+
+    # Plotting selected violinplot
+    plot005_anova <- plot005_anova %>%
+      add_trace(x = minibase_mod[,2][dt_filas],
+                y = minibase_mod[,1][dt_filas],
+                type = "violin",
+                name = paste0("violin", k),
+                points = "all",
+                marker = list(color = selected_color),
+                line = list(color = selected_color),
+                fillcolor = I(selected_color)
+
+      )
+
+
+  }
+
+
+
+
+  # Boxplot
+  plot005_anova <- plotly::add_trace(p = plot005_anova,
+                                     type = "box",
+                                     name = "boxplot",
+                                     x = df_plot005_table$level ,
+                                     color = df_plot005_table$level ,
+                                     lowerfence = df_plot005_table$min,
+                                     q1 = df_plot005_table$Q1,
+                                     median = df_plot005_table$median,
+                                     q3 = df_plot005_table$Q3,
+                                     upperfence = df_plot005_table$max,
+                                     boxmean = TRUE,
+                                     boxpoints = TRUE,
+                                     fillcolor = df_plot005_table$color,
+                                     line = list(color = "black", width = 3),
+                                     opacity = 0.5,
+                                     width = 0.2)
+
+
+  # # # Title and settings...
+  plot005_anova <- plotly::layout(p = plot005_anova,
+                                  title = "Plot 005 - Violinplot",
+                                  font = list(size = 20),
+                                  margin = list(t = 100))
+
+
+  # # # Without zerolines...
+  plot005_anova <- plotly::layout(p = plot005_anova,
+                                  xaxis = list(zeroline = FALSE),
+                                  yaxis = list(zeroline = FALSE))
+
+  # # # Output plot003_anova...
+  plot005_anova
+
+
+}
+
+
+cpiA001_anova1way_plot006 <- function(minibase_mod, df_plot006_table){
+
+
+
+
+  #library(plotly)
+  plot006_anova <- plotly::plot_ly()
+
+  # Add traces
+  plot006_anova <- plotly::add_trace(p = plot006_anova,
+                                     type = "violin",
+                                     y = minibase_mod$VR,
+                                     x = minibase_mod$FACTOR,
+                                     showlegend = TRUE,
+                                     side = "positive",
+                                     points = "all",
+                                     name = "Violinplot",
+                                     color = minibase_mod$FACTOR,
+                                     colors = df_plot006_table$color)
+
+
+
+  # # # Title and settings...
+  plot006_anova <- plotly::layout(p = plot006_anova,
+                                  title = "Plot 006 - Scatterplot + Jitter +  Smoothed",
+                                  font = list(size = 20),
+                                  margin = list(t = 100))
+
+
+  # # # Without zerolines...
+  plot006_anova <- plotly::layout(p = plot006_anova,
+                                  xaxis = list(zeroline = FALSE),
+                                  yaxis = list(zeroline = FALSE))
+
+  # # # Output plot003_anova...
+  plot006_anova
+
+
+}
+
+
+
+
+
+cpiA001_anova1way_plot007 <- function(minibase_mod, df_factor_info){
+
+  # # # Create a new plot...
+  plot007_anova <- plotly::plot_ly()
+
+  # # # Plot001 - Scatter plot for VR and FACTOR on minibase_mod *****************
+  plot007_anova <- plotly::add_trace(p = plot007_anova,
+                                     type = "scatter",
+                                     mode = "markers",
+                                     x = minibase_mod$FACTOR,
+                                     y = minibase_mod$residuals,
+                                     color = minibase_mod$FACTOR,
+                                     colors = df_factor_info$color,
+                                     marker = list(size = 15, opacity = 0.7))
+
+  # # # Title and settings...
+  plot007_anova <-   plotly::layout(p = plot007_anova,
+                                    title = "Plot 007 - Scatterplot - Residuals",
+                                    font = list(size = 20),
+                                    margin = list(t = 100))
+
+
+  # # # Without zerolines
+  plot007_anova <-   plotly::layout(p = plot007_anova,
+                                    xaxis = list(zeroline = FALSE),
+                                    yaxis = list(zeroline = TRUE))
+
+
+  # # # Plot output
+  plot007_anova
+
+}
+
+
+cpiA001_anova1way_plot008 <- function(minibase_mod, df_plot006_table){
+
+
+
+
+  #library(plotly)
+  plot006_anova <- plotly::plot_ly()
+
+  # Add traces
+  plot006_anova <- plotly::add_trace(p = plot006_anova,
+                                     type = "violin",
+                                     y = minibase_mod$residuals,
+                                     x = minibase_mod$FACTOR,
+                                     showlegend = TRUE,
+                                     side = "positive",
+                                     points = "all",
+                                     name = "Violinplot",
+                                     color = minibase_mod$FACTOR,
+                                     colors = df_plot006_table$color)
+
+
+
+  # # # Title and settings...
+  plot006_anova <- plotly::layout(p = plot006_anova,
+                                  title = "Plot 008 - Resisualds - Scatterplot + Jitter +  Smoothed",
+                                  font = list(size = 20),
+                                  margin = list(t = 100))
+
+
+  # # # Without zerolines...
+  plot006_anova <- plotly::layout(p = plot006_anova,
+                                  xaxis = list(zeroline = FALSE),
+                                  yaxis = list(zeroline = FALSE))
+
+  # # # Output plot003_anova...
+  plot006_anova
+
+
+}
+
+
+cpiA001_anova1way_plot009 <- function(minibase_mod, df_factor_info){
+
+  # # # Create a new plot...
+  plot007_anova <- plotly::plot_ly()
+
+  # # # Plot001 - Scatter plot for VR and FACTOR on minibase_mod *****************
+  plot007_anova <- plotly::add_trace(p = plot007_anova,
+                                     type = "scatter",
+                                     mode = "markers",
+                                     x = minibase_mod$fitted.values,
+                                     y = minibase_mod$residuals,
+                                     color = minibase_mod$FACTOR,
+                                     colors = df_factor_info$color,
+                                     marker = list(size = 15, opacity = 0.7))
+
+  # # # Title and settings...
+  plot007_anova <-   plotly::layout(p = plot007_anova,
+                                    title = "Plot 009 - Scatterplot - Residuals vs Fitted.values",
+                                    font = list(size = 20),
+                                    margin = list(t = 100))
+
+
+  # # # Without zerolines
+  plot007_anova <-   plotly::layout(p = plot007_anova,
+                                    xaxis = list(zeroline = FALSE),
+                                    yaxis = list(zeroline = TRUE))
+
+
+  # # # Plot output
+  plot007_anova
+
+}
+
+
+
+cpiA001_anova1way_plot010 <- function(minibase_mod, df_factor_info){
+
+  # # # Create a new plot...
+  plot007_anova <- plotly::plot_ly()
+
+  # # # Plot001 - Scatter plot for VR and FACTOR on minibase_mod *****************
+  plot007_anova <- plotly::add_trace(p = plot007_anova,
+                                     type = "scatter",
+                                     mode = "markers",
+                                     x = minibase_mod$FACTOR,
+                                     y = minibase_mod$studres,
+                                     color = minibase_mod$FACTOR,
+                                     colors = df_factor_info$color,
+                                     marker = list(size = 15, opacity = 0.7))
+
+  # # # Title and settings...
+  plot007_anova <-   plotly::layout(p = plot007_anova,
+                                    title = "Plot 010 - Scatterplot - Studentized Residuals",
+                                    font = list(size = 20),
+                                    margin = list(t = 100))
+
+
+  # # # Without zerolines
+  plot007_anova <-   plotly::layout(p = plot007_anova,
+                                    xaxis = list(zeroline = FALSE),
+                                    yaxis = list(zeroline = TRUE))
+
+
+  # # # Plot output
+  plot007_anova
+
+}
+
+
+
+cpiA001_anova1way_plot011 <- function(minibase_mod, df_plot006_table){
+
+
+
+
+  #library(plotly)
+  plot006_anova <- plotly::plot_ly()
+
+  # Add traces
+  plot006_anova <- plotly::add_trace(p = plot006_anova,
+                                     type = "violin",
+                                     x = minibase_mod$residuals,
+                                     #x = minibase_mod$FACTOR,
+                                     showlegend = TRUE,
+                                     side = "positive",
+                                     points = "all",
+                                     name = "Violinplot")#
+  #color = minibase_mod$FACTOR,
+  #colors = df_plot006_table$color)
+
+
+
+  # # # Title and settings...
+  plot006_anova <- plotly::layout(p = plot006_anova,
+                                  title = "Plot 011 - Residuals",
+                                  font = list(size = 20),
+                                  margin = list(t = 100))
+
+
+  # # # Without zerolines...
+  plot006_anova <- plotly::layout(p = plot006_anova,
+                                  xaxis = list(zeroline = TRUE),
+                                  yaxis = list(zeroline = FALSE))
+
+  # # # Output plot003_anova...
+  plot006_anova
+
+
+}
+
+
+
+cpiA001_anova1way_plot012 <- function(minibase_mod, df_plot006_table){
+
+
+
+
+  #library(plotly)
+  plot006_anova <- plotly::plot_ly()
+
+  # Add traces
+  plot006_anova <- plotly::add_trace(p = plot006_anova,
+                                     type = "violin",
+                                     x = minibase_mod$studres,
+                                     #x = minibase_mod$FACTOR,
+                                     showlegend = TRUE,
+                                     side = "positive",
+                                     points = "all",
+                                     name = "Violinplot")#
+  #color = minibase_mod$FACTOR,
+  #colors = df_plot006_table$color)
+
+
+
+  # # # Title and settings...
+  plot006_anova <- plotly::layout(p = plot006_anova,
+                                  title = "Plot 012 - Studentized Residuals",
+                                  font = list(size = 20),
+                                  margin = list(t = 100))
+
+
+  # # # Without zerolines...
+  plot006_anova <- plotly::layout(p = plot006_anova,
+                                  xaxis = list(zeroline = TRUE),
+                                  yaxis = list(zeroline = FALSE))
+
+  # # # Output plot003_anova...
+  plot006_anova
+
+
+}
+
+
 
 
 
