@@ -886,7 +886,7 @@ cpiA001_anova1way_results <- function(database, vr_var_name, factor_var_name, al
   # # # # # Section 13 - Special table to plots ----------------------------------
 
   # # # Table for plot001
-  df_plot001_table <- data.frame(
+  df_table_factor_plot001 <- data.frame(
     "order" = df_factor_info$order,
     "level" = df_factor_info$level,
     "n" = df_factor_info$n,
@@ -897,76 +897,68 @@ cpiA001_anova1way_results <- function(database, vr_var_name, factor_var_name, al
     "var" = tapply(minibase[,1], minibase[,2], var)
   )
 
-  df_plot002_table <- data.frame(
+  df_table_factor_plot002 <- data.frame(
     "order" = df_factor_info$order,
     "level" = df_factor_info$level,
     "n" = df_factor_info$n,
     "mean" = tapply(minibase[,1], minibase[,2], mean),
     "model_error_sd" = df_model_error$model_error_sd
   )
-  df_plot002_table["lower_limit"] <- df_plot002_table$mean - df_plot002_table$model_error_sd
-  df_plot002_table["upper_limmit"] <- df_plot002_table$mean + df_plot002_table$model_error_sd
-  df_plot002_table["color"] <- df_factor_info$color
-  df_plot002_table
+  df_table_factor_plot002["lower_limit"] <- df_table_factor_plot002$mean - df_table_factor_plot002$model_error_sd
+  df_table_factor_plot002["upper_limmit"] <- df_table_factor_plot002$mean + df_table_factor_plot002$model_error_sd
+  df_table_factor_plot002["color"] <- df_factor_info$color
+  df_table_factor_plot002
 
 
 
-  df_plot003_table <- data.frame(
+  df_table_factor_plot003 <- data.frame(
     "order" = df_factor_info$order,
     "level" = df_factor_info$level,
     "n" = df_factor_info$n,
     "mean" = tapply(minibase[,1], minibase[,2], mean),
     "model_error_se" = df_model_error$model_error_se
   )
-  df_plot003_table["lower_limit"] <- df_plot003_table$mean - df_plot003_table$model_error_se
-  df_plot003_table["upper_limmit"] <- df_plot003_table$mean + df_plot003_table$model_error_se
-  df_plot003_table["color"] <- df_factor_info$color
-  df_plot003_table
+  df_table_factor_plot003["lower_limit"] <- df_table_factor_plot003$mean - df_table_factor_plot003$model_error_se
+  df_table_factor_plot003["upper_limmit"] <- df_table_factor_plot003$mean + df_table_factor_plot003$model_error_se
+  df_table_factor_plot003["color"] <- df_factor_info$color
+  df_table_factor_plot003
 
 
 
   # # # Table for plot004
-  df_plot004_table <- df_vr_position_levels
-  df_plot004_table["color"] <- df_factor_info$color
+  df_table_factor_plot004 <- df_vr_position_levels
+  df_table_factor_plot004["color"] <- df_factor_info$color
 
   # # # Table for plot005
-  df_plot005_table <- df_plot004_table
+  df_table_factor_plot005 <- df_table_factor_plot004
 
   # # # Table for plot006
-  df_plot006_table <- df_plot004_table
+  df_table_factor_plot006 <- df_table_factor_plot004
+
+
+  df_table_factor_plot007 <- df_table_factor_plot003
+  correct_pos_letters <- order(df_tukey_table$level)
+  vector_letters <- df_tukey_table$group[correct_pos_letters]
+  df_table_factor_plot007["group"] <- vector_letters
 
   # # # Table for plot006
-  df_plot007_table <- df_plot004_table
+  df_table_residuals_plot001 <- df_table_factor_plot004
 
   # # # Table for plot006
-  df_plot008_table <- df_plot004_table
+  df_table_residuals_plot002 <- df_table_factor_plot004
 
   # # # Table for plot006
-  df_plot009_table <- df_plot004_table
+  df_table_residuals_plot003 <- df_table_factor_plot004
 
   # # # Table for plot006
-  df_plot010_table <- df_plot004_table
+  df_table_residuals_plot004 <- df_table_factor_plot004
 
   # # # Table for plot006
-  df_plot011_table <- df_plot004_table
+  df_table_residuals_plot005 <- df_table_factor_plot004
 
   # # # Table for plot006
-  df_plot012_table <- df_plot004_table
+  df_table_residuals_plot006 <- df_table_factor_plot004
 
-  df_factor_table_plot001 <- df_plot001_table
-  df_factor_table_plot002 <- df_plot002_table
-  df_factor_table_plot003 <- df_plot003_table
-  df_factor_table_plot004 <- df_plot004_table
-  df_factor_table_plot005 <- df_plot005_table
-  df_factor_table_plot006 <- df_plot006_table
-
-
-  df_residuals_table_plot001 <- df_plot007_table
-  df_residuals_table_plot002 <- df_plot008_table
-  df_residuals_table_plot003 <- df_plot009_table
-  df_residuals_table_plot004 <- df_plot010_table
-  df_residuals_table_plot005 <- df_plot011_table
-  df_residuals_table_plot006 <- df_plot012_table
 
   # --- # hide_: Proccesing objects order
   hide_correct_order <- cpiA001_anova1way_ObjNamesInOrder(selected_fn = cpiA001_anova1way_results)
@@ -1088,9 +1080,9 @@ cpiA001_anova1way_code_section04_UntilTheEnd <- function(){
 }
 
 
-cpiA001_anova1way_code_sectionXX_Plots <- function(){
+cpiA001_anova1way_code_sectionXX_g01_Plots <- function(){
 
-  objetos <- ls("package:Rscience", pattern = "^cpiA001_anova1way_plot[0-9]+")
+  objetos <- ls("package:Rscience", pattern = "^cpiA001_anova1way_factor_plot+[0-9]+")
 
 
 
@@ -1118,6 +1110,39 @@ cpiA001_anova1way_code_sectionXX_Plots <- function(){
 }
 
 
+
+cpiA001_anova1way_code_sectionXX_g02_Plots <- function(){
+
+  objetos <- ls("package:Rscience", pattern = "^cpiA001_anova1way_residuals_plot+[0-9]+")
+
+
+
+  # Filtrar solo las funciones que coinciden con el patrón
+  #list_plot <- objetos[grep("^cpiA001_anova1way_plot[0-9]+", objetos)]
+  list_plot <- objetos
+  list_plot <- sort(list_plot)
+
+  all_code <- sapply(list_plot, function(x){
+
+
+
+    selected_code <- paste0("cpiA001_anova1way_TakeCode(", x, ")")
+    code_new_plot <- eval(parse(text = selected_code))
+    code_new_plot
+
+  }, simplify = F)
+
+  all_code <- unlist(all_code)
+  all_code <- paste0(all_code, collapse = "\n\n\n")
+
+
+  return(all_code)
+
+}
+
+
+
+
 cpiA001_anova1way_code_sectionALL <- function(intro_source_database, vr_var_name, factor_var_name, alpha_value){
 
   # objetos <- ls()
@@ -1132,7 +1157,8 @@ cpiA001_anova1way_code_sectionALL <- function(intro_source_database, vr_var_name
   vector_code[2] <- cpiA001_anova1way_code_section02_FileSource(intro_source_database)
   vector_code[3] <- cpiA001_anova1way_code_section03_VarSelection(vr_var_name, factor_var_name, alpha_value)
   vector_code[4] <- cpiA001_anova1way_code_section04_UntilTheEnd()
-  vector_code[5] <- cpiA001_anova1way_code_sectionXX_Plots()
+  vector_code[5] <- cpiA001_anova1way_code_sectionXX_g01_Plots()
+  vector_code[6] <- cpiA001_anova1way_code_sectionXX_g02_Plots()
 
   vector_code <- paste0(vector_code, collapse = "\n\n\n\n\n")
   return(vector_code)
@@ -1147,7 +1173,7 @@ cpiA001_anova1way_recruit_g01_Tables <- function(list_results_from_cpiA001_anova
   all_tables <- with(list_results_from_cpiA001_anova1way, {
 
     objetos <- ls()
-    vector_obj_name <- objetos[grep("^df_factor_table_plot+[0-9]", objetos)]
+    vector_obj_name <- objetos[grep("^df_table_factor_plot+[0-9]", objetos)]
     vector_obj_name <- sort(vector_obj_name)
     list_tables <- lapply(vector_obj_name, function(x) get(x))
     names(list_tables) <- vector_obj_name
@@ -1165,7 +1191,7 @@ cpiA001_anova1way_recruit_g02_Tables <- function(list_results_from_cpiA001_anova
   all_tables <- with(list_results_from_cpiA001_anova1way, {
 
     objetos <- ls()
-    vector_obj_name <- objetos[grep("^df_residuals_table_plot+[0-9]", objetos)]
+    vector_obj_name <- objetos[grep("^df_table_residuals_plot+[0-9]", objetos)]
     vector_obj_name <- sort(vector_obj_name)
     list_tables <- lapply(vector_obj_name, function(x) get(x))
     names(list_tables) <- vector_obj_name
@@ -1178,13 +1204,13 @@ cpiA001_anova1way_recruit_g02_Tables <- function(list_results_from_cpiA001_anova
 
 
 # # # Plots FACTOR
-cpiA001_anova1way_factor_plot001 <- function(...){
+cpiA001_anova1way_factor_plot001 <- function(minibase_mod, df_factor_info){
 
   # # # Create a new plot...
-  plot001_anova <- plotly::plot_ly()
+  plot001_factor <- plotly::plot_ly()
 
   # # # Plot001 - Scatter plot for VR and FACTOR on minibase_mod *****************
-  plot001_anova <- plotly::add_trace(p = plot001_anova,
+  plot001_factor <- plotly::add_trace(p = plot001_factor,
                                      type = "scatter",
                                      mode = "markers",
                                      x = minibase_mod$FACTOR,
@@ -1194,20 +1220,20 @@ cpiA001_anova1way_factor_plot001 <- function(...){
                                      marker = list(size = 15, opacity = 0.7))
 
   # # # Title and settings...
-  plot001_anova <-   plotly::layout(p = plot001_anova,
+  plot001_factor <-   plotly::layout(p = plot001_factor,
                                     title = "Plot 001 - Scatterplot",
                                     font = list(size = 20),
                                     margin = list(t = 100))
 
 
   # # # Without zerolines
-  plot001_anova <-   plotly::layout(p = plot001_anova,
+  plot001_factor <-   plotly::layout(p = plot001_factor,
                                     xaxis = list(zeroline = FALSE),
                                     yaxis = list(zeroline = FALSE))
 
 
   # # # Plot output
-  plot001_anova
+  plot001_factor
 
 }
 
@@ -1215,42 +1241,42 @@ cpiA001_anova1way_factor_plot001 <- function(...){
 
 
 
-cpiA001_anova1way_factor_plot002 <- function(df_plot002_table){
+cpiA001_anova1way_factor_plot002 <- function(df_table_factor_plot002){
 
 
   # # # Create a new plot...
-  plot002_anova <- plot_ly()
+  plot002_factor <- plot_ly()
 
 
   # # # Adding errors...
-  plot002_anova <-   add_trace(p = plot002_anova,
+  plot002_factor <-   add_trace(p = plot002_factor,
                                type = "scatter",
                                mode = "markers",
-                               x = df_plot002_table$level,
-                               y = df_plot002_table$mean,
-                               color = df_plot002_table$level,
-                               colors = df_plot002_table$color,
+                               x = df_table_factor_plot002$level,
+                               y = df_table_factor_plot002$mean,
+                               color = df_table_factor_plot002$level,
+                               colors = df_table_factor_plot002$color,
                                marker = list(symbol = "line-ew-open",
                                              size = 50,
                                              opacity = 1,
                                              line = list(width = 5)),
-                               error_y = list(value = df_plot002_table$model_error_sd)
+                               error_y = list(value = df_table_factor_plot002$model_error_sd)
   )
 
 
   # # # Title and settings...
-  plot002_anova <- plotly::layout(p = plot002_anova,
+  plot002_factor <- plotly::layout(p = plot002_factor,
                                   title = "Plot 002 - Mean and model standard deviation",
                                   font = list(size = 20),
                                   margin = list(t = 100))
 
   # # # Without zerolines
-  plot002_anova <-plotly::layout(p = plot002_anova,
+  plot002_factor <-plotly::layout(p = plot002_factor,
                                  xaxis = list(zeroline = FALSE),
                                  yaxis = list(zeroline = FALSE))
 
   # # # Plot output
-  plot002_anova
+  plot002_factor
 }
 
 
@@ -1258,42 +1284,42 @@ cpiA001_anova1way_factor_plot002 <- function(df_plot002_table){
 
 
 
-cpiA001_anova1way_factor_plot003 <- function(df_plot003_table){
+cpiA001_anova1way_factor_plot003 <- function(df_table_factor_plot003){
 
 
   # # # Create a new plot...
-  plot003_anova <- plotly::plot_ly()
+  plot003_factor <- plotly::plot_ly()
 
 
   # # # Adding errors...
-  plot003_anova <-   plotly::add_trace(p = plot003_anova,
+  plot003_factor <-   plotly::add_trace(p = plot003_factor,
                                        type = "scatter",
                                        mode = "markers",
-                                       x = df_plot003_table$level,
-                                       y = df_plot003_table$mean,
-                                       color = df_plot003_table$level,
-                                       colors = df_plot003_table$color,
+                                       x = df_table_factor_plot003$level,
+                                       y = df_table_factor_plot003$mean,
+                                       color = df_table_factor_plot003$level,
+                                       colors = df_table_factor_plot003$color,
                                        marker = list(symbol = "line-ew-open",
                                                      size = 50,
                                                      opacity = 1,
                                                      line = list(width = 5)),
-                                       error_y = list(value = df_plot003_table$model_error_se)
+                                       error_y = list(value = df_table_factor_plot003$model_error_se)
   )
 
 
   # # # Title and settings...
-  plot003_anova <- plotly::layout(p = plot003_anova,
+  plot003_factor <- plotly::layout(p = plot003_factor,
                                   title = "Plot 003 - Mean y model standard error",
                                   font = list(size = 20),
                                   margin = list(t = 100))
 
   # # # Without zerolines
-  plot003_anova <-plotly::layout(p = plot003_anova,
+  plot003_factor <-plotly::layout(p = plot003_factor,
                                  xaxis = list(zeroline = FALSE),
                                  yaxis = list(zeroline = FALSE))
 
   # # # Plot output
-  plot003_anova
+  plot003_factor
 }
 
 
@@ -1305,47 +1331,47 @@ cpiA001_anova1way_factor_plot003 <- function(df_plot003_table){
 
 
 
-cpiA001_anova1way_factor_plot004 <- function(df_plot004_table){
+cpiA001_anova1way_factor_plot004 <- function(df_table_factor_plot004){
 
 
   # # # New plotly...
-  plot004_anova <- plotly::plot_ly()
+  plot004_factor <- plotly::plot_ly()
 
   # # # Boxplot and info...
-  plot004_anova <- plotly::add_trace(p = plot004_anova,
+  plot004_factor <- plotly::add_trace(p = plot004_factor,
                                      type = "box",
-                                     x = df_plot004_table$level ,
-                                     color = df_plot004_table$level,
-                                     colors = df_plot004_table$color,
-                                     lowerfence = df_plot004_table$min,
-                                     q1 = df_plot004_table$Q1,
-                                     median = df_plot004_table$median,
-                                     q3 = df_plot004_table$Q3,
-                                     upperfence = df_plot004_table$max,
+                                     x = df_table_factor_plot004$level ,
+                                     color = df_table_factor_plot004$level,
+                                     colors = df_table_factor_plot004$color,
+                                     lowerfence = df_table_factor_plot004$min,
+                                     q1 = df_table_factor_plot004$Q1,
+                                     median = df_table_factor_plot004$median,
+                                     q3 = df_table_factor_plot004$Q3,
+                                     upperfence = df_table_factor_plot004$max,
                                      boxmean = TRUE,
                                      boxpoints = FALSE,
                                      line = list(color = "black", width = 3)
   )
 
   # # # Title and settings...
-  plot004_anova <- plotly::layout(p = plot004_anova,
+  plot004_factor <- plotly::layout(p = plot004_factor,
                                   title = "Plot 004 - Boxplot and means",
                                   font = list(size = 20),
                                   margin = list(t = 100))
 
 
   # # # Without zerolines...
-  plot004_anova <- plotly::layout(p = plot004_anova,
+  plot004_factor <- plotly::layout(p = plot004_factor,
                                   xaxis = list(zeroline = FALSE),
                                   yaxis = list(zeroline = FALSE))
 
-  # # # Output plot003_anova...
-  plot004_anova
+  # # # Output plot004_anova...
+  plot004_factor
 }
 
 
 
-cpiA001_anova1way_factor_plot005 <- function(minibase_mod, df_plot005_table){
+cpiA001_anova1way_factor_plot005 <- function(minibase_mod, df_table_factor_plot005){
 
 
 
@@ -1355,7 +1381,7 @@ cpiA001_anova1way_factor_plot005 <- function(minibase_mod, df_plot005_table){
 
 
 
-  plot005_anova <- plot_ly()
+  plot005_factor <- plot_ly()
 
   # Violinplot
   for (k in 1:n_levels){
@@ -1366,7 +1392,7 @@ cpiA001_anova1way_factor_plot005 <- function(minibase_mod, df_plot005_table){
     dt_filas <- minibase_mod[,2] == selected_level
 
     # Plotting selected violinplot
-    plot005_anova <- plot005_anova %>%
+    plot005_factor <- plot005_factor %>%
       add_trace(x = minibase_mod[,2][dt_filas],
                 y = minibase_mod[,1][dt_filas],
                 type = "violin",
@@ -1385,53 +1411,53 @@ cpiA001_anova1way_factor_plot005 <- function(minibase_mod, df_plot005_table){
 
 
   # Boxplot
-  plot005_anova <- plotly::add_trace(p = plot005_anova,
+  plot005_factor <- plotly::add_trace(p = plot005_factor,
                                      type = "box",
                                      name = "boxplot",
-                                     x = df_plot005_table$level ,
-                                     color = df_plot005_table$level ,
-                                     lowerfence = df_plot005_table$min,
-                                     q1 = df_plot005_table$Q1,
-                                     median = df_plot005_table$median,
-                                     q3 = df_plot005_table$Q3,
-                                     upperfence = df_plot005_table$max,
+                                     x = df_table_factor_plot005$level ,
+                                     color = df_table_factor_plot005$level ,
+                                     lowerfence = df_table_factor_plot005$min,
+                                     q1 = df_table_factor_plot005$Q1,
+                                     median = df_table_factor_plot005$median,
+                                     q3 = df_table_factor_plot005$Q3,
+                                     upperfence = df_table_factor_plot005$max,
                                      boxmean = TRUE,
                                      boxpoints = TRUE,
-                                     fillcolor = df_plot005_table$color,
+                                     fillcolor = df_table_factor_plot005$color,
                                      line = list(color = "black", width = 3),
                                      opacity = 0.5,
                                      width = 0.2)
 
 
   # # # Title and settings...
-  plot005_anova <- plotly::layout(p = plot005_anova,
+  plot005_factor <- plotly::layout(p = plot005_factor,
                                   title = "Plot 005 - Violinplot",
                                   font = list(size = 20),
                                   margin = list(t = 100))
 
 
   # # # Without zerolines...
-  plot005_anova <- plotly::layout(p = plot005_anova,
+  plot005_factor <- plotly::layout(p = plot005_factor,
                                   xaxis = list(zeroline = FALSE),
                                   yaxis = list(zeroline = FALSE))
 
   # # # Output plot003_anova...
-  plot005_anova
+  plot005_factor
 
 
 }
 
 
-cpiA001_anova1way_factor_plot006 <- function(minibase_mod, df_plot006_table){
+cpiA001_anova1way_factor_plot006 <- function(minibase_mod, df_table_factor_plot006){
 
 
 
 
   #library(plotly)
-  plot006_anova <- plotly::plot_ly()
+  plot006_factor <- plotly::plot_ly()
 
   # Add traces
-  plot006_anova <- plotly::add_trace(p = plot006_anova,
+  plot006_factor <- plotly::add_trace(p = plot006_factor,
                                      type = "violin",
                                      y = minibase_mod$VR,
                                      x = minibase_mod$FACTOR,
@@ -1440,27 +1466,79 @@ cpiA001_anova1way_factor_plot006 <- function(minibase_mod, df_plot006_table){
                                      points = "all",
                                      name = "Violinplot",
                                      color = minibase_mod$FACTOR,
-                                     colors = df_plot006_table$color)
+                                     colors = df_table_factor_plot006$color)
 
 
 
   # # # Title and settings...
-  plot006_anova <- plotly::layout(p = plot006_anova,
+  plot006_factor <- plotly::layout(p = plot006_factor,
                                   title = "Plot 006 - Scatterplot + Jitter +  Smoothed",
                                   font = list(size = 20),
                                   margin = list(t = 100))
 
 
   # # # Without zerolines...
-  plot006_anova <- plotly::layout(p = plot006_anova,
+  plot006_factor <- plotly::layout(p = plot006_factor,
                                   xaxis = list(zeroline = FALSE),
                                   yaxis = list(zeroline = FALSE))
 
   # # # Output plot003_anova...
-  plot006_anova
+  plot006_factor
 
 
 }
+
+
+
+cpiA001_anova1way_factor_plot007 <- function(df_table_factor_plot007){
+
+
+  # # # Create a new plot...
+  plot007_factor <- plotly::plot_ly()
+
+
+  # # # Adding errors...
+  plot007_factor <-   plotly::add_trace(p = plot007_factor,
+                                        type = "scatter",
+                                        mode = "markers",
+                                        x = df_table_factor_plot007$level,
+                                        y = df_table_factor_plot007$mean,
+                                        color = df_table_factor_plot007$level,
+                                        colors = df_table_factor_plot007$color,
+                                        marker = list(symbol = "line-ew-open",
+                                                      size = 50,
+                                                      opacity = 1,
+                                                      line = list(width = 5)),
+                                        error_y = list(value = df_table_factor_plot007$model_error_se)
+  )
+
+
+
+  plot007_factor <-  add_text(p = plot007_factor,
+                              x = df_table_factor_plot007$level,
+                              y = df_table_factor_plot007$mean,
+                              text = df_table_factor_plot007$group, name = "Tukey Group",
+                              size = 20)
+
+  # # # Title and settings...
+  plot007_factor <- plotly::layout(p = plot007_factor,
+                                   title = "Plot 007 - Mean y model standard error",
+                                   font = list(size = 20),
+                                   margin = list(t = 100))
+
+  # # # Without zerolines
+  plot007_factor <-plotly::layout(p = plot007_factor,
+                                  xaxis = list(zeroline = FALSE),
+                                  yaxis = list(zeroline = FALSE))
+
+
+  # # # Plot output
+  plot007_factor
+}
+
+
+
+
 
 
 
@@ -1506,13 +1584,13 @@ cpiA001_anova1way_recruit_g01_FactorPlots <- function(list_results_from_cpiA001_
 
 
 
-cpiA001_anova1way_residuals_plot007 <- function(minibase_mod, df_factor_info){
+cpiA001_anova1way_residuals_plot001 <- function(minibase_mod, df_factor_info){
 
   # # # Create a new plot...
-  plot007_anova <- plotly::plot_ly()
+  plot001_residuals <- plotly::plot_ly()
 
   # # # Plot001 - Scatter plot for VR and FACTOR on minibase_mod *****************
-  plot007_anova <- plotly::add_trace(p = plot007_anova,
+  plot001_residuals <- plotly::add_trace(p = plot001_residuals,
                                      type = "scatter",
                                      mode = "markers",
                                      x = minibase_mod$FACTOR,
@@ -1522,34 +1600,34 @@ cpiA001_anova1way_residuals_plot007 <- function(minibase_mod, df_factor_info){
                                      marker = list(size = 15, opacity = 0.7))
 
   # # # Title and settings...
-  plot007_anova <-   plotly::layout(p = plot007_anova,
-                                    title = "Plot 007 - Scatterplot - Residuals",
+  plot001_residuals <-   plotly::layout(p = plot001_residuals,
+                                    title = "Plot 001 - Scatterplot - Residuals",
                                     font = list(size = 20),
                                     margin = list(t = 100))
 
 
   # # # Without zerolines
-  plot007_anova <-   plotly::layout(p = plot007_anova,
+  plot001_residuals <-   plotly::layout(p = plot001_residuals,
                                     xaxis = list(zeroline = FALSE),
                                     yaxis = list(zeroline = TRUE))
 
 
   # # # Plot output
-  plot007_anova
+  plot001_residuals
 
 }
 
 
-cpiA001_anova1way_residuals_plot008 <- function(minibase_mod, df_plot006_table){
+cpiA001_anova1way_residuals_plot002 <- function(minibase_mod, df_table_residuals_plot002){
 
 
 
 
   #library(plotly)
-  plot006_anova <- plotly::plot_ly()
+  plot002_residuals <- plotly::plot_ly()
 
   # Add traces
-  plot006_anova <- plotly::add_trace(p = plot006_anova,
+  plot002_residuals <- plotly::add_trace(p = plot002_residuals,
                                      type = "violin",
                                      y = minibase_mod$residuals,
                                      x = minibase_mod$FACTOR,
@@ -1558,36 +1636,36 @@ cpiA001_anova1way_residuals_plot008 <- function(minibase_mod, df_plot006_table){
                                      points = "all",
                                      name = "Violinplot",
                                      color = minibase_mod$FACTOR,
-                                     colors = df_plot006_table$color)
+                                     colors = df_table_residuals_plot002$color)
 
 
 
   # # # Title and settings...
-  plot006_anova <- plotly::layout(p = plot006_anova,
-                                  title = "Plot 008 - Resisualds - Scatterplot + Jitter +  Smoothed",
+  plot002_residuals <- plotly::layout(p = plot002_residuals,
+                                  title = "Plot 002 - Resisualds - Scatterplot + Jitter +  Smoothed",
                                   font = list(size = 20),
                                   margin = list(t = 100))
 
 
   # # # Without zerolines...
-  plot006_anova <- plotly::layout(p = plot006_anova,
+  plot002_residuals <- plotly::layout(p = plot002_residuals,
                                   xaxis = list(zeroline = FALSE),
                                   yaxis = list(zeroline = FALSE))
 
   # # # Output plot003_anova...
-  plot006_anova
+  plot002_residuals
 
 
 }
 
 
-cpiA001_anova1way_residuals_plot009 <- function(minibase_mod, df_factor_info){
+cpiA001_anova1way_residuals_plot003 <- function(minibase_mod, df_factor_info){
 
   # # # Create a new plot...
-  plot007_anova <- plotly::plot_ly()
+  plot003_residuals <- plotly::plot_ly()
 
   # # # Plot001 - Scatter plot for VR and FACTOR on minibase_mod *****************
-  plot007_anova <- plotly::add_trace(p = plot007_anova,
+  plot003_residuals <- plotly::add_trace(p = plot003_residuals,
                                      type = "scatter",
                                      mode = "markers",
                                      x = minibase_mod$fitted.values,
@@ -1597,32 +1675,32 @@ cpiA001_anova1way_residuals_plot009 <- function(minibase_mod, df_factor_info){
                                      marker = list(size = 15, opacity = 0.7))
 
   # # # Title and settings...
-  plot007_anova <-   plotly::layout(p = plot007_anova,
-                                    title = "Plot 009 - Scatterplot - Residuals vs Fitted.values",
+  plot003_residuals <-   plotly::layout(p = plot003_residuals,
+                                    title = "Plot 003 - Scatterplot - Residuals vs Fitted.values",
                                     font = list(size = 20),
                                     margin = list(t = 100))
 
 
   # # # Without zerolines
-  plot007_anova <-   plotly::layout(p = plot007_anova,
+  plot003_residuals <-   plotly::layout(p = plot003_residuals,
                                     xaxis = list(zeroline = FALSE),
                                     yaxis = list(zeroline = TRUE))
 
 
   # # # Plot output
-  plot007_anova
+  plot003_residuals
 
 }
 
 
 
-cpiA001_anova1way_residuals_plot010 <- function(minibase_mod, df_factor_info){
+cpiA001_anova1way_residuals_plot004 <- function(minibase_mod, df_factor_info){
 
   # # # Create a new plot...
-  plot007_anova <- plotly::plot_ly()
+  plot004_residuals <- plotly::plot_ly()
 
   # # # Plot001 - Scatter plot for VR and FACTOR on minibase_mod *****************
-  plot007_anova <- plotly::add_trace(p = plot007_anova,
+  plot004_residuals <- plotly::add_trace(p = plot004_residuals,
                                      type = "scatter",
                                      mode = "markers",
                                      x = minibase_mod$FACTOR,
@@ -1632,35 +1710,35 @@ cpiA001_anova1way_residuals_plot010 <- function(minibase_mod, df_factor_info){
                                      marker = list(size = 15, opacity = 0.7))
 
   # # # Title and settings...
-  plot007_anova <-   plotly::layout(p = plot007_anova,
-                                    title = "Plot 010 - Scatterplot - Studentized Residuals",
+  plot004_residuals <-   plotly::layout(p = plot004_residuals,
+                                    title = "Plot 004 - Scatterplot - Studentized Residuals",
                                     font = list(size = 20),
                                     margin = list(t = 100))
 
 
   # # # Without zerolines
-  plot007_anova <-   plotly::layout(p = plot007_anova,
+  plot004_residuals <-   plotly::layout(p = plot004_residuals,
                                     xaxis = list(zeroline = FALSE),
                                     yaxis = list(zeroline = TRUE))
 
 
   # # # Plot output
-  plot007_anova
+  plot004_residuals
 
 }
 
 
 
-cpiA001_anova1way_residuals_plot011 <- function(minibase_mod, df_plot006_table){
+cpiA001_anova1way_residuals_plot005 <- function(minibase_mod){
 
 
 
 
   #library(plotly)
-  plot006_anova <- plotly::plot_ly()
+  plot005_residuals <- plotly::plot_ly()
 
   # Add traces
-  plot006_anova <- plotly::add_trace(p = plot006_anova,
+  plot005_residuals <- plotly::add_trace(p = plot005_residuals,
                                      type = "violin",
                                      x = minibase_mod$residuals,
                                      #x = minibase_mod$FACTOR,
@@ -1669,40 +1747,40 @@ cpiA001_anova1way_residuals_plot011 <- function(minibase_mod, df_plot006_table){
                                      points = "all",
                                      name = "Violinplot")#
   #color = minibase_mod$FACTOR,
-  #colors = df_plot006_table$color)
+  #colors = df_table_factor_plot006$color)
 
 
 
   # # # Title and settings...
-  plot006_anova <- plotly::layout(p = plot006_anova,
-                                  title = "Plot 011 - Residuals",
+  plot005_residuals <- plotly::layout(p = plot005_residuals,
+                                  title = "Plot 005 - Residuals",
                                   font = list(size = 20),
                                   margin = list(t = 100))
 
 
   # # # Without zerolines...
-  plot006_anova <- plotly::layout(p = plot006_anova,
+  plot005_residuals <- plotly::layout(p = plot005_residuals,
                                   xaxis = list(zeroline = TRUE),
                                   yaxis = list(zeroline = FALSE))
 
   # # # Output plot003_anova...
-  plot006_anova
+  plot005_residuals
 
 
 }
 
 
 
-cpiA001_anova1way_residuals_plot012 <- function(minibase_mod, df_plot006_table){
+cpiA001_anova1way_residuals_plot006 <- function(minibase_mod){
 
 
 
 
   #library(plotly)
-  plot006_anova <- plotly::plot_ly()
+  plot006_residuals <- plotly::plot_ly()
 
   # Add traces
-  plot006_anova <- plotly::add_trace(p = plot006_anova,
+  plot006_residuals <- plotly::add_trace(p = plot006_residuals,
                                      type = "violin",
                                      x = minibase_mod$studres,
                                      #x = minibase_mod$FACTOR,
@@ -1711,24 +1789,24 @@ cpiA001_anova1way_residuals_plot012 <- function(minibase_mod, df_plot006_table){
                                      points = "all",
                                      name = "Violinplot")#
   #color = minibase_mod$FACTOR,
-  #colors = df_plot006_table$color)
+  #colors = df_table_factor_plot006$color)
 
 
 
   # # # Title and settings...
-  plot006_anova <- plotly::layout(p = plot006_anova,
-                                  title = "Plot 012 - Studentized Residuals",
+  plot006_residuals <- plotly::layout(p = plot006_residuals,
+                                  title = "Plot 006 - Studentized Residuals",
                                   font = list(size = 20),
                                   margin = list(t = 100))
 
 
   # # # Without zerolines...
-  plot006_anova <- plotly::layout(p = plot006_anova,
+  plot006_residuals <- plotly::layout(p = plot006_residuals,
                                   xaxis = list(zeroline = TRUE),
                                   yaxis = list(zeroline = FALSE))
 
   # # # Output plot003_anova...
-  plot006_anova
+  plot006_residuals
 
 
 }
@@ -1775,528 +1853,6 @@ cpiA001_anova1way_recruit_g02_ResidualsPlots <- function(list_results_from_cpiA0
 
 
 
-
-
-
-
-
-
-
-
-cpiA001_anova1way_plot001 <- function(...){
-
-  # # # Create a new plot...
-  plot001_anova <- plotly::plot_ly()
-
-  # # # Plot001 - Scatter plot for VR and FACTOR on minibase_mod *****************
-  plot001_anova <- plotly::add_trace(p = plot001_anova,
-                                     type = "scatter",
-                                     mode = "markers",
-                                     x = minibase_mod$FACTOR,
-                                     y = minibase_mod$VR,
-                                     color = minibase_mod$FACTOR,
-                                     colors = df_factor_info$color,
-                                     marker = list(size = 15, opacity = 0.7))
-
-  # # # Title and settings...
-  plot001_anova <-   plotly::layout(p = plot001_anova,
-                                    title = "Plot 001 - Scatterplot",
-                                    font = list(size = 20),
-                                    margin = list(t = 100))
-
-
-  # # # Without zerolines
-  plot001_anova <-   plotly::layout(p = plot001_anova,
-                                    xaxis = list(zeroline = FALSE),
-                                    yaxis = list(zeroline = FALSE))
-
-
-  # # # Plot output
-  plot001_anova
-
-}
-
-
-
-
-
-cpiA001_anova1way_plot002 <- function(df_plot002_table){
-
-
-  # # # Create a new plot...
-  plot002_anova <- plot_ly()
-
-
-  # # # Adding errors...
-  plot002_anova <-   add_trace(p = plot002_anova,
-                               type = "scatter",
-                               mode = "markers",
-                               x = df_plot002_table$level,
-                               y = df_plot002_table$mean,
-                               color = df_plot002_table$level,
-                               colors = df_plot002_table$color,
-                               marker = list(symbol = "line-ew-open",
-                                             size = 50,
-                                             opacity = 1,
-                                             line = list(width = 5)),
-                               error_y = list(value = df_plot002_table$model_error_sd)
-  )
-
-
-  # # # Title and settings...
-  plot002_anova <- plotly::layout(p = plot002_anova,
-                                  title = "Plot 002 - Mean and model standard deviation",
-                                  font = list(size = 20),
-                                  margin = list(t = 100))
-
-  # # # Without zerolines
-  plot002_anova <-plotly::layout(p = plot002_anova,
-                                 xaxis = list(zeroline = FALSE),
-                                 yaxis = list(zeroline = FALSE))
-
-  # # # Plot output
-  plot002_anova
-}
-
-
-
-
-
-
-cpiA001_anova1way_plot003 <- function(df_plot003_table){
-
-
-  # # # Create a new plot...
-  plot003_anova <- plotly::plot_ly()
-
-
-  # # # Adding errors...
-  plot003_anova <-   plotly::add_trace(p = plot003_anova,
-                                       type = "scatter",
-                                       mode = "markers",
-                                       x = df_plot003_table$level,
-                                       y = df_plot003_table$mean,
-                                       color = df_plot003_table$level,
-                                       colors = df_plot003_table$color,
-                                       marker = list(symbol = "line-ew-open",
-                                                     size = 50,
-                                                     opacity = 1,
-                                                     line = list(width = 5)),
-                                       error_y = list(value = df_plot003_table$model_error_se)
-  )
-
-
-  # # # Title and settings...
-  plot003_anova <- plotly::layout(p = plot003_anova,
-                                  title = "Plot 003 - Mean y model standard error",
-                                  font = list(size = 20),
-                                  margin = list(t = 100))
-
-  # # # Without zerolines
-  plot003_anova <-plotly::layout(p = plot003_anova,
-                                 xaxis = list(zeroline = FALSE),
-                                 yaxis = list(zeroline = FALSE))
-
-  # # # Plot output
-  plot003_anova
-}
-
-
-
-
-
-
-
-
-
-
-cpiA001_anova1way_plot004 <- function(df_plot004_table){
-
-
-  # # # New plotly...
-  plot004_anova <- plotly::plot_ly()
-
-  # # # Boxplot and info...
-  plot004_anova <- plotly::add_trace(p = plot004_anova,
-                                     type = "box",
-                                     x = df_plot004_table$level ,
-                                     color = df_plot004_table$level,
-                                     colors = df_plot004_table$color,
-                                     lowerfence = df_plot004_table$min,
-                                     q1 = df_plot004_table$Q1,
-                                     median = df_plot004_table$median,
-                                     q3 = df_plot004_table$Q3,
-                                     upperfence = df_plot004_table$max,
-                                     boxmean = TRUE,
-                                     boxpoints = FALSE,
-                                     line = list(color = "black", width = 3)
-  )
-
-  # # # Title and settings...
-  plot004_anova <- plotly::layout(p = plot004_anova,
-                                  title = "Plot 004 - Boxplot and means",
-                                  font = list(size = 20),
-                                  margin = list(t = 100))
-
-
-  # # # Without zerolines...
-  plot004_anova <- plotly::layout(p = plot004_anova,
-                                  xaxis = list(zeroline = FALSE),
-                                  yaxis = list(zeroline = FALSE))
-
-  # # # Output plot003_anova...
-  plot004_anova
-}
-
-
-
-cpiA001_anova1way_plot005 <- function(minibase_mod, df_plot005_table){
-
-
-
-  all_levels <- levels(minibase_mod[,2])
-  n_levels <- length(all_levels)
-  all_color <- rainbow(length(all_levels))
-
-
-
-  plot005_anova <- plot_ly()
-
-  # Violinplot
-  for (k in 1:n_levels){
-
-    # Selected values
-    selected_level <- all_levels[k]
-    selected_color <- all_color[k]
-    dt_filas <- minibase_mod[,2] == selected_level
-
-    # Plotting selected violinplot
-    plot005_anova <- plot005_anova %>%
-      add_trace(x = minibase_mod[,2][dt_filas],
-                y = minibase_mod[,1][dt_filas],
-                type = "violin",
-                name = paste0("violin", k),
-                points = "all",
-                marker = list(color = selected_color),
-                line = list(color = selected_color),
-                fillcolor = I(selected_color)
-
-      )
-
-
-  }
-
-
-
-
-  # Boxplot
-  plot005_anova <- plotly::add_trace(p = plot005_anova,
-                                     type = "box",
-                                     name = "boxplot",
-                                     x = df_plot005_table$level ,
-                                     color = df_plot005_table$level ,
-                                     lowerfence = df_plot005_table$min,
-                                     q1 = df_plot005_table$Q1,
-                                     median = df_plot005_table$median,
-                                     q3 = df_plot005_table$Q3,
-                                     upperfence = df_plot005_table$max,
-                                     boxmean = TRUE,
-                                     boxpoints = TRUE,
-                                     fillcolor = df_plot005_table$color,
-                                     line = list(color = "black", width = 3),
-                                     opacity = 0.5,
-                                     width = 0.2)
-
-
-  # # # Title and settings...
-  plot005_anova <- plotly::layout(p = plot005_anova,
-                                  title = "Plot 005 - Violinplot",
-                                  font = list(size = 20),
-                                  margin = list(t = 100))
-
-
-  # # # Without zerolines...
-  plot005_anova <- plotly::layout(p = plot005_anova,
-                                  xaxis = list(zeroline = FALSE),
-                                  yaxis = list(zeroline = FALSE))
-
-  # # # Output plot003_anova...
-  plot005_anova
-
-
-}
-
-
-cpiA001_anova1way_plot006 <- function(minibase_mod, df_plot006_table){
-
-
-
-
-  #library(plotly)
-  plot006_anova <- plotly::plot_ly()
-
-  # Add traces
-  plot006_anova <- plotly::add_trace(p = plot006_anova,
-                                     type = "violin",
-                                     y = minibase_mod$VR,
-                                     x = minibase_mod$FACTOR,
-                                     showlegend = TRUE,
-                                     side = "positive",
-                                     points = "all",
-                                     name = "Violinplot",
-                                     color = minibase_mod$FACTOR,
-                                     colors = df_plot006_table$color)
-
-
-
-  # # # Title and settings...
-  plot006_anova <- plotly::layout(p = plot006_anova,
-                                  title = "Plot 006 - Scatterplot + Jitter +  Smoothed",
-                                  font = list(size = 20),
-                                  margin = list(t = 100))
-
-
-  # # # Without zerolines...
-  plot006_anova <- plotly::layout(p = plot006_anova,
-                                  xaxis = list(zeroline = FALSE),
-                                  yaxis = list(zeroline = FALSE))
-
-  # # # Output plot003_anova...
-  plot006_anova
-
-
-}
-
-
-
-
-
-cpiA001_anova1way_plot007 <- function(minibase_mod, df_factor_info){
-
-  # # # Create a new plot...
-  plot007_anova <- plotly::plot_ly()
-
-  # # # Plot001 - Scatter plot for VR and FACTOR on minibase_mod *****************
-  plot007_anova <- plotly::add_trace(p = plot007_anova,
-                                     type = "scatter",
-                                     mode = "markers",
-                                     x = minibase_mod$FACTOR,
-                                     y = minibase_mod$residuals,
-                                     color = minibase_mod$FACTOR,
-                                     colors = df_factor_info$color,
-                                     marker = list(size = 15, opacity = 0.7))
-
-  # # # Title and settings...
-  plot007_anova <-   plotly::layout(p = plot007_anova,
-                                    title = "Plot 007 - Scatterplot - Residuals",
-                                    font = list(size = 20),
-                                    margin = list(t = 100))
-
-
-  # # # Without zerolines
-  plot007_anova <-   plotly::layout(p = plot007_anova,
-                                    xaxis = list(zeroline = FALSE),
-                                    yaxis = list(zeroline = TRUE))
-
-
-  # # # Plot output
-  plot007_anova
-
-}
-
-
-cpiA001_anova1way_plot008 <- function(minibase_mod, df_plot006_table){
-
-
-
-
-  #library(plotly)
-  plot006_anova <- plotly::plot_ly()
-
-  # Add traces
-  plot006_anova <- plotly::add_trace(p = plot006_anova,
-                                     type = "violin",
-                                     y = minibase_mod$residuals,
-                                     x = minibase_mod$FACTOR,
-                                     showlegend = TRUE,
-                                     side = "positive",
-                                     points = "all",
-                                     name = "Violinplot",
-                                     color = minibase_mod$FACTOR,
-                                     colors = df_plot006_table$color)
-
-
-
-  # # # Title and settings...
-  plot006_anova <- plotly::layout(p = plot006_anova,
-                                  title = "Plot 008 - Resisualds - Scatterplot + Jitter +  Smoothed",
-                                  font = list(size = 20),
-                                  margin = list(t = 100))
-
-
-  # # # Without zerolines...
-  plot006_anova <- plotly::layout(p = plot006_anova,
-                                  xaxis = list(zeroline = FALSE),
-                                  yaxis = list(zeroline = FALSE))
-
-  # # # Output plot003_anova...
-  plot006_anova
-
-
-}
-
-
-cpiA001_anova1way_plot009 <- function(minibase_mod, df_factor_info){
-
-  # # # Create a new plot...
-  plot007_anova <- plotly::plot_ly()
-
-  # # # Plot001 - Scatter plot for VR and FACTOR on minibase_mod *****************
-  plot007_anova <- plotly::add_trace(p = plot007_anova,
-                                     type = "scatter",
-                                     mode = "markers",
-                                     x = minibase_mod$fitted.values,
-                                     y = minibase_mod$residuals,
-                                     color = minibase_mod$FACTOR,
-                                     colors = df_factor_info$color,
-                                     marker = list(size = 15, opacity = 0.7))
-
-  # # # Title and settings...
-  plot007_anova <-   plotly::layout(p = plot007_anova,
-                                    title = "Plot 009 - Scatterplot - Residuals vs Fitted.values",
-                                    font = list(size = 20),
-                                    margin = list(t = 100))
-
-
-  # # # Without zerolines
-  plot007_anova <-   plotly::layout(p = plot007_anova,
-                                    xaxis = list(zeroline = FALSE),
-                                    yaxis = list(zeroline = TRUE))
-
-
-  # # # Plot output
-  plot007_anova
-
-}
-
-
-
-cpiA001_anova1way_plot010 <- function(minibase_mod, df_factor_info){
-
-  # # # Create a new plot...
-  plot007_anova <- plotly::plot_ly()
-
-  # # # Plot001 - Scatter plot for VR and FACTOR on minibase_mod *****************
-  plot007_anova <- plotly::add_trace(p = plot007_anova,
-                                     type = "scatter",
-                                     mode = "markers",
-                                     x = minibase_mod$FACTOR,
-                                     y = minibase_mod$studres,
-                                     color = minibase_mod$FACTOR,
-                                     colors = df_factor_info$color,
-                                     marker = list(size = 15, opacity = 0.7))
-
-  # # # Title and settings...
-  plot007_anova <-   plotly::layout(p = plot007_anova,
-                                    title = "Plot 010 - Scatterplot - Studentized Residuals",
-                                    font = list(size = 20),
-                                    margin = list(t = 100))
-
-
-  # # # Without zerolines
-  plot007_anova <-   plotly::layout(p = plot007_anova,
-                                    xaxis = list(zeroline = FALSE),
-                                    yaxis = list(zeroline = TRUE))
-
-
-  # # # Plot output
-  plot007_anova
-
-}
-
-
-
-cpiA001_anova1way_plot011 <- function(minibase_mod, df_plot006_table){
-
-
-
-
-  #library(plotly)
-  plot006_anova <- plotly::plot_ly()
-
-  # Add traces
-  plot006_anova <- plotly::add_trace(p = plot006_anova,
-                                     type = "violin",
-                                     x = minibase_mod$residuals,
-                                     #x = minibase_mod$FACTOR,
-                                     showlegend = TRUE,
-                                     side = "positive",
-                                     points = "all",
-                                     name = "Violinplot")#
-  #color = minibase_mod$FACTOR,
-  #colors = df_plot006_table$color)
-
-
-
-  # # # Title and settings...
-  plot006_anova <- plotly::layout(p = plot006_anova,
-                                  title = "Plot 011 - Residuals",
-                                  font = list(size = 20),
-                                  margin = list(t = 100))
-
-
-  # # # Without zerolines...
-  plot006_anova <- plotly::layout(p = plot006_anova,
-                                  xaxis = list(zeroline = TRUE),
-                                  yaxis = list(zeroline = FALSE))
-
-  # # # Output plot003_anova...
-  plot006_anova
-
-
-}
-
-
-
-cpiA001_anova1way_plot012 <- function(minibase_mod, df_plot006_table){
-
-
-
-
-  #library(plotly)
-  plot006_anova <- plotly::plot_ly()
-
-  # Add traces
-  plot006_anova <- plotly::add_trace(p = plot006_anova,
-                                     type = "violin",
-                                     x = minibase_mod$studres,
-                                     #x = minibase_mod$FACTOR,
-                                     showlegend = TRUE,
-                                     side = "positive",
-                                     points = "all",
-                                     name = "Violinplot")#
-  #color = minibase_mod$FACTOR,
-  #colors = df_plot006_table$color)
-
-
-
-  # # # Title and settings...
-  plot006_anova <- plotly::layout(p = plot006_anova,
-                                  title = "Plot 012 - Studentized Residuals",
-                                  font = list(size = 20),
-                                  margin = list(t = 100))
-
-
-  # # # Without zerolines...
-  plot006_anova <- plotly::layout(p = plot006_anova,
-                                  xaxis = list(zeroline = TRUE),
-                                  yaxis = list(zeroline = FALSE))
-
-  # # # Output plot003_anova...
-  plot006_anova
-
-
-}
 
 
 
