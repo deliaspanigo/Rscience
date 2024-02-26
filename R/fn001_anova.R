@@ -59,23 +59,23 @@ cpiA001_anova1way_control_previous <- function(database, vr_var_name, factor_var
   # # # # # # Database
   # 1) Database can not be NULL
   if(is.null(database)){
-    stop("Error pre 001: Object 'database' can not be a NULL.")
+    stop("Control pre test 001: Object 'database' can not be a NULL.")
   }
 
   # 2) Database must be a dataframe
   if(!is.data.frame(database)){
-    stop("Error pre 002: Object 'database' must be a dataframe.")
+    stop("Control pre test 002: Object 'database' must be a dataframe.")
   }
 
   # 3) Database must has at least 2 columns
   if(!(ncol(database) >= 2)){
-    stop("Error pre 003: Object 'database' must has al least 2 columns.")
+    stop("Control pre test 003: Object 'database' must has al least 2 columns.")
   }
 
 
   # 4) Database must has at least 2 rows
   if(!(nrow(database) >= 2)){
-    stop("Error pre 004: Object 'database' must has al least 2 rows.")
+    stop("Control pre test 004: Object 'database' must has al least 2 rows.")
   }
 
 
@@ -84,65 +84,65 @@ cpiA001_anova1way_control_previous <- function(database, vr_var_name, factor_var
   # # # # # # # # vr_var_name
   # 5) vr_var_name is not NULL
   if(is.null(vr_var_name)){
-    stop("Error pre 005: Object 'vr_var_name' can not be NULL.")
+    stop("Control pre test 005: Object 'vr_var_name' can not be NULL.")
   }
 
   # 6) vr_var_name is a vector
   if(!is.vector(vr_var_name)){
-    stop("Error pre 006: Object 'vr_var_name' must be vector.")
+    stop("Control pre test 006: Object 'vr_var_name' must be vector.")
   }
 
   # 7) vr_var_name is a vector
   if(!(length(vr_var_name) == 1)){
-    stop("Error pre 007: Object 'vr_var_name' must be vector of length 1.")
+    stop("Control pre test 007: Object 'vr_var_name' must be vector of length 1.")
   }
 
   # 8) vr_var_name is not NA
   if(is.na(vr_var_name)){
-    stop("Error pre 008: Object 'vr_var_name' can not be NA.")
+    stop("Control pre test 008: Object 'vr_var_name' can not be NA.")
   }
 
   # 9) vr_var_name is character
   if(!is.character(vr_var_name)){
-    stop("Error pre 009: Object 'vr_var_name' must be character.")
+    stop("Control pre test 009: Object 'vr_var_name' must be character.")
   }
 
   # 15) factor_var_name is a colname from database
   if(!(vr_var_name %in% colnames(database))){
-    stop("Error pre 015: Object 'vr_var_name' must be a colname from database.")
+    stop("Control pre test 015: Object 'vr_var_name' must be a colname from database.")
   }
 
 
   # # # # # # # # factor_var_name
   # 10) factor_var_name is not NULL
   if(is.null(factor_var_name)){
-    stop("Error pre 010: Object 'factor_var_name' can not be NULL.")
+    stop("Control pre test 010: Object 'factor_var_name' can not be NULL.")
   }
 
   # 11) factor_var_name is a vector
   if(!is.vector(factor_var_name)){
-    stop("Error pre 011: Object 'factor_var_name' must be vector.")
+    stop("Control pre test 011: Object 'factor_var_name' must be vector.")
   }
 
   # 12) factor_var_name is a vector
   if(!(length(factor_var_name) == 1)){
-    stop("Error pre 012: Object 'factor_var_name' must be vector of length 1.")
+    stop("Control pre test 012: Object 'factor_var_name' must be vector of length 1.")
   }
 
   # 13) factor_var_name is not NA
   if(is.na(factor_var_name)){
-    stop("Error pre 013: Object 'factor_var_name' can not be NA.")
+    stop("Control pre test 013: Object 'factor_var_name' can not be NA.")
   }
 
   # 14) factor_var_name is character
   if(!is.character(factor_var_name)){
-    stop("Error pre 014: Object 'factor_var_name' must be character.")
+    stop("Control pre test 014: Object 'factor_var_name' must be character.")
   }
 
 
   # 15) factor_var_name is a colname from database
   if(!(factor_var_name %in% colnames(database))){
-    stop("Error pre 015: Object 'factor_var_name' must be a colname from database.")
+    stop("Control pre test 015: Object 'factor_var_name' must be a colname from database.")
   }
 
 
@@ -151,33 +151,33 @@ cpiA001_anova1way_control_previous <- function(database, vr_var_name, factor_var
   # # # # # # # # alpha_value
   # 16) alpha_value is not NULL
   if(is.null(alpha_value)){
-    stop("Error pre 016: Object 'alpha_value' can not be NULL.")
+    stop("Control pre test 016: Object 'alpha_value' can not be NULL.")
   }
 
   # 17) alpha_value is a vector
   if(!is.vector(alpha_value)){
-    stop("Error pre 017: Object 'alpha_value' must be vector.")
+    stop("Control pre test 017: Object 'alpha_value' must be vector.")
   }
 
   # 18) alpha_value is a vector
   if(!(length(alpha_value) == 1)){
-    stop("Error pre 018: Object 'alpha_value' must be vector of length 1.")
+    stop("Control pre test 018: Object 'alpha_value' must be vector of length 1.")
   }
 
   # 19) alpha_value is not NA
   if(is.na(alpha_value)){
-    stop("Error pre 019: Object 'alpha_value' can not be NA.")
+    stop("Control pre test 019: Object 'alpha_value' can not be NA.")
   }
 
   # 20) alpha_value is numeric
   if(!is.numeric(alpha_value)){
-    stop("Error pre 014: Object 'alpha_value' must be numeric.")
+    stop("Control pre test 014: Object 'alpha_value' must be numeric.")
   }
 
 
   # 20) alpha_value is between 0 and 1
   if(!(alpha_value >= 0 && alpha_value <= 1)){
-    stop("Error pre 014: Object 'alpha_value' must be a number between 0 and 1.")
+    stop("Control pre test 014: Object 'alpha_value' must be a number between 0 and 1.")
   }
 
 
@@ -185,7 +185,7 @@ cpiA001_anova1way_control_previous <- function(database, vr_var_name, factor_var
   # # # # # # # # factor_var_name and vr_var_name
   # 15) factor_var_name is not NULL
   if(vr_var_name == factor_var_name){
-    stop("Error pre 015: Objects 'vr_var_name' and 'factor_var_name' can not be equal.")
+    stop("Control pre test 015: Objects 'vr_var_name' and 'factor_var_name' can not be equal.")
   }
 
 
@@ -193,7 +193,7 @@ cpiA001_anova1way_control_previous <- function(database, vr_var_name, factor_var
   vector_var_names <- c(vr_var_name, factor_var_name)
 
   if(sum(vector_var_names %in% colnames(database)) != 2){
-    stop("Error pre 015: Objects 'vr_var_name' and 'factor_var_name' must be colnames from database.")
+    stop("Control pre test 015: Objects 'vr_var_name' and 'factor_var_name' must be colnames from database.")
   }
 
 
@@ -208,46 +208,46 @@ cpiA001_anova1way_control_previous <- function(database, vr_var_name, factor_var
   # # # # # # minibase
   # 1) minibase can not be NULL
   if(is.null(minibase)){
-    stop("Error pre 001: Object 'minibase' can not be a NULL.")
+    stop("Control pre test 001: Object 'minibase' can not be a NULL.")
   }
 
   # 2) minibase must be a dataframe
   if(!is.data.frame(minibase)){
-    stop("Error pre 002: Object 'minibase' must be a dataframe.")
+    stop("Control pre test 002: Object 'minibase' must be a dataframe.")
   }
 
   # 3) minibase must has at exactly 2 columns
   if(!(ncol(minibase) == 2)){
-    stop("Error pre 003: Object 'minibase' must has exactly 2 columns.")
+    stop("Control pre test 003: Object 'minibase' must has exactly 2 columns.")
   }
 
 
   # 4) minibase must has at least 2 rows
   if(!(nrow(minibase) >= 2)){
-    stop("Error pre 004: Object 'database' must has al least 2 rows.")
+    stop("Control pre test 004: Object 'database' must has al least 2 rows.")
   }
 
 
   # 4) minibase$VR can not be constant
   if(var(minibase$VR) == 0){
-    stop("Error pre 004: Object 'minibase$VR' can not be constant.")
+    stop("Control pre test 004: Object 'minibase$VR' can not be constant.")
   }
 
   # 4) minibase$VR can not be constant
   if(length(unique(as.character(minibase$VR))) == 1){
-    stop("Error pre 004: Object 'minibase$VR' can not be constant.")
+    stop("Control pre test 004: Object 'minibase$VR' can not be constant.")
   }
 
 
   # 4) minibase$VR can not be constant
   if(length(unique(as.character(minibase$VR))) == 1){
-    stop("Error pre 004: Object 'minibase$VR' can not be constant.")
+    stop("Control pre test 004: Object 'minibase$VR' can not be constant.")
   }
 
 
   # Al least 2 levels in minibase$FACTOR
   if(!(nlevels(minibase$FACTOR) >= 2)){
-    stop("Error pre 004: FACTOR must has al least 2 levels.")
+    stop("Control pre test 004: FACTOR must has al least 2 levels.")
   }
 
 
@@ -257,7 +257,7 @@ cpiA001_anova1way_control_previous <- function(database, vr_var_name, factor_var
   dt_reps_level <- reps_level >= 2
   check_01 <- sum(dt_reps_level) == length(dt_reps_level)
   if(!check_01){
-    stop("Error pre 004: On minibase from FACTOR each level must has al least 2 reps.")
+    stop("Control pre test 004: On minibase from FACTOR each level must has al least 2 reps.")
   }
 
 
@@ -266,7 +266,7 @@ cpiA001_anova1way_control_previous <- function(database, vr_var_name, factor_var
   dt_vars_level <- reps_level > 0
   check_02 <- sum(dt_vars_level) ==  length(dt_vars_level)
   if(!check_02){
-    stop("Error pre 004: On minibase from FACTOR each level can not be constant.
+    stop("Control pre test 004: On minibase from FACTOR each level can not be constant.
          On each level variance must be greater than zero.")
   }
 
@@ -278,7 +278,7 @@ cpiA001_anova1way_control_previous <- function(database, vr_var_name, factor_var
   dt_ndata_level <- ndata_level >= 2
   check_03 <- sum(dt_ndata_level) == length(dt_ndata_level)
   if(!check_03){
-    stop("Error pre 004: On minibase from FACTOR each level must not be constant.")
+    stop("Control pre test 004: On minibase from FACTOR each level must not be constant.")
   }
 
 
@@ -287,12 +287,288 @@ cpiA001_anova1way_control_previous <- function(database, vr_var_name, factor_var
 
 }
 
+cpiA001_anova1way_control_previous2 <- function(database, vr_var_name, factor_var_name, alpha_value){
+
+  dt_ok <- FALSE
+
+  # # # # # # Database
+  # 1) Database can not be NULL
+  if(is.null(database)){
+    text_output <- "Control pre test 001: Object 'database' can not be a NULL."
+    return(Hmisc::llist(dt_ok, text_output))
+  }
+
+  # 2) Database must be a dataframe
+  if(!is.data.frame(database)){
+    text_output <- "Control pre test 002: Object 'database' must be a dataframe."
+    return(Hmisc::llist(dt_ok, text_output))
+  }
+
+  # 3) Database must has at least 2 columns
+  if(!(ncol(database) >= 2)){
+    text_output <- "Control pre test 003: Object 'database' must has al least 2 columns."
+    return(Hmisc::llist(dt_ok, text_output))
+  }
+
+
+  # 4) Database must has at least 2 rows
+  if(!(nrow(database) >= 2)){
+    text_output <- "Control pre test 004: Object 'database' must has al least 2 rows."
+    return(Hmisc::llist(dt_ok, text_output))
+  }
+
+
+
+
+  # # # # # # # # vr_var_name
+  # 5) vr_var_name is not NULL
+  if(is.null(vr_var_name)){
+    text_output <- "Control pre test 005: Object 'vr_var_name' can not be NULL."
+    return(Hmisc::llist(dt_ok, text_output))
+  }
+
+  # 6) vr_var_name is a vector
+  if(!is.vector(vr_var_name)){
+    text_output <- "Control pre test 006: Object 'vr_var_name' must be vector."
+    return(Hmisc::llist(dt_ok, text_output))
+  }
+
+  # 7) vr_var_name is a vector
+  if(!(length(vr_var_name) == 1)){
+    text_output <- "Control pre test 007: Object 'vr_var_name' must be vector of length 1."
+    return(Hmisc::llist(dt_ok, text_output))
+  }
+
+  # 8) vr_var_name is not NA
+  if(is.na(vr_var_name)){
+    text_output <- "Control pre test 008: Object 'vr_var_name' can not be NA."
+    return(Hmisc::llist(dt_ok, text_output))
+  }
+
+  # 9) vr_var_name is character
+  if(!is.character(vr_var_name)){
+    text_output <- "Control pre test 009: Object 'vr_var_name' must be character."
+    return(Hmisc::llist(dt_ok, text_output))
+  }
+
+  # 15) factor_var_name is a colname from database
+  if(!(vr_var_name %in% colnames(database))){
+    text_output <- "Control pre test 010: Object 'vr_var_name' must be a colname from database."
+    return(Hmisc::llist(dt_ok, text_output))
+  }
+
+
+  # # # # # # # # factor_var_name
+  # 10) factor_var_name is not NULL
+  if(is.null(factor_var_name)){
+    text_output <- "Control pre test 011: Object 'factor_var_name' can not be NULL."
+    return(Hmisc::llist(dt_ok, text_output))
+  }
+
+  # 11) factor_var_name is a vector
+  if(!is.vector(factor_var_name)){
+    text_output <- "Control pre test 012: Object 'factor_var_name' must be vector."
+    return(Hmisc::llist(dt_ok, text_output))
+  }
+
+  # 12) factor_var_name is a vector
+  if(!(length(factor_var_name) == 1)){
+    text_output <- "Control pre test 013: Object 'factor_var_name' must be vector of length 1."
+    return(Hmisc::llist(dt_ok, text_output))
+  }
+
+  # 13) factor_var_name is not NA
+  if(is.na(factor_var_name)){
+    text_output <- "Control pre test 014: Object 'factor_var_name' can not be NA."
+    return(Hmisc::llist(dt_ok, text_output))
+  }
+
+  # 14) factor_var_name is character
+  if(!is.character(factor_var_name)){
+    text_output <- "Control pre test 015: Object 'factor_var_name' must be character."
+    return(Hmisc::llist(dt_ok, text_output))
+  }
+
+
+  # 15) factor_var_name is a colname from database
+  if(!(factor_var_name %in% colnames(database))){
+    text_output <- "Control pre test 016: Object 'factor_var_name' must be a colname from database."
+    return(Hmisc::llist(dt_ok, text_output))
+  }
+
+
+
+
+  # # # # # # # # alpha_value
+  # 16) alpha_value is not NULL
+  if(is.null(alpha_value)){
+    text_output <- "Control pre test 017: Object 'alpha_value' can not be NULL."
+    return(Hmisc::llist(dt_ok, text_output))
+  }
+
+  # 17) alpha_value is a vector
+  if(!is.vector(alpha_value)){
+    text_output <- "Control pre test 018: Object 'alpha_value' must be vector."
+    return(Hmisc::llist(dt_ok, text_output))
+  }
+
+  # 18) alpha_value is a vector
+  if(!(length(alpha_value) == 1)){
+    text_output <- "Control pre test 019: Object 'alpha_value' must be vector of length 1."
+    return(Hmisc::llist(dt_ok, text_output))
+  }
+
+  # 19) alpha_value is not NA
+  if(is.na(alpha_value)){
+    text_output <- "Control pre test 020: Object 'alpha_value' can not be NA."
+    return(Hmisc::llist(dt_ok, text_output))
+  }
+
+  # 20) alpha_value is numeric
+  if(!is.numeric(alpha_value)){
+    text_output <- "Control pre test 021: Object 'alpha_value' must be numeric."
+    return(Hmisc::llist(dt_ok, text_output))
+  }
+
+
+  # 20) alpha_value is between 0 and 1
+  if(!(alpha_value >= 0 && alpha_value <= 1)){
+    text_output <- "Control pre test 022: Object 'alpha_value' must be a number between 0 and 1."
+    return(Hmisc::llist(dt_ok, text_output))
+  }
+
+
+
+  # # # # # # # # factor_var_name and vr_var_name
+  # 15) factor_var_name is not NULL
+  if(vr_var_name == factor_var_name){
+    text_output <- "Control pre test 023: Objects 'vr_var_name' and 'factor_var_name' can not be equal."
+    return(Hmisc::llist(dt_ok, text_output))
+  }
+
+
+  # New object
+  vector_var_names <- c(vr_var_name, factor_var_name)
+
+  if(sum(vector_var_names %in% colnames(database)) != 2){
+    text_output <- "Control pre test 024: Objects 'vr_var_name' and 'factor_var_name' must be colnames from database."
+    return(Hmisc::llist(dt_ok, text_output))
+  }
+
+
+
+  # # # # # # # # # # # minibase
+  minibase <- na.omit(database[vector_var_names])
+  minibase[,2] <- as.factor(minibase[,2])
+  colnames(minibase) <- c("VR", "FACTOR")
+
+
+
+    # # # # # # minibase
+    # 1) minibase can not be NULL
+    if(is.null(minibase)){
+      text_output <- "Control pre test 025: Object 'minibase' can not be a NULL."
+      return(Hmisc::llist(dt_ok, text_output))
+    }
+
+    # 2) minibase must be a dataframe
+    if(!is.data.frame(minibase)){
+      text_output <- "Control pre test 026: Object 'minibase' must be a dataframe."
+      return(Hmisc::llist(dt_ok, text_output))
+    }
+
+    # 3) minibase must has at exactly 2 columns
+    if(!(ncol(minibase) == 2)){
+      text_output <- "Control pre test 027: Object 'minibase' must has exactly 2 columns."
+      return(Hmisc::llist(dt_ok, text_output))
+    }
+
+
+    # 4) minibase must has at least 2 rows
+    if(!(nrow(minibase) >= 2)){
+      text_output <- "Control pre test 028: Object 'database' must has al least 2 rows."
+      return(Hmisc::llist(dt_ok, text_output))
+    }
+
+
+    # 4) minibase$VR can not be constant
+    if(var(minibase$VR) == 0){
+      text_output <- "Control pre test 029: Object 'minibase$VR' can not be constant."
+      return(Hmisc::llist(dt_ok, text_output))
+    }
+
+    # 4) minibase$VR can not be constant
+    if(length(unique(as.character(minibase$VR))) == 1){
+      text_output <- "Control pre test 030: Object 'minibase$VR' can not be constant."
+      return(Hmisc::llist(dt_ok, text_output))
+    }
+
+
+    # 4) minibase$VR can not be constant
+    if(length(unique(as.character(minibase$VR))) == 1){
+      text_output <- "Control pre test 031: Object 'minibase$VR' can not be constant."
+      return(Hmisc::llist(dt_ok, text_output))
+    }
+
+
+    # Al least 2 levels in minibase$FACTOR
+    if(!(nlevels(minibase$FACTOR) >= 2)){
+      text_output <- "Control pre test 032: FACTOR must has al least 2 levels."
+      return(Hmisc::llist(dt_ok, text_output))
+    }
+
+
+
+    # Al least 2 reps in each level
+    reps_level <- tapply(minibase$VR, minibase$FACTOR, length)
+    dt_reps_level <- reps_level >= 2
+    check_01 <- sum(dt_reps_level) == length(dt_reps_level)
+    if(!check_01){
+      text_output <- "Control pre test 033: On minibase from FACTOR each level must has al least 2 reps."
+      return(Hmisc::llist(dt_ok, text_output))
+    }
+
+
+    # var greater than zero from each level
+    vars_level <- tapply(minibase$VR, minibase$FACTOR, var)
+    dt_vars_level <- reps_level > 0
+    check_02 <- sum(dt_vars_level) ==  length(dt_vars_level)
+    if(!check_02){
+      text_output <- "Control pre test 034: On minibase from FACTOR each level can not be constant.
+On each level variance must be greater than zero."
+      return(Hmisc::llist(dt_ok, text_output))
+    }
+
+
+    # At least 2 differents values from each level
+    ndata_level <- tapply(minibase$VR, minibase$FACTOR, function(x){
+      length(unique(as.character(x)))
+    })
+    dt_ndata_level <- ndata_level >= 2
+    check_03 <- sum(dt_ndata_level) == length(dt_ndata_level)
+    if(!check_03){
+      text_output <- "Control pre test 035: On minibase from FACTOR each level must not be constant."
+      return(Hmisc::llist(dt_ok, text_output))
+    }
+
+
+    # Final!
+    dt_ok <- TRUE
+    text_output <- ""
+    return(Hmisc::llist(dt_ok, text_output))
+
+
+
+}
+
+
+
 
 # Control post
 cpiA001_anova1way_control_post <- function(list_results_from_cpiA001_anova1way){
 
   if(is.null(list_results_from_cpiA001_anova1way)){
-    stop("Error post 001: Object 'list_results_from_cpiA001_anova1way' can not be NULL.")
+    stop("Control post test 001: Object 'list_results_from_cpiA001_anova1way' can not be NULL.")
   }
 
 
@@ -302,13 +578,13 @@ cpiA001_anova1way_control_post <- function(list_results_from_cpiA001_anova1way){
 
 
   if(!(obj_name01 %in% names(list_results_from_cpiA001_anova1way))){
-    stop("Error post 001: Object 'df_table_anova' doesn't exist in 'list_results_from_cpiA001_anova1way'.")
+    stop("Control post test 001: Object 'df_table_anova' doesn't exist in 'list_results_from_cpiA001_anova1way'.")
   }
 
 
   # # # 1) About the table
   if(is.null(list_results_from_cpiA001_anova1way[obj_name01])){
-    text_output <- "Error post 001: Object '_obj_name01_' can not be NULL."
+    text_output <- "Control post test 001: Object '_obj_name01_' can not be NULL."
     text_output <- gsub("_obj_name01_", "obj_name01", text_output)
     stop(text_output)
   }
@@ -318,28 +594,28 @@ cpiA001_anova1way_control_post <- function(list_results_from_cpiA001_anova1way){
 
 
   if(!identical(spected_col_names, colnames(selected_obj01))){
-    text_output <- "Error post 002: Object '_obj_name01_' has unexpected column names."
+    text_output <- "Control post test 002: Object '_obj_name01_' has unexpected column names."
     text_output <- gsub("_obj_name01_", "obj_name01", text_output)
     stop(text_output)
   }
 
 
   if(!is.data.frame(selected_obj01)){
-    text_output <- "Error post 002: Object '_obj_name01_' must be a data.frame."
+    text_output <- "Control post test 002: Object '_obj_name01_' must be a data.frame."
     text_output <- gsub("_obj_name01_", "obj_name01", text_output)
     stop(text_output)
   }
 
 
   if(nrow(selected_obj01) != 2){
-    text_output <- "Error post 002: Object '_obj_name01_' must has 2 rows."
+    text_output <- "Control post test 002: Object '_obj_name01_' must has 2 rows."
     text_output <- gsub("_obj_name01_", "obj_name01", text_output)
     stop(text_output)
   }
 
 
   if(ncol(selected_obj01) != 5){
-    text_output <- "Error post 002: Object '_obj_name01_' must has 5 cols."
+    text_output <- "Control post test 002: Object '_obj_name01_' must has 5 cols."
     text_output <- gsub("_obj_name01_", "obj_name01", text_output)
     stop(text_output)
   }
@@ -350,25 +626,25 @@ cpiA001_anova1way_control_post <- function(list_results_from_cpiA001_anova1way){
   # # # 2) About Degree of Fredom
   vector_df <- selected_obj01$Df
   if(!is.vector(vector_df)){
-    text_output <- "Error post 002: internal object 'vector_df' must be vector."
+    text_output <- "Control post test 002: internal object 'vector_df' must be vector."
     stop(text_output)
   }
 
 
   if(!is.numeric(vector_df)){
-    text_output <- "Error post 002: Column 'Df' must contain only numbers."
+    text_output <- "Control post test 002: Column 'Df' must contain only numbers."
     stop(text_output)
   }
 
 
   if(sum(is.na(vector_df)) != 0){
-    text_output <- "Error post 002: Column 'Df' cannot contain NA values."
+    text_output <- "Control post test 002: Column 'Df' cannot contain NA values."
     stop(text_output)
   }
 
 
   if(sum(vector_df == 0) != 0){
-    text_output <- "Error post 002: Column 'Df' cannot contain 0 as value."
+    text_output <- "Control post test 002: Column 'Df' cannot contain 0 as value."
     stop(text_output)
   }
 
@@ -380,25 +656,25 @@ cpiA001_anova1way_control_post <- function(list_results_from_cpiA001_anova1way){
   vector_sum_sq <- selected_obj01$`Sum Sq`
 
   if(!is.vector(vector_sum_sq)){
-    text_output <- "Error post 002: internal object 'vector_sum_sq' must be vector."
+    text_output <- "Control post test 002: internal object 'vector_sum_sq' must be vector."
     stop(text_output)
   }
 
 
   if(!is.numeric(vector_sum_sq)){
-    text_output <- "Error post 002: Column 'Sum Sq' must contain only numbers."
+    text_output <- "Control post test 002: Column 'Sum Sq' must contain only numbers."
     stop(text_output)
   }
 
 
   if(sum(is.na(vector_sum_sq)) != 0){
-    text_output <- "Error post 002: Column 'Sum Sq' cannot contain NA values."
+    text_output <- "Control post test 002: Column 'Sum Sq' cannot contain NA values."
     stop(text_output)
   }
 
 
   if(sum(vector_sum_sq == 0) != 0){
-    text_output <- "Error post 002: Column 'Sum Sq' cannot contain 0 as value."
+    text_output <- "Control post test 002: Column 'Sum Sq' cannot contain 0 as value."
     stop(text_output)
   }
 
@@ -408,23 +684,23 @@ cpiA001_anova1way_control_post <- function(list_results_from_cpiA001_anova1way){
   vector_mean_sq <- selected_obj01$`Mean Sq`
 
   if(!is.vector(vector_mean_sq)){
-    text_output <- "Error post 002: internal object 'vector_mean_sq' must be vector."
+    text_output <- "Control post test 002: internal object 'vector_mean_sq' must be vector."
     stop(text_output)
   }
 
   if(!is.numeric(vector_mean_sq)){
-    text_output <- "Error post 002: Column 'Mean Sq' must contain only numbers."
+    text_output <- "Control post test 002: Column 'Mean Sq' must contain only numbers."
     stop(text_output)
   }
 
   if(sum(is.na(vector_mean_sq)) != 0){
-    text_output <- "Error post 002: Column 'Mean Sq' cannot contain NA values."
+    text_output <- "Control post test 002: Column 'Mean Sq' cannot contain NA values."
     stop(text_output)
   }
 
 
   if(sum(vector_mean_sq == 0) != 0){
-    text_output <- "Error post 002: Column 'Mean Sq' cannot contain 0 as value."
+    text_output <- "Control post test 002: Column 'Mean Sq' cannot contain 0 as value."
     stop(text_output)
   }
 
@@ -434,34 +710,34 @@ cpiA001_anova1way_control_post <- function(list_results_from_cpiA001_anova1way){
   vector_f_value <- selected_obj01$`F value`
 
   if(!is.vector(vector_f_value)){
-    text_output <- "Error post 002: internal object 'vector_f_value' must has vector."
+    text_output <- "Control post test 002: internal object 'vector_f_value' must has vector."
     stop(text_output)
   }
 
   if(!is.numeric(vector_f_value)){
-    text_output <- "Error post 002: Column 'F value' must be numeric."
+    text_output <- "Control post test 002: Column 'F value' must be numeric."
     stop(text_output)
   }
 
   if(sum(!is.na(vector_f_value)) != 1){
-    text_output <- "Error post 002: Column 'F value' must contain only 1 pvalue."
+    text_output <- "Control post test 002: Column 'F value' must contain only 1 pvalue."
     stop(text_output)
   }
 
   if(is.na(vector_f_value[1])){
-    text_output <- "Error post 002: Column 'F value', for FACTOR cannot be NA."
+    text_output <- "Control post test 002: Column 'F value', for FACTOR cannot be NA."
     stop(text_output)
   }
 
   if(!(vector_f_value[1] > 0)){
-    text_output <- "Error post 002: Column 'F value', for FACTOR f value must be a number greater than zero."
+    text_output <- "Control post test 002: Column 'F value', for FACTOR f value must be a number greater than zero."
     stop(text_output)
   }
 
 
 
   if(!is.na(vector_f_value[2])){
-    text_output <- "Error post 002: Column 'F value', for Residuals f value must be NA."
+    text_output <- "Control post test 002: Column 'F value', for Residuals f value must be NA."
     stop(text_output)
   }
 
@@ -471,35 +747,35 @@ cpiA001_anova1way_control_post <- function(list_results_from_cpiA001_anova1way){
   vector_p_value <- selected_obj01$`Pr(>F)`
 
   if(!is.vector(vector_p_value)){
-    text_output <- "Error post 002: internal object 'vector_p_value' must has vector."
+    text_output <- "Control post test 002: internal object 'vector_p_value' must has vector."
     stop(text_output)
   }
 
   if(!is.numeric(vector_p_value)){
-    text_output <- "Error post 002: Column 'Pr(>F)' must be numeric."
+    text_output <- "Control post test 002: Column 'Pr(>F)' must be numeric."
     stop(text_output)
   }
 
   if(sum(!is.na(vector_p_value)) != 1){
-    text_output <- "Error post 002: Column 'Pr(>F)' must contain only 1 pvalue."
+    text_output <- "Control post test 002: Column 'Pr(>F)' must contain only 1 pvalue."
     text_output <- gsub("_obj_name01_", "obj_name01", text_output)
     stop(text_output)
   }
 
   if(is.na(vector_p_value[1])){
-    text_output <- "Error post 002: Column 'Pr(>F)', for FACTOR cannot be NA."
+    text_output <- "Control post test 002: Column 'Pr(>F)', for FACTOR cannot be NA."
     stop(text_output)
   }
 
   if(!(vector_p_value[1] >= 0 && vector_p_value[1] <= 1)){
-    text_output <- "Error post 002: Column 'Pr(>F)', for FACTOR pvalue must be a number between 0 and 1."
+    text_output <- "Control post test 002: Column 'Pr(>F)', for FACTOR pvalue must be a number between 0 and 1."
     stop(text_output)
   }
 
 
 
   if(!is.na(vector_p_value[2])){
-    text_output <- "Error post 002: Column 'Pr(>F)', for Residuals pvalue must be NA."
+    text_output <- "Control post test 002: Column 'Pr(>F)', for Residuals pvalue must be NA."
     text_output <- gsub("_obj_name01_", "obj_name01", text_output)
     stop(text_output)
   }
@@ -507,6 +783,263 @@ cpiA001_anova1way_control_post <- function(list_results_from_cpiA001_anova1way){
 
 
   return(TRUE)
+
+}
+
+
+cpiA001_anova1way_control_post2 <- function(list_results_from_cpiA001_anova1way){
+
+  if(is.null(list_results_from_cpiA001_anova1way)){
+    text_output <- "Control post test 001: Object 'list_results_from_cpiA001_anova1way' can not be NULL."
+    check_ok <- FALSE
+    return(Hmisc::llist(check_ok, text_output))
+  }
+
+
+
+  obj_name01 <- "df_table_anova"
+  spected_col_names <- c("Df", "Sum Sq", "Mean Sq", "F value", "Pr(>F)")
+
+
+  if(!(obj_name01 %in% names(list_results_from_cpiA001_anova1way))){
+    text_output <- "Control post test 002: Object 'df_table_anova' doesn't exist in 'list_results_from_cpiA001_anova1way'."
+    check_ok <- FALSE
+    return(Hmisc::llist(check_ok, text_output))
+  }
+
+
+  # # # 1) About the table
+  if(is.null(list_results_from_cpiA001_anova1way[obj_name01])){
+    text_output <- "Control post test 003: Object '_obj_name01_' can not be NULL."
+    text_output <- gsub("_obj_name01_", "obj_name01", text_output)
+    check_ok <- FALSE
+    return(Hmisc::llist(check_ok, text_output))
+  }
+
+
+  selected_obj01 <- list_results_from_cpiA001_anova1way[[obj_name01]]
+
+
+  if(!identical(spected_col_names, colnames(selected_obj01))){
+    text_output <- "Control post test 004: Object '_obj_name01_' has unexpected column names."
+    text_output <- gsub("_obj_name01_", "obj_name01", text_output)
+    check_ok <- FALSE
+    return(Hmisc::llist(check_ok, text_output))
+  }
+
+
+  if(!is.data.frame(selected_obj01)){
+    text_output <- "Control post test 005: Object '_obj_name01_' must be a data.frame."
+    text_output <- gsub("_obj_name01_", "obj_name01", text_output)
+    check_ok <- FALSE
+    return(Hmisc::llist(check_ok, text_output))
+  }
+
+
+  if(nrow(selected_obj01) != 2){
+    text_output <- "Control post test 006: Object '_obj_name01_' must has 2 rows."
+    text_output <- gsub("_obj_name01_", "obj_name01", text_output)
+    check_ok <- FALSE
+    return(Hmisc::llist(check_ok, text_output))
+  }
+
+
+  if(ncol(selected_obj01) != 5){
+    text_output <- "Control post test 007: Object '_obj_name01_' must has 5 cols."
+    text_output <- gsub("_obj_name01_", "obj_name01", text_output)
+    check_ok <- FALSE
+    return(Hmisc::llist(check_ok, text_output))
+  }
+
+
+
+
+  # # # 2) About Degree of Fredom
+  vector_df <- selected_obj01$Df
+  if(!is.vector(vector_df)){
+    text_output <- "Control post test 008: internal object 'vector_df' must be vector."
+    check_ok <- FALSE
+    return(Hmisc::llist(check_ok, text_output))
+  }
+
+
+  if(!is.numeric(vector_df)){
+    text_output <- "Control post test 009: Column 'Df' must contain only numbers."
+    check_ok <- FALSE
+    return(Hmisc::llist(check_ok, text_output))
+  }
+
+
+  if(sum(is.na(vector_df)) != 0){
+    text_output <- "Control post test 010: Column 'Df' cannot contain NA values."
+    check_ok <- FALSE
+    return(Hmisc::llist(check_ok, text_output))
+  }
+
+
+  if(sum(vector_df == 0) != 0){
+    text_output <- "Control post test 011: Column 'Df' cannot contain 0 as value."
+    check_ok <- FALSE
+    return(Hmisc::llist(check_ok, text_output))
+  }
+
+
+
+
+
+  # # # 3) Sum Sq
+  vector_sum_sq <- selected_obj01$`Sum Sq`
+
+  if(!is.vector(vector_sum_sq)){
+    text_output <- "Control post test 012: internal object 'vector_sum_sq' must be vector."
+    check_ok <- FALSE
+    return(Hmisc::llist(check_ok, text_output))
+  }
+
+
+  if(!is.numeric(vector_sum_sq)){
+    text_output <- "Control post test 013: Column 'Sum Sq' must contain only numbers."
+    check_ok <- FALSE
+    return(Hmisc::llist(check_ok, text_output))
+  }
+
+
+  if(sum(is.na(vector_sum_sq)) != 0){
+    text_output <- "Control post test 014: Column 'Sum Sq' cannot contain NA values."
+    check_ok <- FALSE
+    return(Hmisc::llist(check_ok, text_output))
+  }
+
+
+  if(sum(vector_sum_sq == 0) != 0){
+    text_output <- "Control post test 015: Column 'Sum Sq' cannot contain 0 as value."
+    check_ok <- FALSE
+    return(Hmisc::llist(check_ok, text_output))
+  }
+
+
+
+  # # # 4) Mean Sq
+  vector_mean_sq <- selected_obj01$`Mean Sq`
+
+  if(!is.vector(vector_mean_sq)){
+    text_output <- "Control post test 016: internal object 'vector_mean_sq' must be vector."
+    check_ok <- FALSE
+    return(Hmisc::llist(check_ok, text_output))
+  }
+
+  if(!is.numeric(vector_mean_sq)){
+    text_output <- "Control post test 017: Column 'Mean Sq' must contain only numbers."
+    check_ok <- FALSE
+    return(Hmisc::llist(check_ok, text_output))
+  }
+
+  if(sum(is.na(vector_mean_sq)) != 0){
+    text_output <- "Control post test 018: Column 'Mean Sq' cannot contain NA values."
+    check_ok <- FALSE
+    return(Hmisc::llist(check_ok, text_output))
+  }
+
+
+  if(sum(vector_mean_sq == 0) != 0){
+    text_output <- "Control post test 019: Column 'Mean Sq' cannot contain 0 as value."
+    check_ok <- FALSE
+    return(Hmisc::llist(check_ok, text_output))
+  }
+
+
+
+  # # # 4) F value
+  vector_f_value <- selected_obj01$`F value`
+
+  if(!is.vector(vector_f_value)){
+    text_output <- "Control post test 020: internal object 'vector_f_value' must has vector."
+    check_ok <- FALSE
+    return(Hmisc::llist(check_ok, text_output))
+  }
+
+  if(!is.numeric(vector_f_value)){
+    text_output <- "Control post test 021: Column 'F value' must be numeric."
+    check_ok <- FALSE
+    return(Hmisc::llist(check_ok, text_output))
+  }
+
+  if(sum(!is.na(vector_f_value)) != 1){
+    text_output <- "Control post test 022: Column 'F value' must contain only 1 pvalue."
+    check_ok <- FALSE
+    return(Hmisc::llist(check_ok, text_output))
+  }
+
+  if(is.na(vector_f_value[1])){
+    text_output <- "Control post test 023: Column 'F value', for FACTOR cannot be NA."
+    check_ok <- FALSE
+    return(Hmisc::llist(check_ok, text_output))
+  }
+
+  if(!(vector_f_value[1] > 0)){
+    text_output <- "Control post test 024: Column 'F value', for FACTOR f value must be a number greater than zero."
+    check_ok <- FALSE
+    return(Hmisc::llist(check_ok, text_output))
+  }
+
+
+
+  if(!is.na(vector_f_value[2])){
+    text_output <- "Control post test 025: Column 'F value', for Residuals f value must be NA."
+    check_ok <- FALSE
+    return(Hmisc::llist(check_ok, text_output))
+  }
+
+
+
+  # # # 5) p values
+  vector_p_value <- selected_obj01$`Pr(>F)`
+
+  if(!is.vector(vector_p_value)){
+    text_output <- "Control post test 026: internal object 'vector_p_value' must has vector."
+    check_ok <- FALSE
+    return(Hmisc::llist(check_ok, text_output))
+  }
+
+  if(!is.numeric(vector_p_value)){
+    text_output <- "Control post test 027: Column 'Pr(>F)' must be numeric."
+    check_ok <- FALSE
+    return(Hmisc::llist(check_ok, text_output))
+  }
+
+  if(sum(!is.na(vector_p_value)) != 1){
+    text_output <- "Control post test 028: Column 'Pr(>F)' must contain only 1 pvalue."
+    text_output <- gsub("_obj_name01_", "obj_name01", text_output)
+    check_ok <- FALSE
+    return(Hmisc::llist(check_ok, text_output))
+  }
+
+  if(is.na(vector_p_value[1])){
+    text_output <- "Control post test 029: Column 'Pr(>F)', for FACTOR cannot be NA."
+    check_ok <- FALSE
+    return(Hmisc::llist(check_ok, text_output))
+  }
+
+  if(!(vector_p_value[1] >= 0 && vector_p_value[1] <= 1)){
+    text_output <- "Control post test 030: Column 'Pr(>F)', for FACTOR pvalue must be a number between 0 and 1."
+    check_ok <- FALSE
+    return(Hmisc::llist(check_ok, text_output))
+  }
+
+
+
+  if(!is.na(vector_p_value[2])){
+    text_output <- "Control post test 031: Column 'Pr(>F)', for Residuals pvalue must be NA."
+    text_output <- gsub("_obj_name01_", "obj_name01", text_output)
+    check_ok <- FALSE
+    return(Hmisc::llist(check_ok, text_output))
+  }
+
+
+  # All OK!
+  check_ok <- TRUE
+  text_output <- ""
+  return(Hmisc::llist(check_ok, text_output))
 
 }
 
@@ -959,6 +1492,8 @@ cpiA001_anova1way_results <- function(database, vr_var_name, factor_var_name, al
   # # # Table for plot006
   df_table_residuals_plot006 <- df_table_factor_plot004
 
+
+  df_table_residuals_plot007 <- df_table_factor_plot004
 
   # --- # hide_: Proccesing objects order
   hide_correct_order <- cpiA001_anova1way_ObjNamesInOrder(selected_fn = cpiA001_anova1way_results)
@@ -1812,6 +2347,51 @@ cpiA001_anova1way_residuals_plot006 <- function(minibase_mod){
 }
 
 
+
+
+cpiA001_anova1way_residuals_plot007 <- function(minibase_mod){
+
+
+
+  set.seed(1000)
+  cuantiles_teoricos <- qnorm(ppoints(nrow(minibase_mod)))
+  cuantiles_observados <- quantile(minibase_mod$studres, ppoints(nrow(minibase_mod)))
+
+  #library(plotly)
+  plot007_residuals <- plotly::plot_ly()
+
+  # Crear el gráfico QQ plot
+  plot007_residuals <-add_trace(p = plot007_residuals,
+                                x = cuantiles_teoricos, y = cuantiles_observados, type = 'scatter', mode = 'markers',
+                                marker = list(color = 'blue'))
+
+  # Agregar la línea de identidad
+  pendiente <- 1
+  intercepto <- 0
+
+  # Calcular las coordenadas de los extremos de la línea de identidad
+  x_extremos <- range(cuantiles_teoricos)
+  y_extremos <- pendiente * x_extremos + intercepto
+
+  # Agregar la recta de identidad
+  plot007_residuals <- add_trace(p = plot007_residuals, x = x_extremos, y = y_extremos,
+                                 type = 'scatter', mode = 'lines', line = list(color = 'red'))
+
+
+  # Establecer etiquetas de los ejes
+  plot007_residuals <- layout(p = plot007_residuals, xaxis = list(title = 'Expected quantiles'),
+                              yaxis = list(title = 'Observed quantiles'))
+
+  plot007_residuals <- plotly::layout(p = plot007_residuals,
+                                      title = "Plot 007 - QQ Plot",
+                                      font = list(size = 20),
+                                      margin = list(t = 100))
+
+  # Mostrar el gráfico
+  plot007_residuals
+
+
+}
 
 
 

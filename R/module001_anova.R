@@ -352,25 +352,27 @@ module02_anova_s02_rscience_server <- function(id, input_general, input_01_anova
       # # # Control for initial inputs
       control_user_01 <- reactive({
 
+        check_previous <- FALSE
+
         validate(
           need(!is.null(input_general()), "Error 01: Module anova s02 - input_general can not be NULL."),
-          need(!is.null(input_01_anova()), "Error 02: Module anova s02 - iinput_01_anova can not be NULL.")
+          need(!is.null(input_01_anova()), "Error 02: Module anova s02 - input_01_anova can not be NULL.")
         )
 
+        check_previous <- cpiA001_anova1way_control_previous2(database = input_general()$database,
+                                                             vr_var_name = input_01_anova()$vr_var_name,
+                                                             factor_var_name = input_01_anova()$factor_var_name,
+                                                             alpha_value = input_01_anova()$alpha_value)
+
+        validate(
+          need(check_previous$dt_ok, check_previous$text_output)
+        )
         return(TRUE)
       })
 
 
       ####################################################################################
 
-      # RR - Control - Previous
-      RR_control_previous <- reactive({
-        check_previous <- cpiA001_anova1way_control_previous(database = input_general()$database,
-                                                             vr_var_name = input_01_anova()$vr_var_name,
-                                                             factor_var_name = input_01_anova()$factor_var_name,
-                                                             alpha_value = input_01_anova()$alpha_value)
-
-      })
 
       # # # All anova results
       RR_general <- reactive({
@@ -388,19 +390,36 @@ module02_anova_s02_rscience_server <- function(id, input_general, input_01_anova
       })
 
 
-      # RR - Control - Post
-      RR_control_post <- reactive({
-        req(RR_general())
-        check_post <- cpiA001_anova1way_control_post(list_results_from_cpiA001_anova1way = RR_general())
 
+      # # # Control for initial inputs
+      control_user_02 <- reactive({
+#
+         req(control_user_01())
+#
+        validate(
+          need(!is.null(RR_general()), "Error 03: Module anova s02 - RR_general() can not be NULL.")
+        )
+#
+#
+#
+#
+#         # Control post
+        check_post <- cpiA001_anova1way_control_post2(list_results_from_cpiA001_anova1way = RR_general())
+#
+        validate(
+          need(check_post$check_ok, check_post$text_output)
+        )
 
+        return(TRUE)
       })
+
+
 
 
       # RR - Tables
       RR_g01_tables <- reactive({
 
-        req(RR_general())
+        req(control_user_02())
         all_tables_g01 <- cpiA001_anova1way_recruit_g01_Tables(list_results_from_cpiA001_anova1way = RR_general())
         all_tables_g01
       })
@@ -409,7 +428,7 @@ module02_anova_s02_rscience_server <- function(id, input_general, input_01_anova
       # RR - Plots
       RR_g01_plots <- reactive({
 
-        req(RR_general())
+        req(control_user_02())
         all_plots_g01 <- cpiA001_anova1way_recruit_g01_FactorPlots(list_results_from_cpiA001_anova1way = RR_general())
         all_plots_g01
       })
@@ -420,7 +439,7 @@ module02_anova_s02_rscience_server <- function(id, input_general, input_01_anova
       # RR - Tables
       RR_g02_tables <- reactive({
 
-        req(RR_general())
+        req(control_user_02())
         all_tables_g02 <- cpiA001_anova1way_recruit_g02_Tables(list_results_from_cpiA001_anova1way = RR_general())
         all_tables_g02
       })
@@ -429,16 +448,14 @@ module02_anova_s02_rscience_server <- function(id, input_general, input_01_anova
       # RR - Plots
       RR_g02_plots <- reactive({
 
-        req(RR_general())
+        req(control_user_02())
         all_plots_g02 <- cpiA001_anova1way_recruit_g02_ResidualsPlots(list_results_from_cpiA001_anova1way = RR_general())
         all_plots_g02
       })
 
       RR_code <- reactive({
 
-        # intro_source_database <- list("file_source" = "R_example",
-        #                               "file_name" = "mtcars")
-        # The code
+        req(control_user_02())
         the_code <- cpiA001_anova1way_code_sectionALL(intro_source_database = input_01_anova()$intro_source_database,
                                                       vr_var_name = input_01_anova()$vr_var_name,
                                                       factor_var_name = input_01_anova()$factor_var_name,
@@ -447,17 +464,7 @@ module02_anova_s02_rscience_server <- function(id, input_general, input_01_anova
       })
 
       ####################################################################################
-      # # # Control for anova results object
-      control_user_02 <- reactive({
 
-        req(control_user_01())
-
-        validate(
-          need(!is.null(RR_general()), "Error 03: Module anova s02 - RR_general() can not be NULL.")        )
-
-        return(TRUE)
-
-      })
 
       observe({
       for (i in 1:length(RR_g01_plots())) {
@@ -629,700 +636,8 @@ module02_anova_s02_rscience_server <- function(id, input_general, input_01_anova
 
 
 
-      # Plot001 - Scatterplot
-      output$plot001 <- plotly::renderPlotly({
 
-        req(control_user_02())
 
-        anova_plot001 <- test001_anova_plot001(minibase_mod = RR_general()$minibase_mod,
-                               df_factor_info = RR_general()$df_factor_info)
-
-        anova_plot001
-
-      })
-      output$table_plot001_v01 <- renderPrint({
-
-        req(control_user_02())
-
-        my_lista <- RR_general()
-        vector_search <- "df_plot001_table"
-
-        # Filtered list
-        filtered_list <- my_lista[vector_search]
-
-        filtered_list
-
-      })
-      output$table_plot001_v02 <- plotly::renderPlotly({
-
-        req(control_user_02())
-
-        selected_table <- RR_general()$df_plot001_table
-
-
-        # Crear la tabla inicial con plotly
-        table_plot001 <- plot_ly(
-          type = "table",
-          header = list(
-            values = colnames(selected_table),
-            align = "center",
-            fill = list(color = "#0077ff"),
-            font = list(color = "white", size = 14)
-          ),
-          cells = list(
-            values = t(selected_table),
-            align = c("center"),
-            fill = list(color = c("white")),
-            height = 50,
-            font = list(size = 22)
-          )
-        )
-
-        # Agregar texto con add_annotations
-        table_plot001 <- table_plot001%>% add_annotations(
-          text = "The error variance corresponds to that obtained directly from the model.
-          From there, the standard deviation of the error and the standard error are obtained.",
-          x = 0,  # Posición en el eje x (0.5 = centrado)
-          y = 0,  # Posición en el eje y (1.1 = por encima del título)
-          showarrow = FALSE,  # No mostrar flecha
-          font = list(size = 22)
-        )
-        table_plot001
-
-      })
-      output$plot001_v02 <- plotly::renderPlotly({
-
-        req(control_user_02())
-
-        anova_plot001 <- test001_anova_plot001(minibase_mod = RR_general()$minibase_mod,
-                                               df_factor_info = RR_general()$df_factor_info)
-
-        anova_plot001
-
-      })
-
-      # Plot002 - Mean and model sd
-      output$plot002 <- plotly::renderPlotly({
-
-        req(control_user_02())
-
-        anova_plot002 <- test001_anova_plot002(df_plot002_table = RR_general()$df_plot002_table)
-        anova_plot002
-      })
-      output$table_plot002_v01 <- renderPrint({
-
-        req(control_user_02())
-
-        my_lista <- RR_general()
-        vector_search <- "df_plot002_table"
-
-        # Filtered list
-        filtered_list <- my_lista[vector_search]
-
-        filtered_list
-
-
-
-      })
-      output$table_plot002_v02 <- plotly::renderPlotly({
-
-        req(control_user_02())
-
-        selected_table <- RR_general()$df_plot002_table
-
-        # Crear la tabla inicial con plotly
-        table_plot001 <- plot_ly(
-          type = "table",
-          header = list(
-            values = colnames(selected_table),
-            align = "center",
-            fill = list(color = "#0077ff"),
-            font = list(color = "white", size = 14)
-          )
-        )
-
-        # Modificar una celda específica
-        table_plot001 <- table_plot001 %>% add_trace(
-          type = "table",
-          #header = list(values = list("Age")),
-          cells = list(
-            values = t(selected_table),
-            align = "center",
-            fill = list(color = c(rep("white", (ncol(selected_table)-1)), list(selected_table$color))),
-            height = 50,
-            font = list(size = 22)
-          )
-        )
-
-
-
-        # Agregar texto con add_annotations
-        table_plot001 <- table_plot001%>% add_annotations(
-          text = "The error variance corresponds to that obtained directly from the model. From there, the standard deviation of the error and the standard error are obtained.",
-          x = 0,  # Posición en el eje x (0.5 = centrado)
-          y = 0,  # Posición en el eje y (1.1 = por encima del título)
-          showarrow = FALSE  # No mostrar flecha
-        )
-        table_plot001
-
-
-      })
-      output$plot002_v02<- plotly::renderPlotly({
-
-        req(control_user_02())
-
-        anova_plot002 <- test001_anova_plot002(df_plot002_table = RR_general()$df_plot002_table)
-        anova_plot002
-      })
-
-      # Plot003 - Mean and model ee
-      output$plot003 <- plotly::renderPlotly({
-
-        req(control_user_02())
-
-        anova_plot003 <- test001_anova_plot003(df_plot003_table = RR_general()$df_plot003_table)
-        anova_plot003
-      })
-      output$table_plot003_v01 <- renderPrint({
-
-        req(control_user_02())
-        my_lista <- RR_general()
-        vector_search <- "df_plot003_table"
-
-        # Filtered list
-        filtered_list <- my_lista[vector_search]
-
-        filtered_list
-
-      })
-
-      output$table_plot003_v02 <- renderPrint({
-
-         req(control_user_02())
-        RR_general()$df_plot003_table
-
-      })
-      output$plot003_v02 <- plotly::renderPlotly({
-
-        req(control_user_02())
-
-        anova_plot003 <- test001_anova_plot003(df_plot003_table = RR_general()$df_plot003_table)
-        anova_plot003
-      })
-
-
-
-
-      # Plot004 - Boxplot con medias
-      output$plot004 <- renderPlotly({
-
-        req(control_user_02())
-
-
-
-        anova_plot004 <- test001_anova_plot004(df_plot004_table = RR_general()$df_plot004_table)
-
-
-        anova_plot004
-
-      })
-      output$table_plot004_v01 <- renderPrint({
-
-        req(control_user_02())
-        my_lista <- RR_general()
-        vector_search <- "df_plot004_table"
-
-        # Filtered list
-        filtered_list <- my_lista[vector_search]
-
-        filtered_list
-
-
-      })
-      output$table_plot004_v02 <- renderTable({
-
-        req(control_user_02())
-        RR_general()$df_plot004_table
-
-      })
-      output$plot004_v02 <- renderPlotly({
-
-        req(control_user_02())
-
-
-
-        anova_plot004 <- test001_anova_plot004(df_plot004_table = RR_general()$df_plot004_table)
-
-
-        anova_plot004
-
-      })
-
-      # Plot005
-      output$plot005 <- renderPlotly({
-
-        req(control_user_02())
-
-
-        anova_plot005 <- test001_anova_plot005(minibase_mod   = RR_general()$minibase_mod,
-                                               df_plot005_table = RR_general()$df_plot005_table)
-        anova_plot005
-
-
-
-
-      })
-      output$table_plot005_v01 <- renderPrint({
-
-        req(control_user_02())
-        my_lista <- RR_general()
-        vector_search <- "df_plot005_table"
-
-        # Filtered list
-        filtered_list <- my_lista[vector_search]
-
-        filtered_list
-
-
-      })
-      output$table_plot005_v02 <- renderDataTable({
-
-        req(control_user_02())
-        output_table <- RR_general()$df_plot004_table
-
-        datatable(output_table, rownames = F,
-                  options = list(
-                    columnDefs = list(list(className = 'dt-center', targets = "_all")),
-          paging = FALSE, # Habilita paginación
-          searching = FALSE, # Habilita búsqueda
-          ordering = TRUE, # Habilita ordenamiento
-          responsive = TRUE # Habilita diseño responsive
-        )) %>% DT::formatStyle(
-          names(output_table), # Aplica el formato a todas las columnas
-          textAlign = "center" # Centra el contenido de las columnas
-        )%>%
-          DT::formatStyle(columns = colnames(output_table), fontSize = '22pt') %>%
-
-          DT::formatStyle(
-            "color",
-            target = 'cell',
-            backgroundColor = styleEqual(output_table$color,
-                                         output_table$color)
-          )
-
-
-      })
-      output$plot005_v02 <- renderPlotly({
-
-        req(control_user_02())
-
-
-        anova_plot005 <- test001_anova_plot005(minibase_mod   = RR_general()$minibase_mod,
-                                               df_plot005_table = RR_general()$df_plot005_table)
-        anova_plot005
-
-
-
-
-      })
-
-      # Plot 006
-      output$plot006 <- renderPlotly({
-
-        req(control_user_02())
-
-
-        anova_plot006 <- test001_anova_plot006(minibase_mod   = RR_general()$minibase_mod,
-                                               df_plot006_table = RR_general()$df_plot006_table)
-        anova_plot006
-
-
-
-
-      })
-      output$table_plot006_v01 <- renderPrint({
-
-        req(control_user_02())
-        my_lista <- RR_general()
-        vector_search <- "df_plot006_table"
-
-        # Filtered list
-        filtered_list <- my_lista[vector_search]
-
-        filtered_list
-
-
-      })
-      output$table_plot006_v02 <- renderDataTable({
-
-        req(control_user_02())
-        output_table <- RR_general()$df_plot004_table
-
-        datatable(output_table, rownames = F,
-                  options = list(
-          columnDefs = list(list(className = 'dt-center', targets = "_all")),
-
-          paging = FALSE, # Habilita paginación
-          searching = FALSE, # Habilita búsqueda
-          ordering = TRUE, # Habilita ordenamiento
-          responsive = TRUE # Habilita diseño responsive
-        )) %>%
-          DT::formatStyle(columns = colnames(output_table), fontSize = '22pt') %>%
-          DT::formatStyle(
-            names(output_table), # Aplica el formato a todas las columnas
-            textAlign = "center" # Centra el contenido de las columnas
-          )%>%
-          DT::formatStyle(
-            names(output_table),
-            target = 'row',
-            backgroundColor = styleEqual(c(1:nrow(output_table)),
-                                         rep(c('lightblue', 'lightgreen'), length.out = nrow(output_table)))
-          )%>%
-          DT::formatStyle(
-            "color",
-            target = 'cell',
-            backgroundColor = styleEqual(output_table$color,
-                                         output_table$color)
-          )
-          # DT::formatStyle(
-          #   "color", # Nombre de la columna categórica a colorear
-          #   backgroundColor = styleEqual(
-          #     unique(output_table$color), # Valores únicos de la columna
-          #     output_table$color # Colores correspondientes
-          #   )
-          # )
-
-
-      })
-      output$plot006_v02 <- renderPlotly({
-
-        req(control_user_02())
-
-
-        anova_plot006 <- test001_anova_plot006(minibase_mod   = RR_general()$minibase_mod,
-                                               df_plot006_table = RR_general()$df_plot006_table)
-        anova_plot006
-
-
-
-
-      })
-
-      ################################################################
-      # Plot001 - Scatterplot
-      output$plot007 <- plotly::renderPlotly({
-
-        req(control_user_02())
-
-        anova_plot007 <- test001_anova_plot007(minibase_mod = RR_general()$minibase_mod,
-                                               df_factor_info = RR_general()$df_factor_info)
-
-        anova_plot007
-
-      })
-      output$table_plot007_v01 <- renderPrint({
-
-        req(control_user_02())
-
-        my_lista <- RR_general()
-        vector_search <- "df_plot001_table"
-
-        # Filtered list
-        filtered_list <- my_lista[vector_search]
-
-        filtered_list
-
-      })
-
-      output$plot008 <- renderPlotly({
-
-        req(control_user_02())
-
-
-        anova_plot008 <- test001_anova_plot008(minibase_mod   = RR_general()$minibase_mod,
-                                               df_plot006_table = RR_general()$df_plot006_table)
-        anova_plot008
-
-
-
-
-      })
-      output$table_plot008_v01 <- renderPrint({
-
-        req(control_user_02())
-        my_lista <- RR_general()
-        vector_search <- "df_plot006_table"
-
-        # Filtered list
-        filtered_list <- my_lista[vector_search]
-
-        filtered_list
-
-
-      })
-
-      # Plot001 - Scatterplot
-      output$plot009 <- plotly::renderPlotly({
-
-        req(control_user_02())
-
-        anova_plot009 <- test001_anova_plot009(minibase_mod = RR_general()$minibase_mod,
-                                               df_factor_info = RR_general()$df_factor_info)
-
-        anova_plot009
-
-      })
-      output$table_plot009_v01 <- renderPrint({
-
-        req(control_user_02())
-
-        my_lista <- RR_general()
-        vector_search <- "df_plot001_table"
-
-        # Filtered list
-        filtered_list <- my_lista[vector_search]
-
-        filtered_list
-
-      })
-
-      # Plot001 - Scatterplot
-      output$plot010 <- plotly::renderPlotly({
-
-        req(control_user_02())
-
-        anova_plot007 <- test001_anova_plot010(minibase_mod = RR_general()$minibase_mod,
-                                               df_factor_info = RR_general()$df_factor_info)
-
-        anova_plot007
-
-      })
-      output$table_plot010_v01 <- renderPrint({
-
-
-
-
-        req(control_user_02())
-
-        my_lista <- RR_general()
-        vector_search <- "df_plot001_table"
-
-        # Filtered list
-        filtered_list <- my_lista[vector_search]
-
-        filtered_list
-
-      })
-
-      output$plot011 <- renderPlotly({
-
-        req(control_user_02())
-
-
-        anova_plot008 <- test001_anova_plot011(minibase_mod   = RR_general()$minibase_mod,
-                                               df_plot006_table = RR_general()$df_plot006_table)
-        anova_plot008
-
-
-
-
-      })
-      output$table_plot011_v01 <- renderPrint({
-
-        req(control_user_02())
-        my_lista <- RR_general()
-        vector_search <- "df_plot006_table"
-
-        # Filtered list
-        filtered_list <- my_lista[vector_search]
-
-        filtered_list
-
-
-      })
-
-
-      output$plot012 <- renderPlotly({
-
-        req(control_user_02())
-
-
-        anova_plot008 <- test001_anova_plot012(minibase_mod   = RR_general()$minibase_mod,
-                                               df_plot006_table = RR_general()$df_plot006_table)
-        anova_plot008
-
-
-
-
-      })
-      output$table_plot012_v01 <- renderPrint({
-
-        req(control_user_02())
-        my_lista <- RR_general()
-        vector_search <- "df_plot006_table"
-
-        # Filtered list
-        filtered_list <- my_lista[vector_search]
-
-        filtered_list
-
-
-      })
-
-
-
-      # All plot v01
-      output$tab_04_all_plotly_v01 <- renderUI({
-
-        ns <- shiny::NS(id)
-
-        div(
-          fluidRow(
-          column(6, plotlyOutput(ns("plot001"))),
-          column(6, verbatimTextOutput(ns("table_plot001_v01")))
-          ),
-          br(),
-          br(),
-          fluidRow(
-            column(6, plotlyOutput(ns("plot002"))),
-            column(6, verbatimTextOutput(ns("table_plot002_v01")))
-          ),
-          br(),
-          br(),
-          fluidRow(
-            column(6, plotlyOutput(ns("plot003"))),
-            column(6, verbatimTextOutput(ns("table_plot003_v01")))
-          ),
-          br(),
-          br(),
-          # plotlyOutput(ns("plot003")),
-          # br(),
-          # br(),
-          fluidRow(
-            column(6, plotlyOutput(ns("plot004"))),
-            column(6, verbatimTextOutput(ns("table_plot004_v01")))
-          ),
-          br(),
-          br(),
-          # plotlyOutput(ns("plot005")),
-          # br(),
-          # br(),
-          fluidRow(
-            column(6, plotlyOutput(ns("plot005"))),
-            column(6, verbatimTextOutput(ns("table_plot005_v01")))
-          ),
-          br(),
-          br(),
-          fluidRow(
-            column(6, plotlyOutput(ns("plot006"))),
-            column(6, verbatimTextOutput(ns("table_plot006_v01")))
-          ),
-          br(),
-          br(),
-          br(),
-          br()
-
-        )
-
-      })
-
-      # All plot v01
-      output$tab_05_all_plotly_residuals_v01 <- renderUI({
-
-        ns <- shiny::NS(id)
-
-        div(
-          h2("NUEVOS GRAFICOS"),
-          fluidRow(
-            column(6, plotlyOutput(ns("plot007"))),
-            column(6, verbatimTextOutput(ns("table_plot007_v01")))
-          ),
-          br(),
-          br(),
-          fluidRow(
-            column(6, plotlyOutput(ns("plot008"))),
-            column(6, verbatimTextOutput(ns("table_plot008_v01")))
-          ),
-          br(),
-          br(),
-          fluidRow(
-            column(6, plotlyOutput(ns("plot009"))),
-            column(6, verbatimTextOutput(ns("table_plot009_v01")))
-          ),
-          br(),
-          br(),
-          fluidRow(
-            column(6, plotlyOutput(ns("plot010"))),
-            column(6, verbatimTextOutput(ns("table_plot010_v01")))
-          ),
-          br(),
-          br(),
-          fluidRow(
-            column(6, plotlyOutput(ns("plot011"))),
-            column(6, verbatimTextOutput(ns("table_plot011_v01")))
-          ),
-          br(),
-          br(),
-          fluidRow(
-            column(6, plotlyOutput(ns("plot012"))),
-            column(6, verbatimTextOutput(ns("table_plot012_v01")))
-          ),
-          br(),
-          br(),
-          br(),
-          br()
-
-
-        )
-
-      })
-
-      # All plot v02
-      output$tab_04_all_plotly_v02 <- renderUI({
-
-        ns <- shiny::NS(id)
-
-        div(
-          fluidRow(
-            column(6, plotlyOutput(ns("plot001_v02"))),
-            column(6, plotlyOutput(ns("table_plot001_v02")))
-          ),
-          br(),
-          br(),
-          fluidRow(
-            column(6, plotlyOutput(ns("plot002_v02"))),
-            column(6, plotlyOutput(ns("table_plot002_v02")))
-          ),
-          br(),
-          br(),
-          fluidRow(
-            column(6, plotlyOutput(ns("plot003_v02"))),
-            column(6, verbatimTextOutput(ns("table_plot003_v02")))
-          ),
-          br(),
-          br(),
-          fluidRow(
-            column(6, plotlyOutput(ns("plot004_v02"))),
-            column(6, tableOutput(ns("table_plot004_v02")))
-          ),
-          br(),
-          br(),
-          fluidRow(
-            column(6, plotlyOutput(ns("plot005_v02"))),
-            column(6, dataTableOutput(ns("table_plot005_v02")))
-          ),
-          br(),
-          br(),
-          fluidRow(
-            column(6, plotlyOutput(ns("plot006_v02"))),
-            column(6, dataTableOutput(ns("table_plot006_v02")))
-          ),
-          br(),
-          br()
-
-        )
-
-      })
 
 
       ##########################################################################
