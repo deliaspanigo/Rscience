@@ -759,7 +759,7 @@ module02_anova_s02_rscience_server <- function(id, input_general, input_01_anova
                                         )
                                       )
                              ),
-                             tabPanel("Plots - Factor",  # 05,
+                             tabPanel("Plots - Raw Data",  # 05,
                                       fluidRow(h2("Anova 1 way")),
                                       fluidRow(
                                         #column(1),

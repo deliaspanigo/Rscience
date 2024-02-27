@@ -10,6 +10,7 @@ app_01_Rscience <- function(){
   library("bslib")
   library("dplyr")
   library("DT")
+  library("EnvStats")
   library("Hmisc")
   library("openxlsx")  # Para archivos XLSX
   library("plotly")
