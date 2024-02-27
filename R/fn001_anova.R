@@ -1666,28 +1666,20 @@ cpiA001_anova1way_code_section04_UntilTheEnd <- function(){
 
 cpiA001_anova1way_code_sectionXX_g01_Plots <- function(){
 
-  objetos <- ls("package:Rscience", pattern = "^cpiA001_anova1way_factor_plot+[0-9]+")
 
 
+  list_code <- list()
 
-  # Filtrar solo las funciones que coinciden con el patrón
-  #list_plot <- objetos[grep("^cpiA001_anova1way_plot[0-9]+", objetos)]
-  list_plot <- objetos
-  list_plot <- sort(list_plot)
+  list_code[[1]] <- cpiA001_anova1way_TakeCode(selected_fn = cpiA001_anova1way_factor_plot001)
+  list_code[[2]] <- cpiA001_anova1way_TakeCode(selected_fn = cpiA001_anova1way_factor_plot002)
+  list_code[[3]] <- cpiA001_anova1way_TakeCode(selected_fn = cpiA001_anova1way_factor_plot003)
+  list_code[[4]] <- cpiA001_anova1way_TakeCode(selected_fn = cpiA001_anova1way_factor_plot004)
+  list_code[[5]] <- cpiA001_anova1way_TakeCode(selected_fn = cpiA001_anova1way_factor_plot005)
+  list_code[[6]] <- cpiA001_anova1way_TakeCode(selected_fn = cpiA001_anova1way_factor_plot006)
+  list_code[[7]] <- cpiA001_anova1way_TakeCode(selected_fn = cpiA001_anova1way_factor_plot007)
 
-  all_code <- sapply(list_plot, function(x){
-
-
-
-      selected_code <- paste0("cpiA001_anova1way_TakeCode(", x, ")")
-      code_new_plot <- eval(parse(text = selected_code))
-      code_new_plot
-
-  }, simplify = F)
-
-  all_code <- unlist(all_code)
-  all_code <- paste0(all_code, collapse = "\n\n\n")
-
+  vector_code <- unlist(list_code)
+  all_code <- paste0(vector_code, collapse = "")
 
   return(all_code)
 
@@ -1697,30 +1689,51 @@ cpiA001_anova1way_code_sectionXX_g01_Plots <- function(){
 
 cpiA001_anova1way_code_sectionXX_g02_Plots <- function(){
 
-  objetos <- ls("package:Rscience", pattern = "^cpiA001_anova1way_residuals_plot+[0-9]+")
+
+  list_code <- list()
+
+  list_code[[1]]  <- cpiA001_anova1way_TakeCode(selected_fn = cpiA001_anova1way_residuals_plot001)
+  list_code[[2]]  <- cpiA001_anova1way_TakeCode(selected_fn = cpiA001_anova1way_residuals_plot002)
+  list_code[[3]]  <- cpiA001_anova1way_TakeCode(selected_fn = cpiA001_anova1way_residuals_plot003)
+  list_code[[4]]  <- cpiA001_anova1way_TakeCode(selected_fn = cpiA001_anova1way_residuals_plot004)
+  list_code[[5]]  <- cpiA001_anova1way_TakeCode(selected_fn = cpiA001_anova1way_residuals_plot005)
+  list_code[[6]]  <- cpiA001_anova1way_TakeCode(selected_fn = cpiA001_anova1way_residuals_plot006)
+  list_code[[7]]  <- cpiA001_anova1way_TakeCode(selected_fn = cpiA001_anova1way_residuals_plot007)
+  list_code[[8]]  <- cpiA001_anova1way_TakeCode(selected_fn = cpiA001_anova1way_residuals_plot008)
+  list_code[[9]]  <- cpiA001_anova1way_TakeCode(selected_fn = cpiA001_anova1way_residuals_plot009)
+  list_code[[10]] <- cpiA001_anova1way_TakeCode(selected_fn = cpiA001_anova1way_residuals_plot010)
 
 
-
-  # Filtrar solo las funciones que coinciden con el patrón
-  #list_plot <- objetos[grep("^cpiA001_anova1way_plot[0-9]+", objetos)]
-  list_plot <- objetos
-  list_plot <- sort(list_plot)
-
-  all_code <- sapply(list_plot, function(x){
-
-
-
-    selected_code <- paste0("cpiA001_anova1way_TakeCode(", x, ")")
-    code_new_plot <- eval(parse(text = selected_code))
-    code_new_plot
-
-  }, simplify = F)
-
-  all_code <- unlist(all_code)
-  all_code <- paste0(all_code, collapse = "\n\n\n")
-
+  vector_code <- unlist(list_code)
+  all_code <- paste0(vector_code, collapse = "")
 
   return(all_code)
+
+
+  # objetos <- ls("package:Rscience", pattern = "^cpiA001_anova1way_residuals_plot+[0-9]+")
+  #
+  #
+  #
+  # # Filtrar solo las funciones que coinciden con el patrón
+  # #list_plot <- objetos[grep("^cpiA001_anova1way_plot[0-9]+", objetos)]
+  # list_plot <- objetos
+  # list_plot <- sort(list_plot)
+  #
+  # all_code <- sapply(list_plot, function(x){
+  #
+  #
+  #
+  #   selected_code <- paste0("cpiA001_anova1way_TakeCode(", x, ")")
+  #   code_new_plot <- eval(parse(text = selected_code))
+  #   code_new_plot
+  #
+  # }, simplify = F)
+  #
+  # all_code <- unlist(all_code)
+  # all_code <- paste0(all_code, collapse = "\n\n\n")
+  #
+  #
+  # return(all_code)
 
 }
 
