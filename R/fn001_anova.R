@@ -1502,7 +1502,9 @@ cpiA001_anova1way_results <- function(database, vr_var_name, factor_var_name, al
     "mean" = mean(minibase_mod$residuals),
     "max" = max(minibase_mod$residuals),
     "var" = var(minibase_mod$residuals),
-    "sd" = sd(minibase_mod$residuals)
+    "sd" = sd(minibase_mod$residuals),
+    "model_error_var" = model_error_var,
+    "model_error_sd" = model_error_sd
   )
 
   # # # Table for plot006
@@ -2321,7 +2323,7 @@ cpiA001_anova1way_residuals_plot004 <- function(minibase_mod){
 
 
 
-cpiA001_anova1way_residuals_plot005 <- function(minibase_mod){
+cpiA001_anova1way_residuals_plot005 <- function(minibase_mod, model_error_sd){
 
 
 
@@ -2365,6 +2367,11 @@ cpiA001_anova1way_residuals_plot005 <- function(minibase_mod){
                                          side = "positive",
                                          points = FALSE,
                                          name = "violinplot")#
+
+  plot005_residuals <- plotly::layout(p = plot005_residuals,
+                                      title = "Plot 005 - Residuals Distribution",
+                                      font = list(size = 20),
+                                      margin = list(t = 100))
 
   plot005_residuals
 
@@ -2593,6 +2600,11 @@ cpiA001_anova1way_residuals_plot010 <- function(minibase_mod){
                                          points = FALSE,
                                          name = "violinplot")#
 
+  plot005_residuals <- plotly::layout(p = plot005_residuals,
+                                      title = "Plot 010 - Studres Distribution",
+                                      font = list(size = 20),
+                                      margin = list(t = 100))
+
   plot005_residuals
 
 
@@ -2670,7 +2682,7 @@ cpiA001_anova1way_recruit_g02_ResidualsPlots <- function(list_results_from_cpiA0
     list_plots[[2]]  <- cpiA001_anova1way_residuals_plot002(minibase_mod, df_table_residuals_plot002)
     list_plots[[3]]  <- cpiA001_anova1way_residuals_plot003(minibase_mod, df_table_residuals_plot003)
     list_plots[[4]]  <- cpiA001_anova1way_residuals_plot004(minibase_mod)
-    list_plots[[5]]  <- cpiA001_anova1way_residuals_plot005(minibase_mod)
+    list_plots[[5]]  <- cpiA001_anova1way_residuals_plot005(minibase_mod, model_error_sd)
     list_plots[[6]]  <- cpiA001_anova1way_residuals_plot006(minibase_mod)
     list_plots[[7]]  <- cpiA001_anova1way_residuals_plot007(minibase_mod, df_factor_info)
     list_plots[[8]]  <- cpiA001_anova1way_residuals_plot008(minibase_mod, df_factor_info)
