@@ -1508,12 +1508,10 @@ cpiA001_anova1way_results <- function(database, vr_var_name, factor_var_name, al
   )
 
   # # # Table for plot006
-  df_table_residuals_plot005 <- df_table_residuals_plot004
-
-  df_table_residuals_plot006  <- df_table_residuals_plot004
+  df_table_residuals_plot005  <- df_table_residuals_plot004
 
   # # # Table for plot006
-  df_table_residuals_plot007 <- data.frame(
+  df_table_residuals_plot006 <- data.frame(
     "order" = 1:nlevels(minibase_mod[,2]),
     "level" = levels(minibase_mod[,2]),
     "n" = tapply(minibase_mod$studres, minibase_mod[,2], length),
@@ -1527,10 +1525,10 @@ cpiA001_anova1way_results <- function(database, vr_var_name, factor_var_name, al
 
 
   # # # Table for plot006
-  df_table_residuals_plot008 <- df_table_residuals_plot007
+  df_table_residuals_plot007 <- df_table_residuals_plot006
 
 
-  df_table_residuals_plot009 <- data.frame(
+  df_table_residuals_plot008 <- data.frame(
     "variable" = "studres",
     "n" = length(minibase_mod$studres),
     "min" = min(minibase_mod$studres),
@@ -1541,9 +1539,9 @@ cpiA001_anova1way_results <- function(database, vr_var_name, factor_var_name, al
   )
 
 
-  df_table_residuals_plot010 <- df_table_residuals_plot009
+  df_table_residuals_plot009 <- df_table_residuals_plot008
 
-  df_table_residuals_plot011 <- df_table_residuals_plot009
+  df_table_residuals_plot010 <- df_table_residuals_plot008
 
 
   # --- # hide_: Proccesing objects order
@@ -2297,7 +2295,7 @@ cpiA001_anova1way_residuals_plot004 <- function(minibase_mod){
                                          showlegend = TRUE,
                                          side = "positive",
                                          points = "all",
-                                         name = "residuals")#
+                                         name = " ")#
   #color = minibase_mod$FACTOR,
   #colors = df_table_factor_plot006$color)
 
@@ -2323,76 +2321,7 @@ cpiA001_anova1way_residuals_plot004 <- function(minibase_mod){
 
 
 
-cpiA001_anova1way_residuals_plot005 <- function(minibase_mod, model_error_sd){
-
-
-
-
-  x <- seq(-4, 4, length.out = 100)
-  y <- dnorm(x, mean = 0, 1)
-  x <- x*model_error_sd
-  densidad_suavizada <- density(x, kernel = "gaussian", adjust = 0.5)
-
-
-  densidad_residuos <-  density(x = minibase_mod$residuals, kernel = "gaussian", adjust =0.5)
-
-  hist_data_residuals <- hist(minibase_mod$residuals, plot = FALSE)
-  hist_data_residuals$"rel_frec" <- hist_data_residuals$counts/sum(hist_data_residuals$counts)
-
-
-  #library(plotly)
-  plot005_residuals <- plotly::plot_ly()
-
-
-  # plot005_residuals <- add_trace(p = plot005_residuals,
-  #                                x = densidad_residuos$x,
-  #                                y = densidad_residuos$y,
-  #                                type = 'scatter',
-  #                                mode = 'lines',
-  #                                name = 'Residuos')
-
-  plot005_residuals <- add_trace(p = plot005_residuals,
-                                 x = x,
-                                 y = y,
-                                 type = 'scatter',
-                                 mode = 'lines',
-                                 name = 'Normal No Standard')
-
-
-
-
-
-  # Add traces
-  # plot005_residuals <- plotly::add_trace(p = plot005_residuals,
-  #                                        type = "violin",
-  #                                        x = minibase_mod$residuals,
-  #                                        #x = minibase_mod$FACTOR,
-  #                                        showlegend = TRUE,
-  #                                        side = "positive",
-  #                                        points = FALSE,
-  #                                        name = "violinplot")#
-
-  plot005_residuals <- plotly::add_trace(p = plot005_residuals,
-                                         type = "bar",
-                                         x = hist_data_residuals$mids,
-                                         y = hist_data_residuals$"rel_frec",
-                                         name = "hist - residuals")#
-
-  plot005_residuals <- plotly::layout(p = plot005_residuals,
-                                      bargap = 0)
-
-  plot005_residuals <- plotly::layout(p = plot005_residuals,
-                                      title = "Plot 005 - Residuals Distribution",
-                                      font = list(size = 20),
-                                      margin = list(t = 100))
-
-  plot005_residuals
-
-}
-
-
-
-cpiA001_anova1way_residuals_plot006 <- function(minibase_mod){
+cpiA001_anova1way_residuals_plot005 <- function(minibase_mod){
 
 
 
@@ -2438,7 +2367,7 @@ cpiA001_anova1way_residuals_plot006 <- function(minibase_mod){
                               yaxis = list(title = 'Observed quantiles'))
 
   plot007_residuals <- plotly::layout(p = plot007_residuals,
-                                      title = "Plot 006 - QQ Plot",
+                                      title = "Plot 005 - QQ Plot",
                                       font = list(size = 20),
                                       margin = list(t = 100))
 
@@ -2450,7 +2379,7 @@ cpiA001_anova1way_residuals_plot006 <- function(minibase_mod){
 
 
 
-cpiA001_anova1way_residuals_plot007 <- function(minibase_mod, df_factor_info){
+cpiA001_anova1way_residuals_plot006 <- function(minibase_mod, df_factor_info){
 
   # # # Create a new plot...
   plot003_residuals <- plotly::plot_ly()
@@ -2467,7 +2396,7 @@ cpiA001_anova1way_residuals_plot007 <- function(minibase_mod, df_factor_info){
 
   # # # Title and settings...
   plot003_residuals <-   plotly::layout(p = plot003_residuals,
-                                        title = "Plot 007 - Scatterplot - Residuals vs Fitted.values",
+                                        title = "Plot 006 - Scatterplot - Residuals vs Fitted.values",
                                         font = list(size = 20),
                                         margin = list(t = 100))
 
@@ -2486,7 +2415,7 @@ cpiA001_anova1way_residuals_plot007 <- function(minibase_mod, df_factor_info){
 
 
 
-cpiA001_anova1way_residuals_plot008 <- function(minibase_mod, df_factor_info){
+cpiA001_anova1way_residuals_plot007 <- function(minibase_mod, df_factor_info){
 
   # # # Create a new plot...
   plot004_residuals <- plotly::plot_ly()
@@ -2503,7 +2432,7 @@ cpiA001_anova1way_residuals_plot008 <- function(minibase_mod, df_factor_info){
 
   # # # Title and settings...
   plot004_residuals <-   plotly::layout(p = plot004_residuals,
-                                    title = "Plot 008 - Scatterplot - Studentized Residuals",
+                                    title = "Plot 007 - Scatterplot - Studentized Residuals",
                                     font = list(size = 20),
                                     margin = list(t = 100))
 
@@ -2523,7 +2452,7 @@ cpiA001_anova1way_residuals_plot008 <- function(minibase_mod, df_factor_info){
 
 
 
-cpiA001_anova1way_residuals_plot009 <- function(minibase_mod){
+cpiA001_anova1way_residuals_plot008 <- function(minibase_mod){
 
 
 
@@ -2539,8 +2468,7 @@ cpiA001_anova1way_residuals_plot009 <- function(minibase_mod){
                                      showlegend = TRUE,
                                      side = "positive",
                                      points = "all",
-                                     name = "Violinplot",
-                                     name = "studres")#
+                                     name = " ")#
   #color = minibase_mod$FACTOR,
   #colors = df_table_factor_plot006$color)
 
@@ -2548,7 +2476,7 @@ cpiA001_anova1way_residuals_plot009 <- function(minibase_mod){
 
   # # # Title and settings...
   plot006_residuals <- plotly::layout(p = plot006_residuals,
-                                  title = "Plot 009 - Studentized Residuals",
+                                  title = "Plot 008 - Studentized Residuals",
                                   font = list(size = 20),
                                   margin = list(t = 100))
 
@@ -2567,7 +2495,7 @@ cpiA001_anova1way_residuals_plot009 <- function(minibase_mod){
 
 
 
-cpiA001_anova1way_residuals_plot010 <- function(minibase_mod){
+cpiA001_anova1way_residuals_plot009 <- function(minibase_mod){
 
 
 
@@ -2623,7 +2551,7 @@ cpiA001_anova1way_residuals_plot010 <- function(minibase_mod){
                                       bargap = 0)
 
   plot005_residuals <- plotly::layout(p = plot005_residuals,
-                                      title = "Plot 010 - Studres Distribution",
+                                      title = "Plot 009 - Studres Distribution",
                                       font = list(size = 20),
                                       margin = list(t = 100))
 
@@ -2634,7 +2562,7 @@ cpiA001_anova1way_residuals_plot010 <- function(minibase_mod){
 
 
 
-cpiA001_anova1way_residuals_plot011 <- function(minibase_mod){
+cpiA001_anova1way_residuals_plot010 <- function(minibase_mod){
 
 
 
@@ -2680,7 +2608,7 @@ cpiA001_anova1way_residuals_plot011 <- function(minibase_mod){
                               yaxis = list(title = 'Observed quantiles'))
 
   plot007_residuals <- plotly::layout(p = plot007_residuals,
-                                      title = "Plot 011 - QQ Plot - studres",
+                                      title = "Plot 010 - QQ Plot - studres",
                                       font = list(size = 20),
                                       margin = list(t = 100))
 
@@ -2704,13 +2632,12 @@ cpiA001_anova1way_recruit_g02_ResidualsPlots <- function(list_results_from_cpiA0
     list_plots[[2]]  <- cpiA001_anova1way_residuals_plot002(minibase_mod, df_table_residuals_plot002)
     list_plots[[3]]  <- cpiA001_anova1way_residuals_plot003(minibase_mod, df_table_residuals_plot003)
     list_plots[[4]]  <- cpiA001_anova1way_residuals_plot004(minibase_mod)
-    list_plots[[5]]  <- cpiA001_anova1way_residuals_plot005(minibase_mod, model_error_sd)
-    list_plots[[6]]  <- cpiA001_anova1way_residuals_plot006(minibase_mod)
+    list_plots[[5]]  <- cpiA001_anova1way_residuals_plot005(minibase_mod)
+    list_plots[[6]]  <- cpiA001_anova1way_residuals_plot006(minibase_mod, df_factor_info)
     list_plots[[7]]  <- cpiA001_anova1way_residuals_plot007(minibase_mod, df_factor_info)
-    list_plots[[8]]  <- cpiA001_anova1way_residuals_plot008(minibase_mod, df_factor_info)
+    list_plots[[8]]  <- cpiA001_anova1way_residuals_plot008(minibase_mod)
     list_plots[[9]]  <- cpiA001_anova1way_residuals_plot009(minibase_mod)
     list_plots[[10]] <- cpiA001_anova1way_residuals_plot010(minibase_mod)
-    list_plots[[11]] <- cpiA001_anova1way_residuals_plot011(minibase_mod)
 
     list_plots
   })
