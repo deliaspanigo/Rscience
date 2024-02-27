@@ -2221,7 +2221,7 @@ cpiA001_anova1way_residuals_plot002 <- function(minibase_mod, df_table_residuals
 
   # # # Title and settings...
   plot002_residuals <- plotly::layout(p = plot002_residuals,
-                                  title = "Plot 002 - Resisualds - Scatterplot + Jitter +  Smoothed",
+                                  title = "Plot 002 - Residuals - Scatterplot + Jitter +  Smoothed",
                                   font = list(size = 20),
                                   margin = list(t = 100))
 
@@ -2261,7 +2261,7 @@ cpiA001_anova1way_residuals_plot003 <- function(minibase_mod, df_table_residuals
 
   # # # Title and settings...
   plot003_residuals <- plotly::layout(p = plot003_residuals,
-                                      title = "Plot 003 - Resisualds - Scatterplot + Jitter +  Smoothed",
+                                      title = "Plot 003 - Residuals - Scatterplot + Jitter +  Smoothed",
                                       font = list(size = 20),
                                       margin = list(t = 100))
 
