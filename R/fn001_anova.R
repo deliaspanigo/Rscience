@@ -2336,43 +2336,50 @@ cpiA001_anova1way_residuals_plot005 <- function(minibase_mod, model_error_sd){
 
   densidad_residuos <-  density(x = minibase_mod$residuals, kernel = "gaussian", adjust =0.5)
 
-  hist_data <- hist(minibase_mod$residuals, plot = FALSE)
+  hist_data_residuals <- hist(minibase_mod$residuals, plot = FALSE)
+  hist_data_residuals$"rel_frec" <- hist_data_residuals$counts/sum(hist_data_residuals$counts)
+
 
   #library(plotly)
   plot005_residuals <- plotly::plot_ly()
 
 
-  plot005_residuals <- add_trace(p = plot005_residuals,
-                                 x = densidad_residuos$x,
-                                 y = densidad_residuos$y,
-                                 type = 'scatter',
-                                 mode = 'lines',
-                                 name = 'Residuos')
+  # plot005_residuals <- add_trace(p = plot005_residuals,
+  #                                x = densidad_residuos$x,
+  #                                y = densidad_residuos$y,
+  #                                type = 'scatter',
+  #                                mode = 'lines',
+  #                                name = 'Residuos')
 
   plot005_residuals <- add_trace(p = plot005_residuals,
                                  x = x,
                                  y = y,
                                  type = 'scatter',
                                  mode = 'lines',
-                                 name = 'Distribucion Normal NO Estandard')
+                                 name = 'Normal No Standard')
 
 
 
 
 
   # Add traces
-  plot005_residuals <- plotly::add_trace(p = plot005_residuals,
-                                         type = "violin",
-                                         x = minibase_mod$residuals,
-                                         #x = minibase_mod$FACTOR,
-                                         showlegend = TRUE,
-                                         side = "positive",
-                                         points = FALSE,
-                                         name = "violinplot")#
+  # plot005_residuals <- plotly::add_trace(p = plot005_residuals,
+  #                                        type = "violin",
+  #                                        x = minibase_mod$residuals,
+  #                                        #x = minibase_mod$FACTOR,
+  #                                        showlegend = TRUE,
+  #                                        side = "positive",
+  #                                        points = FALSE,
+  #                                        name = "violinplot")#
 
   plot005_residuals <- plotly::add_trace(p = plot005_residuals,
                                          type = "bar",
-                                         x = hist_data$mids, y = hist_data$density)#
+                                         x = hist_data_residuals$mids,
+                                         y = hist_data_residuals$"rel_frec",
+                                         name = "hist - residuals")#
+
+  plot005_residuals <- plotly::layout(p = plot005_residuals,
+                                      bargap = 0)
 
   plot005_residuals <- plotly::layout(p = plot005_residuals,
                                       title = "Plot 005 - Residuals Distribution",
@@ -2380,7 +2387,6 @@ cpiA001_anova1way_residuals_plot005 <- function(minibase_mod, model_error_sd){
                                       margin = list(t = 100))
 
   plot005_residuals
-
 
 }
 
@@ -2570,8 +2576,8 @@ cpiA001_anova1way_residuals_plot010 <- function(minibase_mod){
   y <- dnorm(x, mean = 0, 1)
 #  x <- x*model_error_sd
   densidad_suavizada <- density(x, kernel = "gaussian", adjust = 0.5)
-  hist_data <- hist(minibase_mod$studres, plot = FALSE)
-
+  hist_data_studres <- hist(minibase_mod$studres, plot = FALSE)
+  hist_data_studres$"rel_frec" <- hist_data_studres$counts/sum(hist_data_studres$counts)
 
   densidad_studres <-  density(x = minibase_mod$studres, kernel = "gaussian", adjust =0.5)
 
@@ -2579,37 +2585,42 @@ cpiA001_anova1way_residuals_plot010 <- function(minibase_mod){
   plot005_residuals <- plotly::plot_ly()
 
 
-  plot005_residuals <- add_trace(p = plot005_residuals,
-                                 x = densidad_studres$x,
-                                 y = densidad_studres$y,
-                                 type = 'scatter',
-                                 mode = 'lines',
-                                 name = 'densidad_studres')
+  # plot005_residuals <- add_trace(p = plot005_residuals,
+  #                                x = densidad_studres$x,
+  #                                y = densidad_studres$y,
+  #                                type = 'scatter',
+  #                                mode = 'lines',
+  #                                name = 'densidad_studres')
 
   plot005_residuals <- add_trace(p = plot005_residuals,
                                  x = x,
                                  y = y,
                                  type = 'scatter',
                                  mode = 'lines',
-                                 name = 'Distribucion Normal Standard')
+                                 name = 'Normal Standard')
 
 
 
 
 
-  # Add traces
-  plot005_residuals <- plotly::add_trace(p = plot005_residuals,
-                                         type = "violin",
-                                         x = minibase_mod$residuals,
-                                         #x = minibase_mod$FACTOR,
-                                         showlegend = TRUE,
-                                         side = "positive",
-                                         points = FALSE,
-                                         name = "violinplot")#
+  # # Add traces
+  # plot005_residuals <- plotly::add_trace(p = plot005_residuals,
+  #                                        type = "violin",
+  #                                        x = minibase_mod$residuals,
+  #                                        #x = minibase_mod$FACTOR,
+  #                                        showlegend = TRUE,
+  #                                        side = "positive",
+  #                                        points = FALSE,
+  #                                        name = "violinplot")#
 
   plot005_residuals <- plotly::add_trace(p = plot005_residuals,
                                          type = "bar",
-                                         x = hist_data$mids, y = hist_data$density)
+                                         x = hist_data_studres$"mids",
+                                         y = hist_data_studres$"density",
+                                         name = "hist - studres")
+
+  plot005_residuals <- plotly::layout(p = plot005_residuals,
+                                      bargap = 0)
 
   plot005_residuals <- plotly::layout(p = plot005_residuals,
                                       title = "Plot 010 - Studres Distribution",
