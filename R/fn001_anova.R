@@ -1679,7 +1679,7 @@ cpiA001_anova1way_code_sectionXX_g01_Plots <- function(){
   list_code[[7]] <- cpiA001_anova1way_TakeCode(selected_fn = cpiA001_anova1way_factor_plot007)
 
   vector_code <- unlist(list_code)
-  all_code <- paste0(vector_code, collapse = "")
+  all_code <- paste0(vector_code, collapse = "\n\n\n\n")
 
   return(all_code)
 
@@ -1705,7 +1705,7 @@ cpiA001_anova1way_code_sectionXX_g02_Plots <- function(){
 
 
   vector_code <- unlist(list_code)
-  all_code <- paste0(vector_code, collapse = "")
+  all_code <- paste0(vector_code, collapse = "\n\n\n\n")
 
   return(all_code)
 
@@ -2375,12 +2375,12 @@ cpiA001_anova1way_residuals_plot005 <- function(minibase_mod){
 
 
   # Establecer etiquetas de los ejes
-  plot007_residuals <- layout(p = plot007_residuals,
-                              xaxis = list(title = 'Expected quantiles'),
-                              yaxis = list(title = 'Observed quantiles'))
+  # plot007_residuals <- layout(p = plot007_residuals,
+  #                             xaxis = list(title = 'Expected quantiles'),
+  #                             yaxis = list(title = 'Observed quantiles'))
 
   plot007_residuals <- plotly::layout(p = plot007_residuals,
-                                      title = "Plot 005 - QQ Plot",
+                                      title = "Plot 005 - QQ Plot Residuals",
                                       font = list(size = 20),
                                       margin = list(t = 100))
 
@@ -2616,9 +2616,9 @@ cpiA001_anova1way_residuals_plot010 <- function(minibase_mod){
 
 
   # Establecer etiquetas de los ejes
-  plot007_residuals <- layout(p = plot007_residuals,
-                              xaxis = list(title = 'Expected quantiles'),
-                              yaxis = list(title = 'Observed quantiles'))
+  # plot007_residuals <- layout(p = plot007_residuals,
+  #                             xaxis = list(title = 'Expected quantiles'),
+  #                             yaxis = list(title = 'Observed quantiles'))
 
   plot007_residuals <- plotly::layout(p = plot007_residuals,
                                       title = "Plot 010 - QQ Plot - studres",
