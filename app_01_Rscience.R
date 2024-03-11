@@ -15,7 +15,8 @@ ui <- dashboardPage(
     width = "300px",
     sidebarMenu(
       menuItem(text = "database", tabName = "tab01_database", icon = icon("th")),
-      menuItem(text = "Anova 1 way", tabName = "tab02_anova", icon = icon("th"))
+      menuItem(text = "Anova 1 way", tabName = "tab02_anova", icon = icon("th")),
+      menuItem(text = "Anova 1 way with 1 Block", tabName = "tab03_anova1way1block", icon = icon("th"))
     )
   ),
 
@@ -172,7 +173,13 @@ ui <- dashboardPage(
               module02_anova_s01_varselection_ui(id = "anova01"),
               br(), br(), br(),
               module02_anova_s02_rscience_ui(id = "anova02")
+      ),
+      tabItem(tabName = "tab03_anova1way1block",
+              module02_anova_s01_varselection_ui(id = "anova1way1block_s01"),
+              br(), br(), br(),
+              module02_anova_s02_rscience_ui(id = "anova1way1block_s01")
       )
+
     )
   )
 
@@ -206,7 +213,7 @@ server <- function(input, output, session) {
 
   })
 
-
+#################################################################################
 
   input_01_anova <- module02_anova_s01_varselection_server(id = "anova01",
                                           input_general = input_general)
@@ -219,6 +226,7 @@ server <- function(input, output, session) {
 
 
 
+#################################################################################
 
 
   # module_ancova_rscience_server(id = space_ancova)

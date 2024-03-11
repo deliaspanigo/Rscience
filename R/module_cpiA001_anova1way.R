@@ -359,7 +359,7 @@ module02_anova_s02_rscience_server <- function(id, input_general, input_01_anova
           need(!is.null(input_01_anova()), "Error 02: Module anova s02 - input_01_anova can not be NULL.")
         )
 
-        check_previous <- cpiA001_anova1way_control_previous2(database = input_general()$database,
+        check_previous <- cpiA001_anova1way_control_previous(database = input_general()$database,
                                                              vr_var_name = input_01_anova()$vr_var_name,
                                                              factor_var_name = input_01_anova()$factor_var_name,
                                                              alpha_value = input_01_anova()$alpha_value)
@@ -404,7 +404,7 @@ module02_anova_s02_rscience_server <- function(id, input_general, input_01_anova
 #
 #
 #         # Control post
-        check_post <- cpiA001_anova1way_control_post2(list_results_from_cpiA001_anova1way = RR_general())
+        check_post <- cpiA001_anova1way_control_post(list_results_from_cpiA001_anova1way = RR_general())
 #
         validate(
           need(check_post$check_ok, check_post$text_output)

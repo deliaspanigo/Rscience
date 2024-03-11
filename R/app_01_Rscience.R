@@ -35,7 +35,9 @@ ui <- shinydashboard::dashboardPage(
     width = "300px",
     shinydashboard::sidebarMenu(
       shinydashboard::menuItem(text = "database", tabName = "tab01_database", icon = shiny::icon("th")),
-      shinydashboard::menuItem(text = "Anova 1 way", tabName = "tab02_anova", icon = shiny::icon("th"))
+      shinydashboard::menuItem(text = "Anova 1 way", tabName = "tab02_anova", icon = shiny::icon("th")),
+      shinydashboard::menuItem(text = "Anova 1 way with block", tabName = "tab03_anova", icon = shiny::icon("th"))
+
     )
   ),
 
@@ -198,6 +200,11 @@ ui <- shinydashboard::dashboardPage(
               module02_anova_s01_varselection_ui(id = "anova01"),
               br(), br(), br(),
               module02_anova_s02_rscience_ui(id = "anova02")
+      ),
+      shinydashboard::tabItem(tabName = "tab03_anova",
+                              module_cpiA002_s01_varselection_ui(id = "anova03_A"),
+                              br(), br(), br(),
+                              module_cpiA002_s02_rscience_ui(id = "anova03_B")
       )
     )
   )
@@ -233,7 +240,7 @@ server <- function(input, output, session) {
   })
 
 
-
+##################################################################################
   input_01_anova <- module02_anova_s01_varselection_server(id = "anova01",
                                           input_general = input_general)
 
@@ -242,8 +249,19 @@ server <- function(input, output, session) {
   module02_anova_s02_rscience_server(id = "anova02",
                                      input_general = input_general,
                                      input_01_anova = input_01_anova)
+##################################################################################
 
 
+
+input_03_anova <- module_cpiA002_s01_varselection_server(id = "anova03_A",
+                                          input_general = input_general)
+
+
+
+  module_cpiA002_s02_rscience_server(id = "anova03_B",
+                                     input_general = input_general,
+                                     input_01_anova = input_03_anova)
+##################################################################################
 
 
 
