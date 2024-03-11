@@ -36,7 +36,9 @@ ui <- shinydashboard::dashboardPage(
     shinydashboard::sidebarMenu(
       shinydashboard::menuItem(text = "database", tabName = "tab01_database", icon = shiny::icon("th")),
       shinydashboard::menuItem(text = "Anova 1 way", tabName = "tab02_anova", icon = shiny::icon("th")),
-      shinydashboard::menuItem(text = "Anova 1 way with block", tabName = "tab03_anova", icon = shiny::icon("th"))
+      shinydashboard::menuItem(text = "Anova 1 way with block", tabName = "tab03_anova", icon = shiny::icon("th")),
+      shinydashboard::menuItem(text = "Anova 2 ways", tabName = "tab04_anova", icon = shiny::icon("th"))
+
 
     )
   ),
@@ -205,6 +207,11 @@ ui <- shinydashboard::dashboardPage(
                               module_cpiA002_s01_varselection_ui(id = "anova03_A"),
                               br(), br(), br(),
                               module_cpiA002_s02_rscience_ui(id = "anova03_B")
+      ),
+      shinydashboard::tabItem(tabName = "tab04_anova",
+                              module_cpiA003_s01_varselection_ui(id = "cpiA003_A"),
+                              br(), br(), br(),
+                              module_cpiA003_s02_rscience_ui(id = "cpiA003_B")
       )
     )
   )
@@ -264,6 +271,16 @@ input_03_anova <- module_cpiA002_s01_varselection_server(id = "anova03_A",
 ##################################################################################
 
 
+
+  input_cpiA003 <- module_cpiA003_s01_varselection_server(id = "cpiA003_A",
+                                                  input_general = input_general)
+
+
+
+  module_cpiA003_s02_rscience_server(id = "cpiA003_B",
+                                     input_general = input_general,
+                                     input_01_anova = input_cpiA003)
+  ##################################################################################
 
   # module_ancova_rscience_server(id = space_ancova)
   #
