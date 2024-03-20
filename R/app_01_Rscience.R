@@ -38,7 +38,9 @@ ui <- shinydashboard::dashboardPage(
       shinydashboard::menuItem(text = "Anova 1 way", tabName = "tab02_anova", icon = shiny::icon("th")),
       shinydashboard::menuItem(text = "Anova 1 way with block", tabName = "tab03_anova", icon = shiny::icon("th")),
       shinydashboard::menuItem(text = "Anova 2 ways", tabName = "tab04_anova", icon = shiny::icon("th")),
-      shinydashboard::menuItem(text = "Simple Linear Regresion", tabName = "tab06_anova", icon = shiny::icon("th"))
+      shinydashboard::menuItem(text = "Simple Linear Regresion", tabName = "tab06_anova", icon = shiny::icon("th")),
+      shinydashboard::menuItem(text = "Doble Linear Regresion", tabName = "tab07_anova", icon = shiny::icon("th"))
+
 
 
 
@@ -219,7 +221,13 @@ ui <- shinydashboard::dashboardPage(
                               module_cpiA006_s01_varselection_ui(id = "cpiA006_A"),
                               br(), br(), br(),
                               module_cpiA006_s02_rscience_ui(id = "cpiA006_B")
+      ),
+      shinydashboard::tabItem(tabName = "tab07_anova",
+                              module_cpiA007_s01_varselection_ui(id = "cpiA007_A"),
+                              br(), br(), br(),
+                              module_cpiA007_s02_rscience_ui(id = "cpiA007_B")
       )
+
     )
   )
 
@@ -298,6 +306,15 @@ input_03_anova <- module_cpiA002_s01_varselection_server(id = "anova03_A",
   module_cpiA006_s02_rscience_server(id = "cpiA006_B",
                                      input_general = input_general,
                                      input_01_anova = input_cpiA006)
+  ##################################################################################
+  input_cpiA007 <- module_cpiA007_s01_varselection_server(id = "cpiA007_A",
+                                                          input_general = input_general)
+
+
+
+  module_cpiA007_s02_rscience_server(id = "cpiA007_B",
+                                     input_general = input_general,
+                                     input_01_anova = input_cpiA007)
   ##################################################################################
 
   # module_ancova_rscience_server(id = space_ancova)
