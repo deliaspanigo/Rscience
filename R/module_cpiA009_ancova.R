@@ -5,7 +5,7 @@
 
 
 
-module_cpiA007_s01_varselection_ui <- function(id){
+module_cpiA009_s01_varselection_ui <- function(id){
 
   ns <- shiny::NS(id)
 
@@ -17,7 +17,7 @@ module_cpiA007_s01_varselection_ui <- function(id){
 
 
 
-module_cpiA007_s01_varselection_server <- function(id, input_general){
+module_cpiA009_s01_varselection_server <- function(id, input_general){
   moduleServer(
     id,
     function(input, output, session) {
@@ -320,7 +320,7 @@ module_cpiA007_s01_varselection_server <- function(id, input_general){
 
 
 
-module_cpiA007_s02_rscience_ui <- function(id){
+module_cpiA009_s02_rscience_ui <- function(id){
 
   ns <- shiny::NS(id)
 
@@ -331,7 +331,7 @@ module_cpiA007_s02_rscience_ui <- function(id){
 
 
 
-module_cpiA007_s02_rscience_server <- function(id, input_general, input_01_anova){
+module_cpiA009_s02_rscience_server <- function(id, input_general, input_01_anova){
   moduleServer(
     id,
     function(input, output, session) {
@@ -368,7 +368,7 @@ module_cpiA007_s02_rscience_server <- function(id, input_general, input_01_anova
 
         req(control_user_01())
 
-        the_output <- fn_cpiA007_gen02(database = input_general()$database,
+        the_output <- fn_cpiA009_gen02(database = input_general()$database,
                                        vr_var_name = input_01_anova()$vr_var_name,
                                        x01_var_name = input_01_anova()$x01_var_name,
                                        x02_var_name = input_01_anova()$x02_var_name,
@@ -405,7 +405,7 @@ module_cpiA007_s02_rscience_server <- function(id, input_general, input_01_anova
 
 
 
-############################################################################
+      ############################################################################
       observe({
         for (i in 1:length(RR_general()$"out03A_plots_factor")) {
           # Need local so that each item gets its own number. Without it, the value
@@ -454,7 +454,7 @@ module_cpiA007_s02_rscience_server <- function(id, input_general, input_01_anova
         })
       })
 
-##############################################################
+      ##############################################################
       # # # Tab01 - Analysis
       output$tab01_analysis <- renderPrint({
 
@@ -552,39 +552,52 @@ module_cpiA007_s02_rscience_server <- function(id, input_general, input_01_anova
       output$tab03_specialplot <- plotly::renderPlotly({
         RR_general()$"out04A_plots_residuals"[[1]]
       })
-
-      output$tab03_specialplot2 <- plotly::renderPlotly({
-        RR_general()$"out04A_plots_residuals"[[1]]
-      })
+      #
+      #       output$tab03_specialplot2 <- plotly::renderPlotly({
+      #         RR_general()$"out04A_plots_residuals"[[1]]
+      #       })
 
       output$tab03_plot_factor2 <- renderUI({
 
         ns <- shiny::NS(id)
 
         div(
-        fluidRow(
-          column(12, plotlyOutput(ns("tab03_specialplot"),
-                                  height = "80vh", width = "80vh")),
+          fluidRow(
+            column(12, plotlyOutput(ns("tab03_specialplot"),
+                                    height = "80vh", width = "80vh")),
 
-        )
-        )
-      })
-      output$tab03_plot_factor <- renderUI({
-        ns <- shiny::NS(id)
-        plot_output_list <- lapply(1:length(RR_general()$"out03A_plots_factor"), function(i) {
-          plot_name <- paste("plotA", i, sep="")
-          table_name <- paste("tableA", i, sep="")
-
-
-          div(
-            fluidRow(
-              column(6, plotlyOutput(ns(plot_name), height = "100%", width = "100%")),
-              column(6, verbatimTextOutput(ns(table_name)))
-            ), br(), br(), br()
           )
-        })
+        )
       })
 
+      output$tab03_special <- renderPrint({
+
+        req(control_user_02())
+
+        selected_objects <- c("df_table_reg",
+                              "df_table_det_coef",
+                              "df_position")
+
+        all_resutls <- RR_general()$"out05_full_results"
+        all_resutls[selected_objects]
+
+      })
+      # output$tab03_plot_factor <- renderUI({
+      #   ns <- shiny::NS(id)
+      #   plot_output_list <- lapply(1:length(RR_general()$"out03A_plots_factor"), function(i) {
+      #     plot_name <- paste("plotA", i, sep="")
+      #     table_name <- paste("tableA", i, sep="")
+      #
+      #
+      #     div(
+      #       fluidRow(
+      #         column(6, plotlyOutput(ns(plot_name), height = "100%", width = "100%")),
+      #         column(6, verbatimTextOutput(ns(table_name)))
+      #       ), br(), br(), br()
+      #     )
+      #   })
+      # })
+      #
 
       # # # Tab05 - Full Results
       output$tab05_full_results <- renderPrint({
@@ -699,37 +712,28 @@ module_cpiA007_s02_rscience_server <- function(id, input_general, input_01_anova
           shiny::tabsetPanel(id = ns("super_tabset_panel"),
                              tabPanel("Analysis",
                                       fluidRow(
-                                        column(6,
+                                        column(12,
                                                h2("Doble Linear Regresion"),
                                                verbatimTextOutput(ns("tab01_analysis"))
-                                        ),
-                                        column(6, plotlyOutput(ns("tab03_specialplot2"), height = "100%", width = "100%")),
+                                        )#,
+                                        #column(6, plotlyOutput(ns("tab03_specialplot2"), height = "100%", width = "100%")),
 
                                       )
                              ),
                              tabPanel("Requeriments",
                                       h2("Doble Linear Regresion"),
-                                      fluidRow(
-                                        column(12,
-                                               h2("Resumen Correlation test selection"),
-                                               verbatimTextOutput(ns("tab02_requerimentsA"))
-                                              )
-                                        ),
-                                      br(), br(), br(),
-                                      br(), br(), br(),
-                                      fluidRow(
-                                        column(12,
-                                           h2("Requeriment 01 - Non correlation X01 and X02 (Selected correlation test)"),
-
-                                           uiOutput(ns("tab02_requerimentsB_03"))
-                                      )
-                                      ),
-                                      br(), br(), br(),
-                                      br(), br(), br(),
+                                      # fluidRow(
+                                      #   column(12,
+                                      #          h2("Resumen Correlation test selection"),
+                                      #          verbatimTextOutput(ns("tab02_requerimentsA"))
+                                      #         )
+                                      #   ),
+                                      #br(), br(), br(),
+                                      #br(), br(), br(),
 
                                       fluidRow(
                                         column(12,
-                                               h2("Requeriment 02 - Residuals normality"),
+                                               h2("Requeriment 01 - Residuals normality"),
                                                verbatimTextOutput(ns("tab02_requerimentsC"))
 
                                         )
@@ -739,28 +743,39 @@ module_cpiA007_s02_rscience_server <- function(id, input_general, input_01_anova
 
                                       fluidRow(
                                         column(6,
-                                               h2("Requeriment 03 - Residuals homogeneity"),
+                                               h2("Requeriment 02 - Residuals homogeneity"),
                                                plotlyOutput(ns("tab02_homogeneityplot"), height = "100%", width = "100%")),
 
+                                      ),
+                                      br(), br(), br(),
+                                      br(), br(), br(),
+                                      fluidRow(
+                                        column(12,
+                                               h2("Requeriment 03 - Non correlation X01 and X02 (Selected correlation test)"),
+
+                                               uiOutput(ns("tab02_requerimentsB_03"))
+                                        )
                                       ),
                                       br(), br(), br(),
                                       br(), br(), br(),
 
                                       fluidRow(
                                         column(12,
-                                              h2("Extra - Details about requeriments for Person Correlation test"),
-                                              verbatimTextOutput(ns("tab02_requerimentsD"))
-                                              )
-                                        ),
+                                               h2("Extra - Details about requeriments for Person Correlation test"),
+                                               verbatimTextOutput(ns("tab02_requerimentsD"))
+                                        )
+                                      ),
 
 
                              ),
                              tabPanel("Plots",
-                                      uiOutput(ns("tab03_plot_factor2")),
                                       fluidRow(
                                         column(12,
                                                h2("Doble Linear Regresion"),
-                                               uiOutput(ns("tab03_plot_factor"))
+                                               uiOutput(ns("tab03_plot_factor2")),
+                                               br(), br(),br(),
+                                               verbatimTextOutput(ns("tab03_special"))
+
                                         )
                                       )
                              ),

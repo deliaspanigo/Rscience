@@ -617,9 +617,15 @@ fn_cpiA007_code_p02_plot002 <- function(results_p01_test){
     #                      line = list(width = 5, color = 'orange'))
 
 
+    max_abs_residuals <- max(abs(minibase_mod$residuals))*1.2
+    range_y_residuals <- c(-max_abs_residuals, max_abs_residuals)
+    vector_range <- extendrange(minibase_mod$residuals)
+    range_y_residuals <- c(-max(vector_range), max(vector_range))
+
     plot002 <- plotly::layout(p = plot002,
                               xaxis = list(title = "Fitted values"),
-                              yaxis = list(title = "Residuals"),
+                              yaxis = list(title = "Residuals",
+                                           range = range_y_residuals),
                               title = "Plot 002 - Residuals vs. Fitted values",
                               font = list(size = 20),
                               margin = list(t = 100))
