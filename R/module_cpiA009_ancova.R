@@ -122,7 +122,7 @@ module_cpiA009_s01_varselection_server <- function(id, input_general){
 
         div(shinyjs::useShinyjs(), id = ns("input-var-selection"),
             fluidRow(
-              column(6, h1("Doble Linear Regresion"))
+              column(6, h1("Ancova"))
             ),
             fluidRow(
               column(6,
@@ -138,12 +138,12 @@ module_cpiA009_s01_varselection_server <- function(id, input_general){
                                  selected = set_options[1])
               ),
               column(2,
-                     selectInput(inputId = ns("x01_var_name"), label = "X01 (Regresor)",
+                     selectInput(inputId = ns("factor_var_name"), label = "Factor",
                                  choices = set_options,
                                  selected = set_options[1])
               ),
               column(2,
-                     selectInput(inputId = ns("x02_var_name"), label = "X02 (Regresor)",
+                     selectInput(inputId = ns("cov_var_name"), label = "Covariable",
                                  choices = set_options,
                                  selected = set_options[1])
               ),
@@ -267,18 +267,18 @@ module_cpiA009_s01_varselection_server <- function(id, input_general){
       })
 
 
-      x01_var_name <- reactive({
+      factor_var_name <- reactive({
         req(action_button_show())
 
-        output_value <- input$x01_var_name
+        output_value <- input$factor_var_name
         return(output_value)
       })
 
 
-      x02_var_name <- reactive({
+      cov_var_name <- reactive({
         req(action_button_show())
 
-        output_value <- input$x02_var_name
+        output_value <- input$cov_var_name
         return(output_value)
       })
 
@@ -304,9 +304,9 @@ module_cpiA009_s01_varselection_server <- function(id, input_general){
         req(action_button_show())
 
 
-        the_list <- list(vr_var_name(), x01_var_name(), x02_var_name(), alpha_value(), intro_source_database())
+        the_list <- list(vr_var_name(), factor_var_name(), cov_var_name(), alpha_value(), intro_source_database())
 
-        names(the_list) <- c("vr_var_name", "x01_var_name", "x02_var_name", "alpha_value", "intro_source_database")
+        names(the_list) <- c("vr_var_name", "factor_var_name", "cov_var_name", "alpha_value", "intro_source_database")
         the_list
       })
 
@@ -370,8 +370,8 @@ module_cpiA009_s02_rscience_server <- function(id, input_general, input_01_anova
 
         the_output <- fn_cpiA009_gen02(database = input_general()$database,
                                        vr_var_name = input_01_anova()$vr_var_name,
-                                       x01_var_name = input_01_anova()$x01_var_name,
-                                       x02_var_name = input_01_anova()$x02_var_name,
+                                       factor_var_name = input_01_anova()$factor_var_name,
+                                       cov_var_name = input_01_anova()$cov_var_name,
                                        alpha_value = input_01_anova()$alpha_value)
 
 
@@ -535,8 +535,7 @@ module_cpiA009_s02_rscience_server <- function(id, input_general, input_01_anova
 
         req(control_user_02())
 
-        selected_objects <- c("df_check_cor_test", "normality_x01_results", "normality_x02_results",
-                              "homogeneity_results")
+        selected_objects <- c("test_residuals_homogeneity")
 
         all_resutls <- RR_general()$"out05_full_results"
 
@@ -713,7 +712,7 @@ module_cpiA009_s02_rscience_server <- function(id, input_general, input_01_anova
                              tabPanel("Analysis",
                                       fluidRow(
                                         column(12,
-                                               h2("Doble Linear Regresion"),
+                                               h2("Ancova with interaction"),
                                                verbatimTextOutput(ns("tab01_analysis"))
                                         )#,
                                         #column(6, plotlyOutput(ns("tab03_specialplot2"), height = "100%", width = "100%")),
@@ -721,7 +720,7 @@ module_cpiA009_s02_rscience_server <- function(id, input_general, input_01_anova
                                       )
                              ),
                              tabPanel("Requeriments",
-                                      h2("Doble Linear Regresion"),
+                                      h2("Ancova with interaction"),
                                       # fluidRow(
                                       #   column(12,
                                       #          h2("Resumen Correlation test selection"),
@@ -741,27 +740,10 @@ module_cpiA009_s02_rscience_server <- function(id, input_general, input_01_anova
                                       br(), br(), br(),
                                       br(), br(), br(),
 
+
                                       fluidRow(
-                                        column(6,
+                                        column(12,
                                                h2("Requeriment 02 - Residuals homogeneity"),
-                                               plotlyOutput(ns("tab02_homogeneityplot"), height = "100%", width = "100%")),
-
-                                      ),
-                                      br(), br(), br(),
-                                      br(), br(), br(),
-                                      fluidRow(
-                                        column(12,
-                                               h2("Requeriment 03 - Non correlation X01 and X02 (Selected correlation test)"),
-
-                                               uiOutput(ns("tab02_requerimentsB_03"))
-                                        )
-                                      ),
-                                      br(), br(), br(),
-                                      br(), br(), br(),
-
-                                      fluidRow(
-                                        column(12,
-                                               h2("Extra - Details about requeriments for Person Correlation test"),
                                                verbatimTextOutput(ns("tab02_requerimentsD"))
                                         )
                                       ),
@@ -771,7 +753,7 @@ module_cpiA009_s02_rscience_server <- function(id, input_general, input_01_anova
                              tabPanel("Plots",
                                       fluidRow(
                                         column(12,
-                                               h2("Doble Linear Regresion"),
+                                               h2("Ancova with interaction"),
                                                uiOutput(ns("tab03_plot_factor2")),
                                                br(), br(),br(),
                                                verbatimTextOutput(ns("tab03_special"))
@@ -782,7 +764,7 @@ module_cpiA009_s02_rscience_server <- function(id, input_general, input_01_anova
                              tabPanel("Full Results",
                                       fluidRow(
                                         column(12,
-                                               h2("Doble Linear Regresion"),
+                                               h2("Ancova with interaction"),
                                                verbatimTextOutput(ns("tab05_full_results"))
                                         )
                                       )
@@ -790,7 +772,7 @@ module_cpiA009_s02_rscience_server <- function(id, input_general, input_01_anova
                              tabPanel("R Code",
                                       fluidRow(
                                         column(12,
-                                               h2("Doble Linear Regresion"),
+                                               h2("Ancova with interaction"),
                                                verbatimTextOutput(ns("tab06_R_code"))
                                         )
                                       )

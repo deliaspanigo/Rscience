@@ -795,7 +795,7 @@ fn_cpiA009_code_p01_test_with <- function(database, vr_var_name, factor_var_name
 
 
   # --- # hide_: Proccesing objects order
-  hide_correct_order <- fn_cpiA009_ObjNamesInOrder(selected_fn = fn_cpiA009_code_p01_test)
+  hide_correct_order <- fn_cpiA009_ObjNamesInOrder(selected_fn = fn_cpiA009_code_p01_test_with)
   hide_output_list_objects <- mget(hide_correct_order)
 
   # --- # hide_: return!
@@ -1306,7 +1306,7 @@ fn_cpiA009_code_p01_test_without <- function(database, vr_var_name, factor_var_n
 
 
   # --- # hide_: Proccesing objects order
-  hide_correct_order <- fn_cpiA009_ObjNamesInOrder(selected_fn = fn_cpiA009_code_p01_test)
+  hide_correct_order <- fn_cpiA009_ObjNamesInOrder(selected_fn = fn_cpiA009_code_p01_test_with)
   hide_output_list_objects <- mget(hide_correct_order)
 
   # --- # hide_: return!
@@ -1327,56 +1327,44 @@ fn_cpiA009_code_p02_plot001 <- function(results_p01_test){
 
     # Crear el gráfico interactivo con Plotly
 
+    # # # Create a new plot...
     plot001 <- plotly::plot_ly()
 
-    plot001 <- add_trace(p = plot001,
-                         x = minibase$X02,
-                         y = minibase$X01,
-                         z = minibase$VR,
-                         type = 'scatter3d',
-                         mode = 'markers',
-                         name = "data",
-                         marker = list(size = 10,
-                                       color = 'blue',
-                                       opacity = 0.7))
+
+    # # # Adding errors...
+    plot001 <- plotly::add_trace(p = plot001,
+                                 type = "scatter",
+                                 mode = "markers",
+                                 x = minibase_mod$COV,
+                                 y = minibase_mod$VR,
+                                 color = minibase_mod$FACTOR,
+                                 colors = df_factor_info$color,
+                                 marker = list(size = 15, opacity = 0.7))
 
 
+    # plot001<-  add_text(p = plot001,
+    #                      x = df_table_plot002$level,
+    #                      y = df_table_plot002$mean,
+    #                      text = df_table_plot002$group, name = "Tukey Group",
+    #                      size = 20)
+
+    # # # Title and settings...
     plot001 <- plotly::layout(p = plot001,
-                              scene = list(xaxis = list(title = "X02", zeroline = FALSE),
-                                           yaxis = list(title = "X01", zeroline = FALSE),
-                                           zaxis = list(title = "VR",  zeroline = FALSE)),
-                              title = "Plot 001 - Scatterplot XYZ",
+                              xaxis = list(title = "COV"),
+                              yaxis = list(title = "VR"),
+                              title = "Plot 001 - Scatterplot",
                               font = list(size = 20),
                               margin = list(t = 100))
 
 
 
-
-    # Ajustar el modelo de regresión lineal
-    modelo <- lm_full
-
-    # Rango de valores para Sepal.Length y Sepal.Width
-    x_range <- seq(min(minibase$X02), max(minibase$X02), length.out = 20)
-    y_range <- seq(min(minibase$X01), max(minibase$X01), length.out = 20)
-
-    # Crear una malla de puntos en el espacio bidimensional
-    the_mesh <- expand.grid("X02" = x_range, "X01" = y_range)
-
-    # Calcular los valores predichos para Petal.Length en cada punto de la malla
-    the_mesh$"VR" <- predict(modelo, newdata = the_mesh)
+    # # # Without zerolines
+    plot001 <-plotly::layout(p = plot001,
+                             xaxis = list(zeroline = FALSE),
+                             yaxis = list(zeroline = FALSE))
 
 
-    # Agregar el plano de la regresión lineal al gráfico con add_surface
-    plot001 <- add_surface(plot001,
-                           type = "mesh3d",
-                           x = x_range,
-                           y = y_range,
-                           z = matrix(the_mesh$"VR", 20, 20),
-                           showscale = FALSE,
-                           colorscale = list(c(0,1), c('red', 'red')),
-                           opacity = 0.5,
-                           name = 'Plano')
-
+    # # # Plot output
     plot001
   })
 
@@ -1399,47 +1387,7 @@ fn_cpiA009_code_p02_plot002 <- function(results_p01_test){
 
     plot002 <- plotly::plot_ly()
 
-    plot002 <- add_trace(p = plot002,
-                         x = minibase_mod$fitted.values,
-                         y = minibase_mod$residuals,
-                         type = 'scatter',
-                         mode = 'markers',
-                         name = "data",
-                         marker = list(size = 15, color = 'blue'))
 
-
-    # # Agregar la recta
-    # selected_slop <- df_table_reg[2,1]# Pendiente
-    # selected_constant <- df_table_reg[1,1]  # Ordenada al origen
-    #
-    # x_recta <- c(min(minibase$X), max(minibase$X))
-    # y_recta <- selected_slop * x_recta + selected_constant
-    # plot002 <- add_trace(p = plot002,
-    #                      x = x_recta, y = y_recta,
-    #                      type = 'scatter',
-    #                      mode = 'lines',
-    #                      name = 'slop',
-    #                      line = list(width = 5, color = 'orange'))
-
-
-    max_abs_residuals <- max(abs(minibase_mod$residuals))*1.2
-    range_y_residuals <- c(-max_abs_residuals, max_abs_residuals)
-    vector_range <- extendrange(minibase_mod$residuals)
-    range_y_residuals <- c(-max(vector_range), max(vector_range))
-
-    plot002 <- plotly::layout(p = plot002,
-                              xaxis = list(title = "Fitted values"),
-                              yaxis = list(title = "Residuals",
-                                           range = range_y_residuals),
-                              title = "Plot 002 - Residuals vs. Fitted values",
-                              font = list(size = 20),
-                              margin = list(t = 100))
-
-
-
-    plot002 <- plotly::layout(p = plot002,
-                              xaxis = list(zeroline = FALSE),
-                              yaxis = list(zeroline = TRUE))
 
     # Mostrar el gráfico interactivo
     plot002
@@ -1467,46 +1415,10 @@ fn_cpiA009_code_p02_plot003 <- function(results_p01_test){
 
     # Crear el gráfico interactivo con Plotly
 
-    plot001 <- plotly::plot_ly()
-
-    plot001 <- add_trace(p = plot001,
-                         x = minibase$X01,
-                         y = minibase$VR,
-                         type = 'scatter',
-                         mode = 'markers',
-                         name = "data",
-                         marker = list(size = 15, color = 'blue'))
+    plot003 <- plotly::plot_ly()
 
 
-    # Agregar la recta
-    selected_slop <- df_table_reg[2,1]# Pendiente
-    selected_constant <- df_table_reg[1,1]  # Ordenada al origen
-
-    x_recta <- c(min(minibase$X01), max(minibase$X01))
-    y_recta <- selected_slop * x_recta + selected_constant
-    plot001 <- add_trace(p = plot001,
-                         x = x_recta, y = y_recta,
-                         type = 'scatter',
-                         mode = 'lines',
-                         name = 'slop',
-                         line = list(width = 5, color = 'orange'))
-
-
-    plot001 <- plotly::layout(p = plot001,
-                              xaxis = list(title = "BLOCK"),
-                              yaxis = list(title = "VR"),
-                              title = "Plot 003 - Interacción Factor-Bloque",
-                              font = list(size = 20),
-                              margin = list(t = 100))
-
-
-
-    plot001 <- plotly::layout(p = plot001,
-                              xaxis = list(zeroline = FALSE),
-                              yaxis = list(zeroline = FALSE))
-
-    # Mostrar el gráfico interactivo
-    plot001
+    plot003
 
 
   })
@@ -1531,46 +1443,12 @@ fn_cpiA009_code_p02_plot004 <- function(results_p01_test){
 
     # Crear el gráfico interactivo con Plotly
 
-    plot001 <- plotly::plot_ly()
-
-    plot001 <- add_trace(p = plot001,
-                         x = minibase$X01,
-                         y = minibase$VR,
-                         type = 'scatter',
-                         mode = 'markers',
-                         name = "data",
-                         marker = list(size = 15, color = 'blue'))
+    plot004 <- plotly::plot_ly()
 
 
-    # Agregar la recta
-    selected_slop <- df_table_reg[2,1]# Pendiente
-    selected_constant <- df_table_reg[1,1]  # Ordenada al origen
-
-    x_recta <- c(min(minibase$X01), max(minibase$X01))
-    y_recta <- selected_slop * x_recta + selected_constant
-    plot001 <- add_trace(p = plot001,
-                         x = x_recta, y = y_recta,
-                         type = 'scatter',
-                         mode = 'lines',
-                         name = 'slop',
-                         line = list(width = 5, color = 'orange'))
-
-
-    plot001 <- plotly::layout(p = plot001,
-                              xaxis = list(title = "BLOCK"),
-                              yaxis = list(title = "VR"),
-                              title = "Plot 004 - Interacción Factor-Bloque",
-                              font = list(size = 20),
-                              margin = list(t = 100))
-
-
-
-    plot001 <- plotly::layout(p = plot001,
-                              xaxis = list(zeroline = FALSE),
-                              yaxis = list(zeroline = FALSE))
 
     # Mostrar el gráfico interactivo
-    plot001
+    plot004
 
 
   })
@@ -1681,7 +1559,7 @@ fn_cpiA009_control_p02_plots <- function(all_results){
 
 
 
-fn_cpiA009_gen01 <- function(database,  vr_var_name, x01_var_name, x02_var_name,alpha_value){
+fn_cpiA009_gen01 <- function(database,  vr_var_name, factor_var_name, cov_var_name,alpha_value){
 
   output_list <- list()
   output_list$"R_code" <- list()
@@ -1707,7 +1585,7 @@ fn_cpiA009_gen01 <- function(database,  vr_var_name, x01_var_name, x02_var_name,
   output_list$"R_results"$"p02_plots"$"plot004" <- NULL
 
   # Step 01 - R_code
-  output_list$"R_code"$"p01_test"    <- fn_cpiA009_TakeCode(selected_fn = fn_cpiA009_code_p01_test)
+  output_list$"R_code"$"p01_test"    <- fn_cpiA009_TakeCode(selected_fn = fn_cpiA009_code_p01_test_with)
   output_list$"R_code"$"p02_plots"$"plot001"   <- fn_cpiA009_TakeCode(selected_fn = fn_cpiA009_code_p02_plot001)
   output_list$"R_code"$"p02_plots"$"plot002"   <- fn_cpiA009_TakeCode(selected_fn = fn_cpiA009_code_p02_plot002)
   output_list$"R_code"$"p02_plots"$"plot003"   <- fn_cpiA009_TakeCode(selected_fn = fn_cpiA009_code_p02_plot003)
@@ -1716,8 +1594,8 @@ fn_cpiA009_gen01 <- function(database,  vr_var_name, x01_var_name, x02_var_name,
 
   # Step 02 - Pre Control ------------------------------------------------------
   output_list$"check_control"$"previous" <- fn_cpiA009_control_previous(database, vr_var_name,
-                                                                        x01_var_name,
-                                                                        x02_var_name,
+                                                                        factor_var_name,
+                                                                        cov_var_name,
                                                                         alpha_value)
 
 
@@ -1725,7 +1603,7 @@ fn_cpiA009_gen01 <- function(database,  vr_var_name, x01_var_name, x02_var_name,
 
 
   # Step 03 - Results ----------------------------------------------------------
-  output_list$"R_results"$"p01_test" <- fn_cpiA009_code_p01_test(database,  vr_var_name, x01_var_name, x02_var_name, alpha_value)
+  output_list$"R_results"$"p01_test" <- fn_cpiA009_code_p01_test_with(database,  vr_var_name, factor_var_name, cov_var_name, alpha_value)
 
 
   output_list$"R_results"$"p02_plots"$"plot001" <- fn_cpiA009_code_p02_plot001(results_p01_test = output_list$"R_results"$"p01_test")
@@ -1742,10 +1620,10 @@ fn_cpiA009_gen01 <- function(database,  vr_var_name, x01_var_name, x02_var_name,
 }
 
 
-fn_cpiA009_gen02 <- function(database,  vr_var_name, x01_var_name, x02_var_name, alpha_value){
+fn_cpiA009_gen02 <- function(database,  vr_var_name, factor_var_name, cov_var_name, alpha_value){
 
 
-  all_results <- fn_cpiA009_gen01(database,  vr_var_name, x01_var_name, x02_var_name, alpha_value)
+  all_results <- fn_cpiA009_gen01(database,  vr_var_name, factor_var_name, cov_var_name, alpha_value)
 
 
 
@@ -1754,10 +1632,10 @@ fn_cpiA009_gen02 <- function(database,  vr_var_name, x01_var_name, x02_var_name,
 
   # Out01 - Analysis -------------------------------------------------------------
   selection01 <- c("df_selected_vars",
-                   "df_table_reg",
-                   "df_table_det_coef",
-                   "df_position",
-                   "df_dispersion")
+                   "df_factor_info",
+                   "check_unbalanced_reps",
+                   "df_table_ancova_with",
+                   "df_tukey_table")
 
   output_list$"out01_analysis" <- all_results$R_results$p01_test[selection01]
 
