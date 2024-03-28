@@ -299,12 +299,16 @@ fn_cpiA009_code_p01_test_with <- function(database, vr_var_name, factor_var_name
 
 
 
-  # # # # # Section 04 - Var rols and minibase -----------------------------------
   # # # Selected vars
   vector_all_var_names <- colnames(database)
   vector_name_selected_vars <- c(vr_var_name, factor_var_name, cov_var_name)
   vector_rol_vars <- c("VR", "FACTOR", "COV")
 
+  # Minibase
+  minibase <- na.omit(database[,vector_name_selected_vars])
+  colnames(minibase) <- vector_rol_vars
+  minibase[,2] <- as.factor(minibase[,2])
+  #colnames(minibase) <- selected_role_vars
 
 
   # # # Selected vars info as dataframe
@@ -318,73 +322,134 @@ fn_cpiA009_code_p01_test_with <- function(database, vr_var_name, factor_var_name
   )
   df_selected_vars
 
-
-
-
-
-  # # # # # Section 05 - minibase ------------------------------------------------
-  # Only selected vars. Only completed rows. Factor columns as factor object in R.
-  minibase <- na.omit(database[vector_name_selected_vars])
-  colnames(minibase) <- vector_rol_vars
-  minibase$"FACTOR" <- as.factor(minibase$"FACTOR")
-
-
-
-  # # # Anova control
-  # 'VR' must be numeric and 'FACTOR must be factor.
   df_control_minibase <- data.frame(
-    "order" = 1:nrow(df_selected_vars),
+    "order" = 1:length(vector_rol_vars),
     "var_name" = df_selected_vars$var_name,
     "var_role" = df_selected_vars$var_role,
     "control" = c("is.numeric()", "is.factor()", "is.numeric()"),
     "verify" = c(is.numeric(minibase[,1]), is.factor(minibase[,2]), is.numeric(minibase[,3]))
   )
-  df_control_minibase
 
 
-
-  # # # database and minibase reps
-  # Our 'n' is from minibase
   df_show_n <- data.frame(
     "object" = c("database", "minibase"),
     "n_col" = c(ncol(database), ncol(minibase)),
     "n_row" = c(nrow(database), nrow(minibase))
   )
-  df_show_n
 
-
-
-  # # # Factor info
-  # Default order for levels its alphabetic order.
+  #
   df_factor_info <- data.frame(
     "order" = 1:nlevels(minibase[,2]),
     "level" = levels(minibase[,2]),
     "n" = as.vector(table(minibase[,2])),
-    "mean" = tapply(minibase[,1], minibase[,2], mean),
     "color" = rainbow(nlevels(minibase[,2]))
   )
-  df_factor_info
 
-
-
-  # # # Unbalanced reps for levels?
-  # Important information for Tukey.
-  # If reps its equal or not equal in all levels must be detailled
-  # on Tukey.
   check_unbalanced_reps <- length(unique(df_factor_info$n)) > 1
-  check_unbalanced_reps
+
+  #####################################################################################
+
+  # Medidas de posicion particionadas (VR)
+  df_position_vr_levels <- data.frame(
+    "order" = 1:nlevels(minibase[,2]),
+    "level" = levels(minibase[,2]),
+    "min" = tapply(minibase[,1], minibase[,2], min),
+    "mean" = tapply(minibase[,1], minibase[,2], mean),
+    "median" = tapply(minibase[,1], minibase[,2], median),
+    "max" = tapply(minibase[,1], minibase[,2], max),
+    "n" = tapply(minibase[,1], minibase[,2], length)
+  )
 
 
 
+  # Medidas de dispersion particionadas (VR)
+  df_dispersion_vr_levels <- data.frame(
+    "order" = 1:nlevels(minibase[,2]),
+    "level" = levels(minibase[,2]),
+    "range" = tapply(minibase[,1], minibase[,2], function(x){max(x) - min(x)}),
+    "variance" = tapply(minibase[,1], minibase[,2], var),
+    "standard_deviation" = tapply(minibase[,1], minibase[,2], sd),
+    "standard_error" = tapply(minibase[,1], minibase[,2], function(x){sd(x)/sqrt(length(x))}),
+    "n" = tapply(minibase[,1], minibase[,2], length)
+  )
 
 
-  # # # # # Section 06 - Anova Test ----------------------------------------------
-  # # # Anova test
-  lm_ancova_with <- lm(VR ~ COV + FACTOR + FACTOR:COV, data = minibase)   # Linear model
-  aov_ancova_with <- aov(lm_ancova_with)                                 # R results for ancova
-  df_table_ancova_with <- as.data.frame(summary(aov_ancova_with)[[1]])   # Common ancova table
-  df_table_ancova_with
+  # Medidas de posicion particionadas (VR)
+  df_position_vr_general <- data.frame(
+    "min" = min(minibase[,1]),
+    "mean" = mean(minibase[,1]),
+    "median" = median(minibase[,1]),
+    "max" = max(minibase[,1]),
+    "n" = length(minibase[,1])
+  )
 
+
+
+  # Medidas de dispersion particionadas (VR)
+  df_dispersion_vr_general <- data.frame(
+    "range" = max(minibase[,1]) - min(minibase[,1]),
+    "variance" = var(minibase[,1]),
+    "standard_deviation" = sd(minibase[,1]),
+    "standard_error" = sd(minibase[,1])/(sqrt(length(minibase[,1]))),
+    "n" = length(minibase[,1])
+  )
+
+
+  #########################################################################################
+
+  # Medidas de posicion particionadas (COV)
+  df_position_cov_levels <- data.frame(
+    "order" = 1:nlevels(minibase[,2]),
+    "level" = levels(minibase[,2]),
+    "min" = tapply(minibase[,3], minibase[,2], min),
+    "mean" = tapply(minibase[,3], minibase[,2], mean),
+    "median" = tapply(minibase[,3], minibase[,2], median),
+    "max" = tapply(minibase[,3], minibase[,2], max),
+    "n" = tapply(minibase[,3], minibase[,2], length)
+  )
+
+
+
+  # Medidas de dispersion particionadas  (COV)
+  df_dispersion_cov_levels <- data.frame(
+    "order" = 1:nlevels(minibase[,2]),
+    "level" = levels(minibase[,2]),
+    "range" = tapply(minibase[,3], minibase[,2], function(x){max(x) - min(x)}),
+    "variance" = tapply(minibase[,3], minibase[,2], var),
+    "standard_deviation" = tapply(minibase[,3], minibase[,2], sd),
+    "standard_error" = tapply(minibase[,3], minibase[,2], function(x){sd(x)/sqrt(length(x))}),
+    "n" = tapply(minibase[,3], minibase[,2], length)
+  )
+
+  # Medidas de posicion particionadas (VR)
+  df_position_cov_general <- data.frame(
+    "min" = min(minibase[,3]),
+    "mean" = mean(minibase[,3]),
+    "median" = median(minibase[,3]),
+    "max" = max(minibase[,3]),
+    "n" = length(minibase[,3])
+  )
+
+
+
+  # Medidas de dispersion particionadas (VR)
+  df_dispersion_cov_general <- data.frame(
+    "range" = max(minibase[,3]) - min(minibase[,3]),
+    "variance" = var(minibase[,3]),
+    "standard_deviation" = sd(minibase[,3]),
+    "standard_error" = sd(minibase[,3])/(sqrt(length(minibase[,3]))),
+    "n" = length(minibase[,3])
+  )
+
+
+
+  ################################################################################
+
+  # Analisis
+  lm_ancova_with <- lm(VR ~ COV + FACTOR + FACTOR:COV, data = minibase)
+  aov_ancova_with <- aov(lm_ancova_with)
+  coefficients_ancova_with <- coefficients(aov_ancova_with)
+  df_table_ancova_with <- as.data.frame(summary(aov_ancova_with)[[1]])
 
 
   # # # Standard error from model for each level
@@ -402,88 +467,104 @@ fn_cpiA009_code_p01_test_with <- function(database, vr_var_name, factor_var_name
   df_model_error
 
 
+  ######################################################################################
+
+  dt_rows_database_ok <- rowSums(is.na(database[vector_name_selected_vars])) == 0
 
 
-
-  # # # # # Section 07 - minibase_mod --------------------------------------------
-  # # # Detect rows on database there are on minibase
-  dt_rows_database_ok <- rowSums(!is.na(database[vector_name_selected_vars])) == ncol(minibase)
-
-
-
-  # # # Object minibase_mod and new cols
   minibase_mod <- minibase
-  minibase_mod$"lvl_order_number" <- as.numeric(minibase_mod[,2])
-  minibase_mod$"lvl_color" <- df_factor_info$color[minibase_mod$"lvl_order_number"]
-  minibase_mod$"fitted.values" <- df_factor_info$"mean"[minibase_mod$"lvl_order_number"]
+  minibase_mod$"fitted.values" <- lm_ancova_with$fitted.values
   minibase_mod$"residuals" <- lm_ancova_with$residuals
   minibase_mod$"id_database" <- c(1:nrow(database))[dt_rows_database_ok]
   minibase_mod$"id_minibase" <- 1:nrow(minibase)
-  minibase_mod$"studres" <- minibase_mod$"residuals"/model_error_sd
+  minibase_mod$"lvl_order_number" <- as.numeric(minibase[,2])
+  minibase_mod$"lvl_color" <- df_factor_info$color[minibase_mod$"lvl_order_number"]
+
+
+
+  ######################################################################################
+
+  # Medidas de posicion particionadas (residuals)
+  df_position_residuals_levels <- data.frame(
+    "order" = 1:nlevels(minibase_mod[,2]),
+    "level" = levels(minibase_mod[,2]),
+    "min" = tapply(minibase_mod$residuals, minibase_mod[,2], min),
+    "mean" = tapply(minibase_mod$residuals, minibase_mod[,2], mean),
+    "median" = tapply(minibase_mod$residuals, minibase_mod[,2], median),
+    "max" = tapply(minibase_mod$residuals, minibase_mod[,2], max),
+    "n" = tapply(minibase_mod$residuals, minibase_mod[,2], length)
+  )
+
+
+
+  # Medidas de dispersion particionadas  (residuals)
+  df_dispersion_residuals_levels <- data.frame(
+    "order" = 1:nlevels(minibase_mod[,2]),
+    "level" = levels(minibase_mod[,2]),
+    "range" = tapply(minibase_mod$residuals, minibase_mod[,2], function(x){max(x) - min(x)}),
+    "variance" = tapply(minibase_mod$residuals, minibase_mod[,2], var),
+    "standard_deviation" = tapply(minibase_mod$residuals, minibase_mod[,2], sd),
+    "standard_error" = tapply(minibase_mod$residuals, minibase_mod[,2], function(x){sd(x)/sqrt(length(x))}),
+    "n" = tapply(minibase_mod$residuals, minibase_mod[,2], length)
+  )
+
+
+
+  # Medidas de posicion particionadas (residuals)
+  df_position_residuals_general <- data.frame(
+    "min" = min(minibase_mod$residuals),
+    "mean" = mean(minibase_mod$residuals),
+    "median" = median(minibase_mod$residuals),
+    "max" = max(minibase_mod$residuals),
+    "n" = length(minibase_mod$residuals)
+  )
+
+
+
+  # Medidas de dispersion particionadas (residuals)
+  df_dispersion_residuals_general <- data.frame(
+    "range" = max(minibase_mod$residuals) - min(minibase_mod$residuals),
+    "variance" = var(minibase_mod$residuals),
+    "standard_deviation" = sd(minibase_mod$residuals),
+    "standard_error" = sd(minibase_mod$residuals)/(sqrt(length(minibase_mod$residuals))),
+    "n" = length(minibase_mod$residuals)
+  )
 
 
 
 
 
-  # # # # # Section 08 - Requeriments for residuals-------------------------------
-  # # # Normality test (Shapiro-Wilk)
+  # # # Seccion 09 - Requisitos del modelo de Ancova con interacción ------------------
+  # Test de Normalidad de Shapiro-Wilk
   test_residuals_normality <- shapiro.test(minibase_mod$residuals)
   test_residuals_normality
 
 
-
-
-  # # # Homogeinidy test (Bartlett)
   test_residuals_homogeneity <- bartlett.test(residuals ~ FACTOR, data = minibase_mod)
   test_residuals_homogeneity
 
 
+  sum_residuos <- sum(minibase_mod$residuals)
+  sum_residuos
 
-  # # # Residuals variance from levels from original residuals
-  df_residuals_variance_levels <- data.frame(
-    "order" = 1:nlevels(minibase_mod[,2]),
-    "level" = levels(minibase_mod[,2]),
-    "variance" = tapply(minibase_mod$residuals, minibase_mod[,2], var),
-    "n" = tapply(minibase_mod$residuals, minibase_mod[,2], length)
-  )
-  df_residuals_variance_levels
-
-
-
-  # # # Sum for residuals
-  sum_residuals <- sum(minibase_mod$residuals)
-  sum_residuals
-
-
-
-  # # # Mean for residuals
-  mean_residuals <- mean(minibase_mod$residuals)
-  mean_residuals
-
-
-
-
-
-  # # # # # Section 09 - Tukey --------------------------------------------------
-  # # # Tukey test - Tukey with groups - Full version
+  # # Sección 09-2) Tabla Tukey --------------------------------------------------
+  # Tukey completo
   tukey01_full_groups <- agricolae::HSD.test(y = lm_ancova_with,
-                                             trt = "FACTOR",
+                                             trt = colnames(minibase)[2],
                                              alpha = alpha_value,
                                              group = TRUE,
                                              console = FALSE,
                                              unbalanced = check_unbalanced_reps)
 
-
-
-  # # # Tukey test - Tukey pairs comparation - Full version
   tukey02_full_pairs <- agricolae::HSD.test(y = lm_ancova_with,
-                                            trt = "FACTOR",
+                                            trt = colnames(minibase)[2],
                                             alpha = alpha_value,
                                             group = FALSE,
                                             console = FALSE,
                                             unbalanced = check_unbalanced_reps)
 
 
+  ########################################################
 
   # # Original table from R about Tukey
   df_tukey_original_table <- tukey01_full_groups$groups
@@ -499,185 +580,158 @@ fn_cpiA009_code_p01_test_with <- function(database, vr_var_name, factor_var_name
   )
   df_tukey_table
 
+  vector_mean_vr_levels <- tukey01_full_groups$means[,1]
+  names(vector_mean_vr_levels) <- rownames(tukey01_full_groups$means)
+
+  mean_of_means_vr <- mean(vector_mean_vr_levels)
+  vector_mean_of_means_vr <- rep(mean_of_means_vr, length(vector_mean_vr_levels))
+  names(vector_mean_of_means_vr) <- names(vector_mean_vr_levels)
+
+  vector_tau_vr_levels <- vector_mean_vr_levels - mean_of_means_vr
+  names(vector_tau_vr_levels) <- names(vector_mean_vr_levels)
+
+  df_factorial_effects <- data.frame(
+    "order" = 1:length(vector_mean_vr_levels),
+    "level" = names(vector_mean_vr_levels),
+    "mu" = vector_mean_of_means_vr,
+    "tau_i" = vector_tau_vr_levels,
+    "mu_i" = vector_mean_vr_levels,
+    "groups" = tukey01_full_groups$groups$groups
+  )
 
 
+  df_tukey_means <- data.frame(
+    "order" = 1:length(vector_mean_vr_levels),
+    "level" = names(vector_mean_vr_levels),
+    "mean" = vector_mean_vr_levels,
+    "groups" = tukey01_full_groups$groups$groups
+  )
 
-
-  # # # # # Section 10 - Partitioned Measures (VR)--------------------------------
-  # # # Partitioned Measures of Position (VR)
-  df_vr_position_levels <- data.frame(
-    "order" = 1:nlevels(minibase[,2]),
-    "level" = levels(minibase[,2]),
-    "min" = tapply(minibase[,1], minibase[,2], min),
-    "mean" = tapply(minibase[,1], minibase[,2], mean),
-    "Q1" = tapply(minibase[,1], minibase[,2], quantile, 0.25),
-    "median" = tapply(minibase[,1], minibase[,2], median),
-    "Q3" = tapply(minibase[,1], minibase[,2], quantile, 0.75),
-    "max" = tapply(minibase[,1], minibase[,2], max),
-    "n" = tapply(minibase[,1], minibase[,2], length)
+  df_tukey_effects <- data.frame(
+    "order" = 1:length(vector_mean_vr_levels),
+    "level" = names(vector_mean_vr_levels),
+    "tau_i" = vector_tau_vr_levels,
+    "groups" = tukey01_full_groups$groups$groups
   )
 
 
 
-  # # # Partitioned Measures of Dispersion (VR)
-  df_vr_dispersion_levels <- data.frame(
-    "order" = 1:nlevels(minibase[,2]),
-    "level" = levels(minibase[,2]),
-    "range" = tapply(minibase[,1], minibase[,2], function(x){max(x) - min(x)}),
-    "variance" = tapply(minibase[,1], minibase[,2], var),
-    "standard_deviation" = tapply(minibase[,1], minibase[,2], sd),
-    "standard_error" = tapply(minibase[,1], minibase[,2], function(x){sd(x)/sqrt(length(x))}),
-    "n" = tapply(minibase[,1], minibase[,2], length)
+  # Suma de los efectos tau
+  sum_tau <- sum(vector_tau_vr_levels)
+  sum_tau
+
+
+
+
+
+
+  # # Sección 09-3) Tabla con las pendientes y ordenadas de cada factor ----------
+  # Ecuaciones de cada recta
+  # Ordenadas de los niveles del factor
+  pos_mod_intercept <- c((1:(nlevels(minibase[,2])-1)) + 2)
+  vector_mod_intercept_levels <- c(0, coefficients_ancova_with[pos_mod_intercept])
+  names(vector_mod_intercept_levels) <- levels(minibase[,2])
+  vector_intercept_levels <- vector_mod_intercept_levels + coefficients_ancova_with[1]
+  names(vector_intercept_levels) <- levels(minibase[,2])
+
+
+  # Pendientes de los niveles dle factor
+  pos_mod_slope <- c((nlevels(minibase[,2]) + 2):length(coefficients_ancova_with))
+  vector_mod_slope_levels <- c(0, coefficients_ancova_with[pos_mod_slope])
+  names(vector_mod_slope_levels) <- levels(minibase[,2])
+
+  vector_slope_levels <- vector_mod_slope_levels + coefficients_ancova_with[2]
+  names(vector_slope_levels) <- levels(minibase[,2])
+
+
+  df_lines <- data.frame(
+    "order" = 1:length(vector_slope_levels),
+    "level" = names(vector_slope_levels),
+    "slope" = vector_slope_levels,
+    "intercept" = vector_intercept_levels
   )
-  df_vr_dispersion_levels
 
 
 
-  # # # General Measures of Position (VR)
-  df_vr_position_general <- data.frame(
-    "min" = min(minibase[,1]),
-    "mean" = mean(minibase[,1]),
-    "median" = median(minibase[,1]),
-    "max" = max(minibase[,1]),
-    "n" = length(minibase[,1])
+
+  # # Sección 09-4) Tabla con las estimaciones del modelo ------------------------
+  # Estimacion de la interaccion en las combinaciones COV:FACTOR
+  slope_general <- mean(vector_slope_levels)
+  vector_slope_general <- rep(slope_general, length(vector_slope_levels))
+  names(vector_slope_general) <- names(vector_slope_levels)
+
+
+  # Efectos de interaccion
+  vector_interaction <- vector_slope_levels - vector_slope_general
+  names(vector_interaction) <- names(vector_interaction)
+
+  df_interaction <- data.frame(
+    "order" = 1:length(vector_interaction),
+    "level" = names(vector_interaction),
+    "beta" = vector_slope_general,
+    "gamma_i" = vector_interaction,
+    "beta_i" = vector_slope_levels
   )
-  df_vr_position_general
+
+
+  # Suma de las interacciones
+  sum_interaction <- sum(vector_interaction)
+  sum_interaction
 
 
 
-  # # # General Measures of Dispersion (VR)
-  df_vr_dispersion_general <- data.frame(
-    "range" = max(minibase[,1]) - min(minibase[,1]),
-    "variance" = var(minibase[,1]),
-    "standard_deviation" = sd(minibase[,1]),
-    "standard_error" = sd(minibase[,1])/(sqrt(length(minibase[,1]))),
-    "n" = length(minibase[,1])
+
+
+
+  # # Sección 09-6) Tabla con estimaciones del modelo de Ancova (modelo largo) ---
+
+  df_resumen_ancova_with_large <- data.frame(
+    "order" = df_factorial_effects$order,
+    "level" = df_factorial_effects$level,
+    "mu" = df_factorial_effects$mu,
+    "tau_i" = df_factorial_effects$tau_i,
+    "beta" = df_interaction$beta,
+    "gamma_i" = df_interaction$gamma_i,
+    "mean_cov_i" = df_position_cov_levels$mean,
+    "min_cov_i" = df_position_cov_levels$min,
+    "max_cov_i" = df_position_cov_levels$max
   )
-  df_vr_dispersion_general
 
 
 
-
-
-  # # # # # Section 11 - Partitioned Measures (Residuals)-------------------------
-  # # # Partitioned Measures of Position (residuals)
-  df_residuals_position_levels <- data.frame(
-    "order" = 1:nlevels(minibase_mod[,2]),
-    "level" = levels(minibase_mod[,2]),
-    "min" = tapply(minibase_mod$residuals, minibase_mod[,2], min),
-    "mean" = tapply(minibase_mod$residuals, minibase_mod[,2], mean),
-    "median" = tapply(minibase_mod$residuals, minibase_mod[,2], median),
-    "max" = tapply(minibase_mod$residuals, minibase_mod[,2], max),
-    "n" = tapply(minibase_mod$residuals, minibase_mod[,2], length)
+  df_resumen_ancova_with_short <- data.frame(
+    "order" = df_factorial_effects$order,
+    "level" = df_factorial_effects$level,
+    "mu_i" = df_factorial_effects$mu_i,
+    "beta_i" = df_interaction$beta_i,
+    "mean_cov_i" = df_position_cov_levels$mean,
+    "min_cov_i" = df_position_cov_levels$min,
+    "max_cov_i" = df_position_cov_levels$max
   )
-  df_residuals_position_levels
 
 
+  vector_dif_min_cov_levels <- df_position_cov_levels$min - df_position_cov_levels$mean
+  names(vector_dif_min_cov_levels) <- df_position_cov_levels$level
 
-  # # # Partitioned Measures of Dispersion (residuals)
-  df_residual_dispersion_levels <- data.frame(
-    "order" = 1:nlevels(minibase_mod[,2]),
-    "level" = levels(minibase_mod[,2]),
-    "range" = tapply(minibase_mod$residuals, minibase_mod[,2], function(x){max(x) - min(x)}),
-    "variance" = tapply(minibase_mod$residuals, minibase_mod[,2], var),
-    "standard_deviation" = tapply(minibase_mod$residuals, minibase_mod[,2], sd),
-    "standard_error" = tapply(minibase_mod$residuals, minibase_mod[,2], function(x){sd(x)/sqrt(length(x))}),
-    "n" = tapply(minibase_mod$residuals, minibase_mod[,2], length)
+  vector_dif_max_cov_levels <- df_position_cov_levels$max - df_position_cov_levels$mean
+  names(vector_dif_max_cov_levels) <- df_position_cov_levels$level
+
+
+  vector_initial_point_y_levels <- vector_mean_vr_levels + (vector_slope_levels*(vector_dif_min_cov_levels))
+  vector_end_point_y_levels     <- vector_mean_vr_levels + (vector_slope_levels*(vector_dif_max_cov_levels))
+
+
+  df_segments <- data.frame(
+    "order" = df_position_cov_levels$order,
+    "level" = df_position_cov_levels$level,
+    "min_cov_i_x" = df_position_cov_levels$min,
+    "max_cov_i_x" = df_position_cov_levels$max,
+    "initial_point_i_y" = vector_initial_point_y_levels,
+    "end_point_i_x" = vector_end_point_y_levels,
+    "color" = df_factor_info$color
   )
-  df_residual_dispersion_levels
 
 
-
-  # # # General Measures of Position (residuals)
-  df_residuals_position_general <- data.frame(
-    "min" = min(minibase_mod$residuals),
-    "mean" = mean(minibase_mod$residuals),
-    "median" = median(minibase_mod$residuals),
-    "max" = max(minibase_mod$residuals),
-    "n" = length(minibase_mod$residuals)
-  )
-  df_residuals_position_general
-
-
-
-  # # # General Measures of Dispersion (residuals)
-  df_residuals_dispersion_general <- data.frame(
-    "range" = max(minibase_mod$residuals) - min(minibase_mod$residuals),
-    "variance" = var(minibase_mod$residuals),
-    "standard_deviation" = sd(minibase_mod$residuals),
-    "standard_error" = sd(minibase_mod$residuals)/(sqrt(length(minibase_mod$residuals))),
-    "n" = length(minibase_mod$residuals)
-  )
-  df_residuals_dispersion_general
-
-
-
-
-
-  # # # # # Section 12 - Model estimators ----------------------------------------
-  # # # Means for each level
-  vector_est_mu_i <- df_vr_position_levels$mean
-  vector_est_mu_i
-
-
-
-  # # # Mean of means
-  est_mu <- mean(vector_est_mu_i)
-  vector_est_mu <- rep(est_mu, length(vector_est_mu_i))
-  vector_est_mu
-
-
-
-  # # # Tau efects
-  vector_est_tau_i <- vector_est_mu_i - vector_est_mu
-  vector_est_tau_i
-
-
-
-  # # # Sum of tau efects
-  sum_est_tau_i <- sum(vector_est_tau_i)
-  sum_est_tau_i
-
-
-
-  # # # Long model information on dataframe
-  df_anova1way_model_long <- data.frame(
-    "order" = df_factor_info$order,
-    "level" = df_factor_info$level,
-    "n" = df_factor_info$n,
-    "est_mu" = vector_est_mu,
-    "est_tau_i" = vector_est_tau_i
-  )
-  df_anova1way_model_long
-
-
-
-  # # # Short model information on dataframe
-  df_anova1way_model_short <- data.frame(
-    "order" = df_factor_info$order,
-    "level" = df_factor_info$level,
-    "n" = df_factor_info$n,
-    "est_mu_i" = vector_est_mu_i
-  )
-  df_anova1way_model_short
-
-
-
-
-
-  # # # # # Section 13 - Special table to plots ----------------------------------
-
-  # # # Table for plot001
-  df_table_factor_plot001 <- data.frame(
-    "order" = df_factor_info$order,
-    "level" = df_factor_info$level,
-    "n" = df_factor_info$n,
-    "mean" = tapply(minibase[,1], minibase[,2], mean),
-    "min" = tapply(minibase[,1], minibase[,2], min),
-    "max" = tapply(minibase[,1], minibase[,2], max),
-    "sd" = tapply(minibase[,1], minibase[,2], sd),
-    "var" = tapply(minibase[,1], minibase[,2], var)
-  )
 
   df_table_factor_plot002 <- data.frame(
     "order" = df_factor_info$order,
@@ -693,6 +747,7 @@ fn_cpiA009_code_p01_test_with <- function(database, vr_var_name, factor_var_name
 
 
 
+
   df_table_factor_plot003 <- data.frame(
     "order" = df_factor_info$order,
     "level" = df_factor_info$level,
@@ -703,94 +758,15 @@ fn_cpiA009_code_p01_test_with <- function(database, vr_var_name, factor_var_name
   df_table_factor_plot003["lower_limit"] <- df_table_factor_plot003$mean - df_table_factor_plot003$model_error_se
   df_table_factor_plot003["upper_limmit"] <- df_table_factor_plot003$mean + df_table_factor_plot003$model_error_se
   df_table_factor_plot003["color"] <- df_factor_info$color
-  df_table_factor_plot003
-
-
-
-  # # # Table for plot004
-  df_table_factor_plot004 <- df_vr_position_levels
-  df_table_factor_plot004["color"] <- df_factor_info$color
-
-  # # # Table for plot005
-  df_table_factor_plot005 <- df_table_factor_plot004
-
-  # # # Table for plot006
-  df_table_factor_plot006 <- df_table_factor_plot004
-
-
-  df_table_factor_plot007 <- df_table_factor_plot003
   correct_pos_letters <- order(df_tukey_table$level)
   vector_letters <- df_tukey_table$group[correct_pos_letters]
-  df_table_factor_plot007["group"] <- vector_letters
-
-  # # # Table for plot006
-  df_table_residuals_plot001 <- data.frame(
-    "order" = 1:nlevels(minibase_mod[,2]),
-    "level" = levels(minibase_mod[,2]),
-    "n" = tapply(minibase_mod$residuals, minibase_mod[,2], length),
-    "min" = tapply(minibase_mod$residuals, minibase_mod[,2], min),
-    "mean" = tapply(minibase_mod$residuals, minibase_mod[,2], mean),
-    "max" = tapply(minibase_mod$residuals, minibase_mod[,2], max),
-    "var" = tapply(minibase_mod$residuals, minibase_mod[,2], var),
-    "sd" = tapply(minibase_mod$residuals, minibase_mod[,2], sd),
-    "color" = df_factor_info$color
-  )
-  df_table_residuals_plot001
-
-  # # # Table for plot006
-  df_table_residuals_plot002 <- df_table_residuals_plot001
-
-  # # # Table for plot006
-  df_table_residuals_plot003 <- df_table_residuals_plot001
-
-  # # # Table for plot006
-  df_table_residuals_plot004 <- data.frame(
-    "variable" = "residuals",
-    "n" = length(minibase_mod$residuals),
-    "min" = min(minibase_mod$residuals),
-    "mean" = mean(minibase_mod$residuals),
-    "max" = max(minibase_mod$residuals),
-    "var" = var(minibase_mod$residuals),
-    "sd" = sd(minibase_mod$residuals),
-    "model_error_var" = model_error_var,
-    "model_error_sd" = model_error_sd
-  )
-
-  # # # Table for plot006
-  df_table_residuals_plot005  <- df_table_residuals_plot004
-
-  # # # Table for plot006
-  df_table_residuals_plot006 <- data.frame(
-    "order" = 1:nlevels(minibase_mod[,2]),
-    "level" = levels(minibase_mod[,2]),
-    "n" = tapply(minibase_mod$studres, minibase_mod[,2], length),
-    "min" = tapply(minibase_mod$studres, minibase_mod[,2], min),
-    "mean" = tapply(minibase_mod$studres, minibase_mod[,2], mean),
-    "max" = tapply(minibase_mod$studres, minibase_mod[,2], max),
-    "var" = tapply(minibase_mod$studres, minibase_mod[,2], var),
-    "sd" = tapply(minibase_mod$studres, minibase_mod[,2], sd),
-    "color" = df_factor_info$color
-  )
+  df_table_factor_plot003["group"] <- vector_letters
 
 
-  # # # Table for plot006
-  df_table_residuals_plot007 <- df_table_residuals_plot006
+  # # # # # Section 13 - Special table to plots ----------------------------------
 
 
-  df_table_residuals_plot008 <- data.frame(
-    "variable" = "studres",
-    "n" = length(minibase_mod$studres),
-    "min" = min(minibase_mod$studres),
-    "mean" = mean(minibase_mod$studres),
-    "max" = max(minibase_mod$studres),
-    "var" = var(minibase_mod$studres),
-    "sd" = sd(minibase_mod$studres)
-  )
 
-
-  df_table_residuals_plot009 <- df_table_residuals_plot008
-
-  df_table_residuals_plot010 <- df_table_residuals_plot008
 
 
 
@@ -1323,10 +1299,6 @@ fn_cpiA009_code_p02_plot001 <- function(results_p01_test){
   new_plot <-  with(results_p01_test,{
 
 
-    # Crear el gráfico interactivo con Plotly
-
-    # Crear el gráfico interactivo con Plotly
-
     # # # Create a new plot...
     plot001 <- plotly::plot_ly()
 
@@ -1364,6 +1336,16 @@ fn_cpiA009_code_p02_plot001 <- function(results_p01_test){
                              yaxis = list(zeroline = FALSE))
 
 
+    for (x in 1:nrow(df_segments)){
+      plot001 <- add_segments(p = plot001,
+                              x = df_segments$min_cov_i_x[x],
+                              y = df_segments$initial_point_i_y[x],
+                              xend = df_segments$max_cov_i_x[x],
+                              yend = df_segments$end_point_i_x[x],
+                              line = list(color = df_segments$color[x],
+                                          width = 4),
+                              name = df_segments$level[x])
+    }
     # # # Plot output
     plot001
   })
@@ -1383,13 +1365,40 @@ fn_cpiA009_code_p02_plot002 <- function(results_p01_test){
   new_plot <-  with(results_p01_test,{
 
 
-    # Crear el gráfico interactivo con Plotly
-
+    # # # Create a new plot...
     plot002 <- plotly::plot_ly()
 
 
+    # # # Adding errors...
+    plot002 <-   plotly::add_trace(p = plot002,
+                                   type = "scatter",
+                                   mode = "markers",
+                                   x = df_table_factor_plot002$level,
+                                   y = df_table_factor_plot002$mean,
+                                   color = df_table_factor_plot002$level,
+                                   colors = df_table_factor_plot002$color,
+                                   marker = list(symbol = "line-ew-open",
+                                                 size = 50,
+                                                 opacity = 1,
+                                                 line = list(width = 5)),
+                                   error_y = list(type = "data", array = df_table_factor_plot002$model_error_sd)
+    )
 
-    # Mostrar el gráfico interactivo
+
+    # # # Title and settings...
+    plot002 <- plotly::layout(p = plot002,
+                              xaxis = list(title = "FACTOR"),
+                              yaxis = list(title = "VR"),
+                              title = "Plot 002 - Mean y model standard deviation",
+                              font = list(size = 20),
+                              margin = list(t = 100))
+
+    # # # Without zerolines
+    plot002 <-plotly::layout(p = plot002,
+                             xaxis = list(zeroline = FALSE),
+                             yaxis = list(zeroline = FALSE))
+
+    # # # Plot output
     plot002
 
 
@@ -1411,13 +1420,46 @@ fn_cpiA009_code_p02_plot003 <- function(results_p01_test){
   new_plot <-  with(results_p01_test,{
 
 
-    # Crear el gráfico interactivo con Plotly
-
-    # Crear el gráfico interactivo con Plotly
-
+    # # # Create a new plot...
     plot003 <- plotly::plot_ly()
 
 
+    # # # Adding errors...
+    plot003 <-   plotly::add_trace(p = plot003,
+                                   type = "scatter",
+                                   mode = "markers",
+                                   x = df_table_factor_plot003$level,
+                                   y = df_table_factor_plot003$mean,
+                                   color = df_table_factor_plot003$level,
+                                   colors = df_table_factor_plot003$color,
+                                   marker = list(symbol = "line-ew-open",
+                                                 size = 50,
+                                                 opacity = 1,
+                                                 line = list(width = 5)),
+                                   error_y = list(type = "data", array = df_table_factor_plot003$model_error_se)
+    )
+
+
+    plot003 <-  add_text(p = plot003,
+                                x = df_table_factor_plot003$level,
+                                y = df_table_factor_plot003$mean,
+                                text = df_table_factor_plot003$group, name = "Tukey Group",
+                                size = 20)
+
+    # # # Title and settings...
+    plot003 <- plotly::layout(p = plot003,
+                              xaxis = list(title = "FACTOR"),
+                              yaxis = list(title = "VR"),
+                              title = "Plot 003 - Mean y model standard error",
+                              font = list(size = 20),
+                              margin = list(t = 100))
+
+    # # # Without zerolines
+    plot003 <-plotly::layout(p = plot003,
+                             xaxis = list(zeroline = FALSE),
+                             yaxis = list(zeroline = FALSE))
+
+    # # # Plot output
     plot003
 
 
@@ -1643,21 +1685,19 @@ fn_cpiA009_gen02 <- function(database,  vr_var_name, factor_var_name, cov_var_na
 
 
   # Out02 - Requeriments ---------------------------------------------------------
-  selection02 <- c("df_check_cor_test", "normality_x01_results",
-                   "normality_x02_results", "homogeneity_results", "pearson_cor_results",
-                   "spearman_cor_results", "test_residuals_normality")
+  selection02 <- c("test_residuals_normality", "test_residuals_homogeneity")
 
   output_list$"out02_requeriments" <- all_results$R_results$p01_test[selection02]
 
 
 
   # Out03 - Plots and Tables - Factor --------------------------------------------
-  output_list$"out03A_plots_factor" <- all_results$R_results$p02_plots
+  output_list$"out03A_plots" <- all_results$R_results$p02_plots
 
 
   selection03B <- c("df_table_plot001", "df_table_plot002",
                     "df_table_plot003", "df_table_plot004")
-  output_list$"out03B_tables_factor" <- all_results$R_results$p01_test[selection03B]
+  output_list$"out03B_tableplots" <- all_results$R_results$p01_test[selection03B]
 
 
 

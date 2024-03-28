@@ -456,147 +456,174 @@ module_cpiA009_s02_rscience_server <- function(id, input_general, input_01_anova
 
       ##############################################################
       # # # Tab01 - Analysis
-      output$tab01_analysis <- renderPrint({
+      output$tab01_analysis_reference <- renderPrint({
 
         req(control_user_02())
 
-        RR_general()$"out01_analysis"
+        selected_names <- c("df_selected_vars")
+        RR_general()$"out01_analysis"[selected_names]
       })
 
 
-
-      output$tab02_requerimentsA <- renderPrint({
-
-        #req(control_user_02())
-
-        #RR_general()$"out02_requeriments"
-        req(control_user_02())
-        selected_objects <- c("df_check_cor_test")
-
-        all_resutls <- RR_general()$"out05_full_results"
-        all_resutls[selected_objects]
-
-      })
-
-
-      output$tab02_requerimentsB_01 <- renderPrint({
+      output$tab01_analysis_factor <- renderPrint({
 
         req(control_user_02())
 
-        selected_objects <- c("pearson_cor_results")
-
-        all_resutls <- RR_general()$"out02_requeriments"
-        all_resutls[selected_objects]
-
+        selected_names <- c("df_factor_info")
+        RR_general()$"out01_analysis"[selected_names]
       })
 
-      output$tab02_requerimentsB_02 <- renderPrint({
+
+      output$tab01_analysis_ancova <- renderPrint({
 
         req(control_user_02())
 
-        selected_objects <- c("spearman_cor_results")
-
-        all_resutls <- RR_general()$"out02_requeriments"
-        all_resutls[selected_objects]
-
+        selected_names <- c("df_table_ancova_with")
+        RR_general()$"out01_analysis"[selected_names]
       })
 
-      output$tab02_requerimentsB_03 <- renderUI({
 
+      output$tab01_analysis_tukey <- renderPrint({
+
+        req(control_user_02())
+
+        selected_names <- c("check_unbalanced_reps", "df_tukey_table")
+        RR_general()$"out01_analysis"[selected_names]
+      })
+
+
+      output$tab01_analysis_full <- renderUI({
+
+        req(control_user_02())
         ns <- shiny::NS(id)
 
-        the_table <- RR_general()$"out05_full_results"$"df_check_cor_test"
-        the_test <- the_table$"selected_cor_test"
 
-        if(the_test == "Pearson") verbatimTextOutput(ns("tab02_requerimentsB_01")) else
-          if(the_test == "Spearman") verbatimTextOutput(ns("tab02_requerimentsB_02")) else NULL
-
+        div(
+          fluidRow(
+            column(12,
+                   h1("Ancova with interaction"),
+                   br(),
+                   h2("1) References"),
+                   verbatimTextOutput(ns("tab01_analysis_reference")),
+                   br(), br(), br(),
+                   h2("2) Factor resumen"),
+                   verbatimTextOutput(ns("tab01_analysis_factor")),
+                   br(), br(), br(),
+                   h2("3) Ancova with interaction"),
+                   verbatimTextOutput(ns("tab01_analysis_ancova")),
+                   br(), br(), br(),
+                   h2("4) Multiple Comparation Test (Tukey)"),
+                   verbatimTextOutput(ns("tab01_analysis_tukey"))
+            )
+          )
+        )
 
 
       })
 
-      output$tab02_requerimentsC <- renderPrint({
 
-        #req(control_user_02())
 
-        #RR_general()$"out02_requeriments"
+
+      # # # Tab02 - Requeriments
+      output$tab02_requeriments_normality <- renderPrint({
+
+
         req(control_user_02())
 
         selected_objects <- c("test_residuals_normality")
 
-        all_resutls <- RR_general()$"out05_full_results"
+        all_resutls <- RR_general()$"out02_requeriments"
 
         all_resutls[selected_objects]
 
 
       })
 
-      output$tab02_requerimentsD <- renderPrint({
+
+      output$tab02_requeriments_homogeneity <- renderPrint({
 
         req(control_user_02())
 
         selected_objects <- c("test_residuals_homogeneity")
 
-        all_resutls <- RR_general()$"out05_full_results"
+        all_resutls <- RR_general()$"out02_requeriments"
 
         all_resutls[selected_objects]
       })
 
-      output$tab02_homogeneityplot <- plotly::renderPlotly({
-        RR_general()$"out04A_plots_residuals"[[2]]
-      })
 
+      output$tab02_requeriments_full <- renderUI({
 
-
-      output$tab03_specialplot <- plotly::renderPlotly({
-        RR_general()$"out04A_plots_residuals"[[1]]
-      })
-      #
-      #       output$tab03_specialplot2 <- plotly::renderPlotly({
-      #         RR_general()$"out04A_plots_residuals"[[1]]
-      #       })
-
-      output$tab03_plot_factor2 <- renderUI({
-
+        req(control_user_02())
         ns <- shiny::NS(id)
+
 
         div(
           fluidRow(
-            column(12, plotlyOutput(ns("tab03_specialplot"),
+            column(12,
+                   h1("Ancova with interaction"),
+                   br(),
+                   h2("Requeriment 01 - Residuals normality"),
+                   verbatimTextOutput(ns("tab02_requeriments_normality")),
+                   br(), br(), br(),
+                   h2("Requeriment 02 - Residuals homogeneity"),
+                   verbatimTextOutput(ns("tab02_requeriments_homogeneity")),
+                   br(), br(), br()
+            )
+          )
+        )
+
+
+      })
+
+
+
+      # # # Tab03 - Plots
+      output$tab03_plot001 <- plotly::renderPlotly({
+        RR_general()$"out03A_plots"[[1]]
+      })
+
+
+
+      output$tab03_plot002 <- plotly::renderPlotly({
+        RR_general()$"out03A_plots"[[2]]
+      })
+
+
+      output$tab03_plot003 <- plotly::renderPlotly({
+        RR_general()$"out03A_plots"[[3]]
+      })
+
+
+      output$tab03_plots_full <- renderUI({
+
+        ns <- shiny::NS(id)
+
+
+
+        div(
+          h1("Ancova with interaction"),
+          fluidRow(
+            column(12, plotlyOutput(ns("tab03_plot001"),
                                     height = "80vh", width = "80vh")),
+
+          ),
+          br(), br(), br(),
+          fluidRow(
+            column(12, plotlyOutput(ns("tab03_plot002"),
+                                    height = "40vh", width = "80vh")),
+
+          ),
+          br(), br(), br(),
+          fluidRow(
+            column(12, plotlyOutput(ns("tab03_plot003"),
+                                    height = "40vh", width = "80vh")),
 
           )
         )
       })
 
-      output$tab03_special <- renderPrint({
 
-        req(control_user_02())
-
-        selected_objects <- c("df_table_reg",
-                              "df_table_det_coef",
-                              "df_position")
-
-        all_resutls <- RR_general()$"out05_full_results"
-        all_resutls[selected_objects]
-
-      })
-      # output$tab03_plot_factor <- renderUI({
-      #   ns <- shiny::NS(id)
-      #   plot_output_list <- lapply(1:length(RR_general()$"out03A_plots_factor"), function(i) {
-      #     plot_name <- paste("plotA", i, sep="")
-      #     table_name <- paste("tableA", i, sep="")
-      #
-      #
-      #     div(
-      #       fluidRow(
-      #         column(6, plotlyOutput(ns(plot_name), height = "100%", width = "100%")),
-      #         column(6, verbatimTextOutput(ns(table_name)))
-      #       ), br(), br(), br()
-      #     )
-      #   })
-      # })
-      #
 
       # # # Tab05 - Full Results
       output$tab05_full_results <- renderPrint({
@@ -710,61 +737,20 @@ module_cpiA009_s02_rscience_server <- function(id, input_general, input_01_anova
 
           shiny::tabsetPanel(id = ns("super_tabset_panel"),
                              tabPanel("Analysis",
-                                      fluidRow(
-                                        column(12,
-                                               h2("Ancova with interaction"),
-                                               verbatimTextOutput(ns("tab01_analysis"))
-                                        )#,
-                                        #column(6, plotlyOutput(ns("tab03_specialplot2"), height = "100%", width = "100%")),
-
-                                      )
+                                      uiOutput(ns("tab01_analysis_full"))
                              ),
                              tabPanel("Requeriments",
-                                      h2("Ancova with interaction"),
-                                      # fluidRow(
-                                      #   column(12,
-                                      #          h2("Resumen Correlation test selection"),
-                                      #          verbatimTextOutput(ns("tab02_requerimentsA"))
-                                      #         )
-                                      #   ),
-                                      #br(), br(), br(),
-                                      #br(), br(), br(),
-
-                                      fluidRow(
-                                        column(12,
-                                               h2("Requeriment 01 - Residuals normality"),
-                                               verbatimTextOutput(ns("tab02_requerimentsC"))
-
-                                        )
-                                      ),
-                                      br(), br(), br(),
-                                      br(), br(), br(),
-
-
-                                      fluidRow(
-                                        column(12,
-                                               h2("Requeriment 02 - Residuals homogeneity"),
-                                               verbatimTextOutput(ns("tab02_requerimentsD"))
-                                        )
-                                      ),
+                                      uiOutput(ns("tab02_requeriments_full"))
 
 
                              ),
                              tabPanel("Plots",
-                                      fluidRow(
-                                        column(12,
-                                               h2("Ancova with interaction"),
-                                               uiOutput(ns("tab03_plot_factor2")),
-                                               br(), br(),br(),
-                                               verbatimTextOutput(ns("tab03_special"))
-
-                                        )
-                                      )
-                             ),
+                                      uiOutput(ns("tab03_plots_full"))
+                                        ),
                              tabPanel("Full Results",
                                       fluidRow(
                                         column(12,
-                                               h2("Ancova with interaction"),
+                                               h1("Ancova with interaction"),
                                                verbatimTextOutput(ns("tab05_full_results"))
                                         )
                                       )
@@ -772,7 +758,7 @@ module_cpiA009_s02_rscience_server <- function(id, input_general, input_01_anova
                              tabPanel("R Code",
                                       fluidRow(
                                         column(12,
-                                               h2("Ancova with interaction"),
+                                               h1("Ancova with interaction"),
                                                verbatimTextOutput(ns("tab06_R_code"))
                                         )
                                       )
