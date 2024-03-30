@@ -480,6 +480,8 @@ fn_cpiA009_code_p01_test_with <- function(database, vr_var_name, factor_var_name
   minibase_mod$"lvl_order_number" <- as.numeric(minibase[,2])
   minibase_mod$"lvl_color" <- df_factor_info$color[minibase_mod$"lvl_order_number"]
 
+  minibase_mod$"VR_mod"  <- minibase$"VR"  - df_position_vr_levels$"mean"[minibase_mod$"lvl_order_number"]
+  minibase_mod$"COV_mod" <- minibase$"COV" - df_position_cov_levels$"mean"[minibase_mod$"lvl_order_number"]
 
 
   ######################################################################################
@@ -673,6 +675,12 @@ fn_cpiA009_code_p01_test_with <- function(database, vr_var_name, factor_var_name
     "beta_i" = vector_slope_levels
   )
 
+  df_slop <- data.frame(
+    "orden" = df_interaction$"order",
+    "level" = names(vector_interaction),
+    "slop" = df_interaction$"beta_i"
+  )
+  df_slop
 
   # Suma de las interacciones
   sum_interaction <- sum(vector_interaction)
@@ -1478,21 +1486,59 @@ fn_cpiA009_code_p02_plot004 <- function(results_p01_test){
 
 
 
+
   new_plot <-  with(results_p01_test,{
 
 
-    # Crear el gráfico interactivo con Plotly
-
-    # Crear el gráfico interactivo con Plotly
-
+    # # # Create a new plot...
     plot004 <- plotly::plot_ly()
 
 
+    # # # Adding errors...
+    plot004 <- plotly::add_trace(p = plot004,
+                                 type = "scatter",
+                                 mode = "markers",
+                                 x = minibase_mod$COV_mod,
+                                 y = minibase_mod$VR_mod,
+                                 color = minibase_mod$FACTOR,
+                                 colors = df_factor_info$color,
+                                 marker = list(size = 15, opacity = 0.7))
 
-    # Mostrar el gráfico interactivo
+
+    # plot001<-  add_text(p = plot001,
+    #                      x = df_table_plot002$level,
+    #                      y = df_table_plot002$mean,
+    #                      text = df_table_plot002$group, name = "Tukey Group",
+    #                      size = 20)
+
+    # # # Title and settings...
+    plot004 <- plotly::layout(p = plot004,
+                              xaxis = list(title = "COV_mod"),
+                              yaxis = list(title = "VR_mod"),
+                              title = "Plot 001 - Scatterplot",
+                              font = list(size = 20),
+                              margin = list(t = 100))
+
+
+
+    # # # Without zerolines
+    plot004 <-plotly::layout(p = plot004,
+                             xaxis = list(zeroline = FALSE),
+                             yaxis = list(zeroline = FALSE))
+
+
+    # for (x in 1:nrow(df_segments)){
+    #   plot001 <- add_segments(p = plot001,
+    #                           x = df_segments$min_cov_i_x[x],
+    #                           y = df_segments$initial_point_i_y[x],
+    #                           xend = df_segments$max_cov_i_x[x],
+    #                           yend = df_segments$end_point_i_x[x],
+    #                           line = list(color = df_segments$color[x],
+    #                                       width = 4),
+    #                           name = df_segments$level[x])
+    # }
+    # # # Plot output
     plot004
-
-
   })
 
 
@@ -1677,7 +1723,8 @@ fn_cpiA009_gen02 <- function(database,  vr_var_name, factor_var_name, cov_var_na
                    "df_factor_info",
                    "check_unbalanced_reps",
                    "df_table_ancova_with",
-                   "df_tukey_table")
+                   "df_tukey_table",
+                   "df_slop")
 
   output_list$"out01_analysis" <- all_results$R_results$p01_test[selection01]
 

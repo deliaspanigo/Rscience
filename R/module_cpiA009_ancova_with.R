@@ -405,55 +405,6 @@ module_cpiA009_s02_rscience_server <- function(id, input_general, input_01_anova
 
 
 
-      ############################################################################
-      observe({
-        for (i in 1:length(RR_general()$"out03A_plots_factor")) {
-          # Need local so that each item gets its own number. Without it, the value
-          # of i in the renderPlot() will be the same across all instances, because
-          # of when the expression is evaluated.
-          local({
-            my_i <- i
-            plot_name <- paste("plotA", my_i, sep="")
-            table_name <- paste("tableA", my_i, sep="")
-
-            output[[plot_name]] <- plotly::renderPlotly({
-              RR_general()$"out03A_plots_factor"[[my_i]]
-            })
-
-            output[[table_name]] <- renderPrint({
-
-              req(control_user_02())
-
-              my_lista <- RR_general()$"out03B_tables_factor"
-              vector_search <- names(my_lista)[my_i]
-
-              # Filtered list
-              filtered_list <- my_lista[vector_search]
-
-              filtered_list
-
-            })
-
-          })
-        }
-      })
-
-      output$plot_outputs33 <- renderUI({
-        ns <- shiny::NS(id)
-        plot_output_list <- lapply(1:length(RR_general()$"out03A_plots_factor"), function(i) {
-          plot_name <- paste("plotA", i, sep="")
-          table_name <- paste("tableA", i, sep="")
-
-
-          div(
-            fluidRow(
-              column(6, plotlyOutput(ns(plot_name), height = "100%", width = "100%")),
-              column(6, verbatimTextOutput(ns(table_name)))
-            ), br(), br(), br()
-          )
-        })
-      })
-
       ##############################################################
       # # # Tab01 - Analysis
       output$tab01_analysis_reference <- renderPrint({
@@ -492,6 +443,14 @@ module_cpiA009_s02_rscience_server <- function(id, input_general, input_01_anova
       })
 
 
+      output$tab01_analysis_slop <- renderPrint({
+
+        req(control_user_02())
+
+        selected_names <- c("df_slop")
+        RR_general()$"out01_analysis"[selected_names]
+      })
+
       output$tab01_analysis_full <- renderUI({
 
         req(control_user_02())
@@ -513,7 +472,9 @@ module_cpiA009_s02_rscience_server <- function(id, input_general, input_01_anova
                    verbatimTextOutput(ns("tab01_analysis_ancova")),
                    br(), br(), br(),
                    h2("4) Multiple Comparation Test (Tukey)"),
-                   verbatimTextOutput(ns("tab01_analysis_tukey"))
+                   verbatimTextOutput(ns("tab01_analysis_tukey")),
+                   h2("5) Slop"),
+                   verbatimTextOutput(ns("tab01_analysis_slop"))
             )
           )
         )
@@ -594,6 +555,9 @@ module_cpiA009_s02_rscience_server <- function(id, input_general, input_01_anova
         RR_general()$"out03A_plots"[[3]]
       })
 
+      output$tab03_plot004 <- plotly::renderPlotly({
+        RR_general()$"out03A_plots"[[4]]
+      })
 
       output$tab03_plots_full <- renderUI({
 
@@ -618,6 +582,12 @@ module_cpiA009_s02_rscience_server <- function(id, input_general, input_01_anova
           fluidRow(
             column(12, plotlyOutput(ns("tab03_plot003"),
                                     height = "40vh", width = "80vh")),
+
+          ),
+          br(), br(), br(),
+          fluidRow(
+            column(12, plotlyOutput(ns("tab03_plot004"),
+                                    height = "80vh", width = "80vh")),
 
           )
         )
