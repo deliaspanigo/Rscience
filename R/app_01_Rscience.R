@@ -41,7 +41,8 @@ ui <- shinydashboard::dashboardPage(
       shinydashboard::menuItem(text = "Simple Linear Regresion", tabName = "tab06_anova", icon = shiny::icon("th")),
       shinydashboard::menuItem(text = "Doble Linear Regresion", tabName = "tab07_anova", icon = shiny::icon("th")),
       shinydashboard::menuItem(text = "Ancova with", tabName = "tab09_anova", icon = shiny::icon("th")),
-      shinydashboard::menuItem(text = "Ancova without", tabName = "tab10_anova", icon = shiny::icon("th"))
+      shinydashboard::menuItem(text = "Ancova without", tabName = "tab10_anova", icon = shiny::icon("th")),
+      shinydashboard::menuItem(text = "Ancova", tabName = "tab11_anova", icon = shiny::icon("th"))
 
 
 
@@ -238,6 +239,11 @@ ui <- shinydashboard::dashboardPage(
                               module_cpiA010_s01_varselection_ui(id = "cpiA010_A"),
                               br(), br(), br(),
                               module_cpiA010_s02_rscience_ui(id = "cpiA010_B")
+      ),
+      shinydashboard::tabItem(tabName = "tab11_anova",
+                              module_cpiA011_s01_varselection_ui(id = "cpiA011_A"),
+                              br(), br(), br(),
+                              module_cpiA011_s02_rscience_ui(id = "cpiA011_B")
       )
 
     )
@@ -350,6 +356,22 @@ input_03_anova <- module_cpiA002_s01_varselection_server(id = "anova03_A",
                                      input_general = input_general,
                                      input_01_anova = input_cpiA010)
   ##################################################################################
+  input_cpiA011 <- module_cpiA011_s01_varselection_server(id = "cpiA011_A",
+                                                          input_general = input_general)
+
+  #observe(print(input_cpiA011()))
+  module_cpiA011_s02_rscience_server(id = "cpiA011_B",
+                                     input_general = input_general,
+                                     input_01_anova = input_cpiA011)
+
+
+  output$"mix" <- renderUI({
+    div(
+    module_cpiA011_s01_varselection_ui(id = "cpiA011_A"),
+    br(), br(), br(),
+    module_cpiA011_s02_rscience_ui(id = "cpiA011_B")
+    )
+  })
   # module_ancova_rscience_server(id = space_ancova)
   #
   # module_dummy_rscience_server(id = space_dummy)
