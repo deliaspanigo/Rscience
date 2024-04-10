@@ -1400,7 +1400,7 @@ module_cpiA011_s02_rscience_server <- function(id, input_general, input_01_anova
       })
 
 
-
+      # "A" y "C"
       output$page_test01 <- renderUI({
 
         req(control_user_02())
@@ -1414,48 +1414,130 @@ module_cpiA011_s02_rscience_server <- function(id, input_general, input_01_anova
 
           shiny::tabsetPanel(id = ns("super_tabset_panel_01A"),
                              tabPanel("Analysis",
-                                      fluidRow(
-                                        column(6, uiOutput(ns("tab01_analysis_full_01A"))),
-                                        column(6, uiOutput(ns("tab01_analysis_full_01C")))
-                                      )
+                                      div(
+                                        fluidRow(
+                                          column(6, h1("Ancova with interaction")),
+                                          column(6, h1("Ancova without interaction"))
+                                          ), br(),
+                                        fluidRow(
+                                          column(6, h2("1) References"),
+                                                    verbatimTextOutput(ns("tab01_analysis_reference_01A"))),
+                                          column(6, h2("1) References"),
+                                                 verbatimTextOutput(ns("tab01_analysis_reference_01C")))
+                                        ),
+                                        br(), br(), br(),
+                                        fluidRow(
+                                          column(6, h2("2) Factor resumen"),
+                                                 verbatimTextOutput(ns("tab01_analysis_factor_01A"))),
+                                          column(6, h2("2) Factor resumen"),
+                                                 verbatimTextOutput(ns("tab01_analysis_factor_01C")))
+                                        ),
+                                        br(), br(), br(),
+                                        fluidRow(
+                                          column(6, h2("3) Ancova with interaction"),
+                                                 verbatimTextOutput(ns("tab01_analysis_ancova_01A"))),
+                                          column(6, h2("3) Ancova without interaction"),
+                                                 verbatimTextOutput(ns("tab01_analysis_ancova_01C")))
+                                        ),
+                                        br(), br(), br(),
+                                        fluidRow(
+                                          column(6, h2("4) Multiple Comparation Test (Tukey)"),
+                                                 verbatimTextOutput(ns("tab01_analysis_tukey_01A"))),
+                                          column(6, h2("4) Multiple Comparation Test (Tukey)"),
+                                                 verbatimTextOutput(ns("tab01_analysis_tukey_01C")))
+                                        ),
+                                        br(), br(), br(),
+                                        fluidRow(
+                                          column(6, h2("5) Slop"),
+                                                 verbatimTextOutput(ns("tab01_analysis_slop_01A"))),
+                                          column(6, h2("5) Slop"),
+                                                 verbatimTextOutput(ns("tab01_analysis_slop_01C")))
+                                        )
+                                  )
+
                              ),
                              tabPanel("Requeriments",
                                       fluidRow(
-                                        column(6, uiOutput(ns("tab02_requeriments_full_01A"))),
-                                        column(6, uiOutput(ns("tab02_requeriments_full_01C")))
-
-                                      )
+                                        column(6, h1("Ancova with interaction")),
+                                        column(6, h1("Ancova without interaction"))
+                                      ), br(),
+                                      fluidRow(
+                                        column(6, h2("Requeriment 01 - Residuals normality"),
+                                               verbatimTextOutput(ns("tab02_requeriments_normality_01A"))),
+                                        column(6, h2("Requeriment 01 - Residuals normality"),
+                                               verbatimTextOutput(ns("tab02_requeriments_normality_01C")))
+                                      ),
+                                      br(), br(), br(),
+                                      fluidRow(
+                                        column(6, h2("Requeriment 02 - Residuals homogeneity"),
+                                               verbatimTextOutput(ns("tab02_requeriments_homogeneity_01A"))),
+                                        column(6, h2("Requeriment 02 - Residuals homogeneity"),
+                                               verbatimTextOutput(ns("tab02_requeriments_homogeneity_01C")))
+                                      ),
+                                      br(), br(), br()
 
 
                              ),
                              tabPanel("Plots",
                                       fluidRow(
-                                        column(5, uiOutput(ns("tab03_plots_full_01A"))),
+                                        column(6, h1("Ancova with interaction")),
+                                        column(6, h1("Ancova without interaction"))
+                                      ), br(),
+                                      fluidRow(
+                                        column(5, plotlyOutput(ns("tab03_plot001_01A"), height = "70vh", width = "70vh")),
                                         column(1),
-                                        column(5, uiOutput(ns("tab03_plots_full_01C"))),
+                                        column(5, plotlyOutput(ns("tab03_plot001_01C"), height = "70vh", width = "70vh")),
+                                        column(1)
+                                      ),
+                                      br(), br(), br(),
+                                      fluidRow(
+                                        column(5, plotlyOutput(ns("tab03_plot002_01A"), height = "70vh", width = "70vh")),
+                                        column(1),
+                                        column(5, plotlyOutput(ns("tab03_plot002_01C"), height = "70vh", width = "70vh")),
+                                        column(1)
+
+                                      ),
+                                      br(), br(), br(),
+                                      fluidRow(
+                                        column(5, plotlyOutput(ns("tab03_plot003_01A"), height = "70vh", width = "70vh")),
+                                        column(1),
+                                        column(5, plotlyOutput(ns("tab03_plot003_01C"), height = "70vh", width = "70vh")),
+                                        column(1)
+
+                                      ),
+                                      br(), br(), br(),
+                                      fluidRow(
+                                        column(5, plotlyOutput(ns("tab03_plot004_01A"), height = "70vh", width = "70vh")),
+                                        column(1),
+                                        column(5, plotlyOutput(ns("tab03_plot004_01C"), height = "70vh", width = "70vh")),
                                         column(1)
 
                                       )
+
                              ),
                              tabPanel("Full Results",
                                       fluidRow(
-                                        column(12,
-                                               h1("Ancova with interaction"),
-                                               verbatimTextOutput(ns("tab05_full_results_01A")),
-                                               verbatimTextOutput(ns("tab05_full_results_01C"))
-
+                                        column(6, h1("Ancova with interaction")),
+                                        column(6, h1("Ancova without interaction"))
+                                               ),
+                                      br(),
+                                        fluidRow(
+                                          column(6, verbatimTextOutput(ns("tab05_full_results_01A"))),
+                                          column(6, verbatimTextOutput(ns("tab05_full_results_01C")))
                                         )
-                                      )
                              ),
                              tabPanel("R Code",
                                       fluidRow(
-                                        column(12,
-                                               h1("Ancova with interaction"),
-                                               verbatimTextOutput(ns("tab06_R_code_01A")),
-                                               verbatimTextOutput(ns("tab06_R_code_01C"))
+                                        column(6, h1("Ancova with interaction")),
+                                        column(6, h1("Ancova with interaction"))
+                                        ),
+                                        br(),
+                                        fluidRow(
+                                          column(6, verbatimTextOutput(ns("tab06_R_code_01A"))),
+                                          column(6, verbatimTextOutput(ns("tab06_R_code_01C")))
 
                                         )
-                                      )
+
                              )
                              # tabPanel("Analysis",  # 05
                              #          fluidRow(
@@ -1527,7 +1609,7 @@ module_cpiA011_s02_rscience_server <- function(id, input_general, input_01_anova
         )
       })
 
-
+      # "B"
       output$page_test02 <- renderUI({
 
         req(control_user_02())
@@ -1643,7 +1725,7 @@ module_cpiA011_s02_rscience_server <- function(id, input_general, input_01_anova
         )
       })
 
-
+      # "D"
       output$page_test03 <- renderUI({
 
         req(control_user_02())
@@ -1651,7 +1733,7 @@ module_cpiA011_s02_rscience_server <- function(id, input_general, input_01_anova
         ns <- shiny::NS(id)
 
         div(
-          "WITH", br(),
+          "WitOUT", br(),
           rclipboardSetup(),
           textOutput(ns("calling_help")),
 

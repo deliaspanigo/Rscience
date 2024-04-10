@@ -741,6 +741,35 @@ fn_cpiA009_code_p01_test_with <- function(database, vr_var_name, factor_var_name
 
 
 
+  ################
+  vector_initial_point_y_levels_mod <- vector_slope_levels*(vector_dif_min_cov_levels)
+  vector_end_point_y_levels_mod     <- vector_slope_levels*(vector_dif_max_cov_levels)
+
+  df_segments_mod <- data.frame(
+    "order" = df_position_cov_levels$order,
+    "level" = df_position_cov_levels$level,
+    "min_cov_i_x" = vector_dif_min_cov_levels,
+    "max_cov_i_x" = vector_dif_max_cov_levels,
+    "initial_point_i_y" = vector_initial_point_y_levels_mod,
+    "end_point_i_x" = vector_end_point_y_levels_mod,
+    "color" = df_factor_info$color
+  )
+
+  general_min_cov_mod <- min(vector_dif_min_cov_levels)
+  general_max_cov_mod <- max(vector_dif_max_cov_levels)
+  general_initial_point_mod <- general_min_cov_mod*slope_general
+  general_end_point_mod <- general_max_cov_mod*slope_general
+
+  df_beta_mod <- data.frame(
+    "description" = "beta (mean slope)",
+    "min_cov_i_x" = general_min_cov_mod,
+    "max_cov_i_x" = general_max_cov_mod,
+    "initial_point_i_y" = general_initial_point_mod,
+    "end_point_i_x" = general_end_point_mod,
+    "color" = "black"
+  )
+
+
   df_table_factor_plot002 <- data.frame(
     "order" = df_factor_info$order,
     "level" = df_factor_info$level,
@@ -1515,7 +1544,7 @@ fn_cpiA009_code_p02_plot004 <- function(results_p01_test){
     plot004 <- plotly::layout(p = plot004,
                               xaxis = list(title = "COV_mod"),
                               yaxis = list(title = "VR_mod"),
-                              title = "Plot 001 - Scatterplot",
+                              title = "Plot 004 - Scatterplot",
                               font = list(size = 20),
                               margin = list(t = 100))
 
@@ -1523,10 +1552,30 @@ fn_cpiA009_code_p02_plot004 <- function(results_p01_test){
 
     # # # Without zerolines
     plot004 <-plotly::layout(p = plot004,
-                             xaxis = list(zeroline = FALSE),
-                             yaxis = list(zeroline = FALSE))
+                             xaxis = list(zeroline = TRUE),
+                             yaxis = list(zeroline = TRUE))
 
+    for (x in 1:nrow(df_segments_mod)){
+      plot004 <- add_segments(p = plot004,
+                              x = df_segments_mod$min_cov_i_x[x],
+                              y = df_segments_mod$initial_point_i_y[x],
+                              xend = df_segments_mod$max_cov_i_x[x],
+                              yend = df_segments_mod$end_point_i_x[x],
+                              line = list(color = df_segments_mod$color[x],
+                                          width = 4),
+                              name = df_segments_mod$level[x])
+    }
 
+    plot004 <- add_segments(p = plot004,
+                            x = df_beta_mod$min_cov_i_x[1],
+                            y = df_beta_mod$initial_point_i_y[1],
+                            xend = df_beta_mod$max_cov_i_x[1],
+                            yend = df_beta_mod$end_point_i_x[1],
+                            line = list(color = df_beta_mod$color[1],
+                                        width = 4),
+                            name = df_beta_mod$description[1])
+    # # # Plot output
+    plot004
     # for (x in 1:nrow(df_segments)){
     #   plot001 <- add_segments(p = plot001,
     #                           x = df_segments$min_cov_i_x[x],
