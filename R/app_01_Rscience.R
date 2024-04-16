@@ -28,21 +28,23 @@ app_01_Rscience <- function(){
 ui <- shinydashboard::dashboardPage(
 
   # # # Dashboard title
-  shinydashboard::dashboardHeader(title = "R-Science"),
+  shinydashboard::dashboardHeader(title = "R-Science 0.0.1"),
 
   # # # Sidebar content
   shinydashboard::dashboardSidebar(
-    width = "300px",
+    width = "340px",
     shinydashboard::sidebarMenu(
+      " General Linear Models - 0.0.1",br(),br(),
       shinydashboard::menuItem(text = "database", tabName = "tab01_database", icon = shiny::icon("th")),
       shinydashboard::menuItem(text = "Anova 1 way", tabName = "tab02_anova", icon = shiny::icon("th")),
       shinydashboard::menuItem(text = "Anova 1 way with block", tabName = "tab03_anova", icon = shiny::icon("th")),
       shinydashboard::menuItem(text = "Anova 2 ways", tabName = "tab04_anova", icon = shiny::icon("th")),
       shinydashboard::menuItem(text = "Simple Linear Regresion", tabName = "tab06_anova", icon = shiny::icon("th")),
       shinydashboard::menuItem(text = "Doble Linear Regresion", tabName = "tab07_anova", icon = shiny::icon("th")),
-      shinydashboard::menuItem(text = "Ancova with", tabName = "tab09_anova", icon = shiny::icon("th")),
-      shinydashboard::menuItem(text = "Ancova without", tabName = "tab10_anova", icon = shiny::icon("th")),
-      shinydashboard::menuItem(text = "Ancova", tabName = "tab11_anova", icon = shiny::icon("th"))
+      #shinydashboard::menuItem(text = "Ancova with", tabName = "tab09_anova", icon = shiny::icon("th")),
+      #shinydashboard::menuItem(text = "Ancova without", tabName = "tab10_anova", icon = shiny::icon("th")),
+      shinydashboard::menuItem(text = "Ancova", tabName = "tab11_anova", icon = shiny::icon("th")),
+      shinydashboard::menuItem(text = "Dummy", tabName = "tab14_anova", icon = shiny::icon("th"))
 
 
 
@@ -60,7 +62,20 @@ ui <- shinydashboard::dashboardPage(
             background-color: green;
             }'),
       shiny::HTML('.sidebar-menu { font-size: 28px; }'),
-      shiny::HTML('.treeview-menu > li > a { font-size: 28px; }')
+      shiny::HTML('.treeview-menu > li > a { font-size: 28px; }'),
+      # shiny::HTML("
+      #   /* Cambiar el ancho del encabezado */
+      #   .main-header {
+      #     width: 250px; /* Puedes ajustar el valor según tus necesidades */
+      #   }
+      # # "),
+      # shiny::HTML("
+      #   /* Ajustar la posición del botón que colapsa el menú lateral */
+      #   .sidebar-toggle {
+      #     top: 10px; /* Puedes ajustar el valor según tus necesidades */
+      #     right: 50px; /* Puedes ajustar el valor según tus necesidades */
+      #   }
+      # ")
     ),
 
 
@@ -230,20 +245,27 @@ ui <- shinydashboard::dashboardPage(
                               br(), br(), br(),
                               module_cpiA007_s02_rscience_ui(id = "cpiA007_B")
       ),
-      shinydashboard::tabItem(tabName = "tab09_anova",
-                              module_cpiA009_s01_varselection_ui(id = "cpiA009_A"),
-                              br(), br(), br(),
-                              module_cpiA009_s02_rscience_ui(id = "cpiA009_B")
-      ),
-      shinydashboard::tabItem(tabName = "tab10_anova",
-                              module_cpiA010_s01_varselection_ui(id = "cpiA010_A"),
-                              br(), br(), br(),
-                              module_cpiA010_s02_rscience_ui(id = "cpiA010_B")
-      ),
+      # shinydashboard::tabItem(tabName = "tab09_anova",
+      #                         module_cpiA009_s01_varselection_ui(id = "cpiA009_A"),
+      #                         br(), br(), br(),
+      #                         module_cpiA009_s02_rscience_ui(id = "cpiA009_B")
+      # ),
+      # shinydashboard::tabItem(tabName = "tab10_anova",
+      #                         module_cpiA010_s01_varselection_ui(id = "cpiA010_A"),
+      #                         br(), br(), br(),
+      #                         module_cpiA010_s02_rscience_ui(id = "cpiA010_B")
+      #),
       shinydashboard::tabItem(tabName = "tab11_anova",
                               module_cpiA011_s01_varselection_ui(id = "cpiA011_A"),
                               br(), br(), br(),
-                              module_cpiA011_s02_rscience_ui(id = "cpiA011_B")
+                              module_cpiA011_s02_rscience_ui(id = "cpiA011_B"),
+
+      ),
+      shinydashboard::tabItem(tabName = "tab14_anova",
+                              module_cpiA014_s01_varselection_ui(id = "cpiA014_A"),
+                              br(), br(), br(),
+                              module_cpiA014_s02_rscience_ui(id = "cpiA014_B"),
+
       )
 
     )
@@ -365,13 +387,22 @@ input_03_anova <- module_cpiA002_s01_varselection_server(id = "anova03_A",
                                      input_01_anova = input_cpiA011)
 
 
-  output$"mix" <- renderUI({
-    div(
-    module_cpiA011_s01_varselection_ui(id = "cpiA011_A"),
-    br(), br(), br(),
-    module_cpiA011_s02_rscience_ui(id = "cpiA011_B")
-    )
-  })
+  ##################################################################################
+  ##################################################################################
+  input_cpiA014 <- module_cpiA014_s01_varselection_server(id = "cpiA014_A",
+                                                          input_general = input_general)
+
+  #observe(print(input_cpiA011()))
+  module_cpiA014_s02_rscience_server(id = "cpiA014_B",
+                                     input_general = input_general,
+                                     input_01_anova = input_cpiA014)
+  # output$"mix" <- renderUI({
+  #   div(
+  #   module_cpiA011_s01_varselection_ui(id = "cpiA011_A"),
+  #   br(), br(), br(),
+  #   module_cpiA011_s02_rscience_ui(id = "cpiA011_B")
+  #   )
+  # })
   # module_ancova_rscience_server(id = space_ancova)
   #
   # module_dummy_rscience_server(id = space_dummy)

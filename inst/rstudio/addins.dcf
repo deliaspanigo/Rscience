@@ -1,12 +1,9 @@
-Name: Rscience
+Name: Rscience - 01) General Linear Models
 Description: R for Science.
 Binding: app_01_Rscience
 Interactive: true
 
 
-Name: Rscience - UNT
-Description: R for Science.
-Binding: app_02_UNT
-Interactive: true
+
 
 

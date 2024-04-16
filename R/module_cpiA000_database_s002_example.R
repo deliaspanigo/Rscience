@@ -13,7 +13,7 @@ module01_database_s02_example_ui <- function(id){
 
       # h2("Initial user election - database"),
       fluidRow(
-        column(2,
+        column(6,
 
          # # # R examples selector
         div(shinyjs::useShinyjs(), id = ns("input-example"),
@@ -23,7 +23,6 @@ module01_database_s02_example_ui <- function(id){
 
                ) # Div
         ),
-        column(2),
         # # # Action buttons
         column(4, br(), br(), uiOutput(ns("action_buttons")))
 
@@ -81,7 +80,7 @@ module01_database_s02_example_server <- function(id, input_file_source){
         div(
           fluidRow(
             column(2, actionButton(ns("action_load"), label = "LOAD", style = output_style_button_load)),
-            column(8),
+            column(5),
             column(2, actionButton(ns("action_reset_all"), "RESET ALL", style = output_style_button_reset))
           )
         )

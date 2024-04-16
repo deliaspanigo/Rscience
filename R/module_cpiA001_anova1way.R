@@ -83,7 +83,7 @@ module02_anova_s01_varselection_server <- function(id, input_general){
         # # # UI content
         div(
           fluidRow(
-            actionButton(ns("action_load"), label = "LOAD", style = output_style_button_load),
+            actionButton(ns("action_load"), label = "RUN", style = output_style_button_load),
             actionButton(ns("action_reset_all"), "RESET ALL", style = output_style_button_reset)
           )
         )
@@ -121,7 +121,7 @@ module02_anova_s01_varselection_server <- function(id, input_general){
 
         div(shinyjs::useShinyjs(), id = ns("input-var-selection"),
             fluidRow(
-              column(2, h1("ANOVA 1 Way"))
+              column(12, h1("ANOVA 1 Way"))
               ),
             fluidRow(
               column(6,
@@ -131,28 +131,59 @@ module02_anova_s01_varselection_server <- function(id, input_general){
 
 
             fluidRow(
-              column(2,
-                selectInput(inputId = ns("vr_var_name"), label = "Response Variable",
-                            choices = set_options ,
-                            selected = set_options[1])
+              column(4,
+                     fluidRow(
+                       column(12,
+                      selectInput(inputId = ns("vr_var_name"), label = "Response Variable",
+                                  choices = set_options ,
+                                  selected = set_options[1])
+                            )),
+                    fluidRow(
+                      column(12,
+                      selectInput(inputId = ns("factor_var_name"), label = "Factor",
+                                  choices = set_options,
+                                  selected = set_options[1])
+                            ))),
+              column(4,
+                     fluidRow(
+                column(12,
+                      selectInput(inputId = ns("alpha_value"), label = "Alpha value",
+                                  choices = c(0.10, 0.05, 0.01),
+                                  selected = 0.05)
+                         ))),
+              column(4, uiOutput(ns("action_buttons"))),
             ),
-              column(2,
-                selectInput(inputId = ns("factor_var_name"), label = "Factor",
-                            choices = set_options,
-                            selected = set_options[1])
-            ),
+            fluidRow(
+              column(12, textOutput(ns("calling_help")))
+            )
+        )
 
-            column(2,
-                selectInput(inputId = ns("alpha_value"), label = "Alpha value",
-                            choices = c(0.10, 0.05, 0.01),
-                            selected = 0.05)
-                   ),
-            column(4, br(), br(), uiOutput(ns("action_buttons"))
-                   )
-            ),
-          br(),
-          textOutput(ns("calling_help"))
-          )
+          #     column(8,
+          #             fluidRow(
+          #       selectInput(inputId = ns("vr_var_name"), label = "Response Variable",
+          #                   choices = set_options ,
+          #                   selected = set_options[1])
+          #             ),
+          #             fluidRow(
+          #       selectInput(inputId = ns("factor_var_name"), label = "Factor",
+          #                   choices = set_options,
+          #                   selected = set_options[1])
+          #             )
+          #       ),
+          #       column(4,
+          #             fluidRow(
+          #       selectInput(inputId = ns("alpha_value"), label = "Alpha value",
+          #                   choices = c(0.10, 0.05, 0.01),
+          #                   selected = 0.05)
+          #          )
+          #       )
+          #       ,
+          #   column(4, br(), br(), uiOutput(ns("action_buttons"))
+          #          )
+          #   ),
+          # br(),
+          # textOutput(ns("calling_help"))
+          # )
 
 
 
@@ -578,6 +609,78 @@ module02_anova_s02_rscience_server <- function(id, input_general, input_01_anova
       ##########################################################################
 
       # # #Tab02 - Residuals Requeriments
+      output$tab02_requeriments_obj01 <- renderPrint({
+
+        req(control_user_02())
+
+
+        mi_lista <- RR_general()
+
+
+
+
+        # Vector con nombres de elementos a ver
+        nombres_a_ver <- c("test_residuals_normality")
+
+        # Usar lapply para mostrar los elementos deseados
+        mi_lista[nombres_a_ver]
+
+      })
+      output$tab02_requeriments_obj02 <- renderPrint({
+
+        req(control_user_02())
+
+
+        mi_lista <- RR_general()
+
+
+
+
+        # Vector con nombres de elementos a ver
+        nombres_a_ver <- c("test_residuals_homogeneity")
+
+        # Usar lapply para mostrar los elementos deseados
+        mi_lista[nombres_a_ver]
+
+      })
+      output$tab02_requeriments_obj03 <- renderPrint({
+
+        req(control_user_02())
+
+
+        mi_lista <- RR_general()
+
+
+
+
+        # Vector con nombres de elementos a ver
+        nombres_a_ver <- c("df_residuals_variance_levels")
+
+        # Usar lapply para mostrar los elementos deseados
+        mi_lista[nombres_a_ver]
+
+      })
+
+      output$tab02_analysis_anova_FULL <- renderUI({
+
+        ns <- shiny::NS(id)
+
+        div(
+          h2("Requeriments 1) Normaility test - Residuals"),
+          verbatimTextOutput(ns("tab02_requeriments_obj01")),
+          br(), br(), br(),
+
+          h2("Requeriments 2) Homogeneity test - Residuals"),
+          verbatimTextOutput(ns("tab02_requeriments_obj02")),
+          br(), br(), br(),
+
+          h2("Estimated variances - Residuals"),
+          verbatimTextOutput(ns("tab02_requeriments_obj03")),
+          br(), br(), br()
+        )
+
+      })
+
       output$tab02_requeriments <- renderPrint({
 
         req(control_user_02())
@@ -603,7 +706,7 @@ module02_anova_s02_rscience_server <- function(id, input_general, input_01_anova
       ##########################################################################
 
       # # # Tab 05 - Analysis resume...
-      output$tab03_analysis_anova <- renderPrint({
+      output$tab03_analysis_anova_obj01 <- renderPrint({
 
         req(control_user_02())
 
@@ -613,22 +716,110 @@ module02_anova_s02_rscience_server <- function(id, input_general, input_01_anova
 
 
         # Vector con nombres de elementos a ver
-        nombres_a_ver <- c("df_selected_vars",
-                           "df_table_anova", "df_factor_info", "check_unbalanced_reps",
-                           "df_tukey_table",
-                           "df_model_error")
-        # nombres_a_ver <- c("df_selected_vars", "df_factor", "dt_unbalanced_reps", "lm_ancova_with",
-        #                    "test_normality_residuals", "test_homogeneity_residuals",
-        #                    "sum_residuos", "table_ancova_with",
-        #                    "df_resumen_ancova_with_large", "df_resumen_ancova_with_short",
-        #                    "df_tukey", "tukey01_full_groups", "tukey02_full_pairs")
+        selected_objs <- c("df_selected_vars")
+
 
         # Usar lapply para mostrar los elementos deseados
-        elementos_a_ver <- lapply(nombres_a_ver, function(nombre) mi_lista[[nombre]])
-        names(elementos_a_ver) <- nombres_a_ver
-        elementos_a_ver
+        mi_lista[selected_objs]
 
       })
+      output$tab03_analysis_anova_obj02 <- renderPrint({
+
+        req(control_user_02())
+
+        mi_lista <- RR_general()
+
+
+
+
+        # Vector con nombres de elementos a ver
+        selected_objs <- c("df_factor_info", "check_unbalanced_reps")
+
+
+        # Usar lapply para mostrar los elementos deseados
+        mi_lista[selected_objs]
+
+      })
+
+      output$tab03_analysis_anova_obj03 <- renderPrint({
+
+        req(control_user_02())
+
+        mi_lista <- RR_general()
+
+
+
+
+        # Vector con nombres de elementos a ver
+        selected_objs <- c("df_table_anova")
+
+
+        # Usar lapply para mostrar los elementos deseados
+        mi_lista[selected_objs]
+
+      })
+      output$tab03_analysis_anova_obj04 <- renderPrint({
+
+        req(control_user_02())
+
+        mi_lista <- RR_general()
+
+
+
+
+        # Vector con nombres de elementos a ver
+        selected_objs <- c("df_tukey_table")
+
+
+        # Usar lapply para mostrar los elementos deseados
+        mi_lista[selected_objs]
+
+      })
+      output$tab03_analysis_anova_obj05 <- renderPrint({
+
+        req(control_user_02())
+
+        mi_lista <- RR_general()
+
+
+
+
+        # Vector con nombres de elementos a ver
+        selected_objs <- c("df_model_error")
+
+
+        # Usar lapply para mostrar los elementos deseados
+        mi_lista[selected_objs]
+
+      })
+      output$tab03_analysis_anova_FULL <- renderUI({
+
+        ns <- shiny::NS(id)
+
+        div(
+          h2("1) References"),
+          verbatimTextOutput(ns("tab03_analysis_anova_obj01")),
+          br(), br(), br(),
+
+          h2("2) Factor resumen"),
+          verbatimTextOutput(ns("tab03_analysis_anova_obj02")),
+          br(), br(), br(),
+
+          h2("3) Anova 1 way - Table"),
+          verbatimTextOutput(ns("tab03_analysis_anova_obj03")),
+          br(), br(), br(),
+
+          h2("4) Multiple comparation test (Tukey)"),
+          verbatimTextOutput(ns("tab03_analysis_anova_obj04")),
+          br(), br(), br(),
+
+          h2("5) Model Error"),
+          verbatimTextOutput(ns("tab03_analysis_anova_obj05")),
+          br(), br(), br()
+        )
+
+      })
+
 
       ##########################################################################
 
@@ -746,21 +937,21 @@ module02_anova_s02_rscience_server <- function(id, input_general, input_01_anova
                              tabPanel("Analysis",  # 05
                                       fluidRow(
                                         column(12,
-                                               h2("Anova 1 way"),
-                                               verbatimTextOutput(ns("tab03_analysis_anova"))
+                                               h1("Anova 1 way"),
+                                               uiOutput(ns("tab03_analysis_anova_FULL"))
                                         )
                                       )
                              ),
                              tabPanel("Requeriments",  # 05
                                       fluidRow(
                                         column(12,
-                                               h2("Anova 1 way"),
-                                               verbatimTextOutput(ns("tab02_requeriments"))
+                                               h1("Anova 1 way"),
+                                               uiOutput(ns("tab02_analysis_anova_FULL"))
                                         )
                                       )
                              ),
                              tabPanel("Plots - Raw Data",  # 05,
-                                      fluidRow(h2("Anova 1 way")),
+                                      fluidRow(column(12, h1("Anova 1 way"))),
                                       fluidRow(
                                         #column(1),
                                         column(12,
@@ -773,7 +964,7 @@ module02_anova_s02_rscience_server <- function(id, input_general, input_01_anova
                                       )
                              ),
                              tabPanel("Plots - Residuals",  # 05,
-                                      fluidRow(h2("Anova 1 way")),
+                                      fluidRow(column(12, h1("Anova 1 way"))),
                                       fluidRow(
                                         #column(1),
                                         column(12,
@@ -786,7 +977,7 @@ module02_anova_s02_rscience_server <- function(id, input_general, input_01_anova
                                       )
                              ),
                              # tabPanel("Plots - Factor",  # 05,
-                             #          fluidRow(h2("Anova 1 way")),
+                             #          fluidRow(h1("Anova 1 way")),
                              #          fluidRow(
                              #            #column(1),
                              #            column(12,
@@ -799,7 +990,7 @@ module02_anova_s02_rscience_server <- function(id, input_general, input_01_anova
                              #          )
                              # ),
                              # tabPanel("Plots - Residuals",  # 05,
-                             #          fluidRow(h2("Anova 1 way")),
+                             #          fluidRow(h1("Anova 1 way")),
                              #          fluidRow(
                              #            #column(1),
                              #            column(12,
@@ -812,7 +1003,7 @@ module02_anova_s02_rscience_server <- function(id, input_general, input_01_anova
                              #          )
                              # ),
                              # tabPanel("Plots2",  # 05,
-                             #          fluidRow(h2("Anova 1 way")),
+                             #          fluidRow(h1("Anova 1 way")),
                              #          fluidRow(
                              #            #column(1),
                              #            column(12,
@@ -825,7 +1016,7 @@ module02_anova_s02_rscience_server <- function(id, input_general, input_01_anova
                              tabPanel("Full Results",  # 05
                                       fluidRow(
                                         column(12,
-                                               h2("Anova 1 way"),
+                                               h1("Anova 1 way"),
                                                verbatimTextOutput(ns("tab01_all_anova_results"))
                                         )
                                       )
@@ -836,9 +1027,10 @@ module02_anova_s02_rscience_server <- function(id, input_general, input_01_anova
                              tabPanel("R code",  # 05
                                       fluidRow(
                                         column(10,
-                                               h2("Anova 1 way"),
+                                               h1("Anova 1 way"),
                                                verbatimTextOutput(ns("tab05_code"))
                                         ),
+                                        br(), br(),
                                         column(2, uiOutput(ns("clip")),
                                                br(),
                                                downloadButton(ns("downloadBtn"), "Download Code")

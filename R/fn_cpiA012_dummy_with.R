@@ -1,0 +1,1214 @@
+
+
+# # # # Special Functions
+# Take the original code from a function
+fn_cpiA012_TakeCode <- function(selected_fn){
+
+
+  test_code <- capture.output(selected_fn)
+
+  # Fist "{" - Its the function beggining
+  pos_first_key <- grep("\\{", test_code)[1]
+
+  # Last "{" - Its the function end
+  pos_last_key <- tail(grep("\\}", test_code), 1)
+
+  # Seleccion
+  vector_output_code <- test_code[(pos_first_key + 1):(pos_last_key - 1)]
+
+  # Eliminamos los return y los "hide" que hemos colocado.
+  vector_output_code <- grep("return\\(", vector_output_code, value = TRUE, invert = TRUE)
+  vector_output_code <- grep("hide_", vector_output_code, value = TRUE, invert = TRUE)
+  vector_output_code <- grep("# hide_", vector_output_code, value = TRUE, invert = TRUE)
+
+  text_output_code <- paste(vector_output_code, collapse = "\n")
+  # test_code <- test_code[-1]
+  # test_code <- test_code[-length(test_code)]
+  # test_code <- grep("bytecode:", test_code, value = TRUE, invert = TRUE)
+  # test_code <- grep("function", test_code, value = TRUE, invert = TRUE)
+  # test_code <- test_code[-length(test_code)]
+  # test_code <- grep("hide_", test_code, value = TRUE, invert = TRUE)
+  # test_code <- grep("# hide", test_code, value = TRUE, invert = TRUE)
+  text_output_code
+
+}
+
+# List the cronologic order for objects in a function
+fn_cpiA012_ObjNamesInOrder <- function(selected_fn){
+
+  selected_code <- deparse(body(selected_fn))
+  selected_code <- grep("<-", selected_code, value = TRUE)
+  selected_code <- trimws(selected_code)
+  selected_code <- gsub("\\s", "", selected_code)
+  selected_code <- sub("<-.*", "", selected_code)
+  selected_code <- grep("^[a-zA-Z0-9._]*$", selected_code, value = TRUE)
+  selected_code <- grep("^hide", selected_code, value = TRUE, invert = TRUE)
+
+  # # # # # #
+  selected_code <- grep("^detail_name", selected_code, value = TRUE, invert = TRUE)
+  selected_code <- grep("^selected_role", selected_code, value = TRUE, invert = TRUE)
+
+  # # # # # #
+  selected_code <- unique(selected_code)
+
+  return(selected_code)
+
+}
+
+
+# # # # Control funcitons
+# Control previous
+fn_cpiA012_control_previous <- function(database, vr_var_name, x01_var_name, x02_var_name,alpha_value){
+
+  dt_ok <- FALSE
+
+  # # # # # # # Database
+  # # 1) Database can not be NULL
+  # if(is.null(database)){
+  #   text_output <- "Control pre test 001: Object 'database' can not be a NULL."
+  #   return(Hmisc::llist(dt_ok, text_output))
+  # }
+  #
+  # # 2) Database must be a dataframe
+  # if(!is.data.frame(database)){
+  #   text_output <- "Control pre test 002: Object 'database' must be a dataframe."
+  #   return(Hmisc::llist(dt_ok, text_output))
+  # }
+  #
+  # # 3) Database must has at least 2 columns
+  # if(!(ncol(database) >= 2)){
+  #   text_output <- "Control pre test 003: Object 'database' must has al least 2 columns."
+  #   return(Hmisc::llist(dt_ok, text_output))
+  # }
+  #
+  #
+  # # 4) Database must has at least 2 rows
+  # if(!(nrow(database) >= 2)){
+  #   text_output <- "Control pre test 004: Object 'database' must has al least 2 rows."
+  #   return(Hmisc::llist(dt_ok, text_output))
+  # }
+  #
+  #
+  #
+  #
+  # # # # # # # # # vr_var_name
+  # # 5) vr_var_name is not NULL
+  # if(is.null(vr_var_name)){
+  #   text_output <- "Control pre test 005: Object 'vr_var_name' can not be NULL."
+  #   return(Hmisc::llist(dt_ok, text_output))
+  # }
+  #
+  # # 6) vr_var_name is a vector
+  # if(!is.vector(vr_var_name)){
+  #   text_output <- "Control pre test 006: Object 'vr_var_name' must be vector."
+  #   return(Hmisc::llist(dt_ok, text_output))
+  # }
+  #
+  # # 7) vr_var_name is a vector
+  # if(!(length(vr_var_name) == 1)){
+  #   text_output <- "Control pre test 007: Object 'vr_var_name' must be vector of length 1."
+  #   return(Hmisc::llist(dt_ok, text_output))
+  # }
+  #
+  # # 8) vr_var_name is not NA
+  # if(is.na(vr_var_name)){
+  #   text_output <- "Control pre test 008: Object 'vr_var_name' can not be NA."
+  #   return(Hmisc::llist(dt_ok, text_output))
+  # }
+  #
+  # # 9) vr_var_name is character
+  # if(!is.character(vr_var_name)){
+  #   text_output <- "Control pre test 009: Object 'vr_var_name' must be character."
+  #   return(Hmisc::llist(dt_ok, text_output))
+  # }
+  #
+  # # 15) x_var_name is a colname from database
+  # if(!(vr_var_name %in% colnames(database))){
+  #   text_output <- "Control pre test 010: Object 'vr_var_name' must be a colname from database."
+  #   return(Hmisc::llist(dt_ok, text_output))
+  # }
+  #
+  #
+  # # # # # # # # # # x_var_name
+  # # # 10) x_var_name is not NULL
+  # # if(is.null(x_var_name)){
+  # #   text_output <- "Control pre test 011: Object 'x_var_name' can not be NULL."
+  # #   return(Hmisc::llist(dt_ok, text_output))
+  # # }
+  # #
+  # # # 11) x_var_name is a vector
+  # # if(!is.vector(x_var_name)){
+  # #   text_output <- "Control pre test 012: Object 'x_var_name' must be vector."
+  # #   return(Hmisc::llist(dt_ok, text_output))
+  # # }
+  # #
+  # # # 12) x_var_name is a vector
+  # # if(!(length(x_var_name) == 1)){
+  # #   text_output <- "Control pre test 013: Object 'x_var_name' must be vector of length 1."
+  # #   return(Hmisc::llist(dt_ok, text_output))
+  # # }
+  # #
+  # # # 13) x_var_name is not NA
+  # # if(is.na(x_var_name)){
+  # #   text_output <- "Control pre test 014: Object 'x_var_name' can not be NA."
+  # #   return(Hmisc::llist(dt_ok, text_output))
+  # # }
+  # #
+  # # # 14) x_var_name is character
+  # # if(!is.character(x_var_name)){
+  # #   text_output <- "Control pre test 015: Object 'x_var_name' must be character."
+  # #   return(Hmisc::llist(dt_ok, text_output))
+  # # }
+  # #
+  # #
+  # # # 15) x_var_name is a colname from database
+  # # if(!(x_var_name %in% colnames(database))){
+  # #   text_output <- "Control pre test 016: Object 'x_var_name' must be a colname from database."
+  # #   return(Hmisc::llist(dt_ok, text_output))
+  # # }
+  #
+  #
+  #
+  # # # # # # # # # alpha_value
+  # # 16) alpha_value is not NULL
+  # if(is.null(alpha_value)){
+  #   text_output <- "Control pre test 017: Object 'alpha_value' can not be NULL."
+  #   return(Hmisc::llist(dt_ok, text_output))
+  # }
+  #
+  # # 17) alpha_value is a vector
+  # if(!is.vector(alpha_value)){
+  #   text_output <- "Control pre test 018: Object 'alpha_value' must be vector."
+  #   return(Hmisc::llist(dt_ok, text_output))
+  # }
+  #
+  # # 18) alpha_value is a vector
+  # if(!(length(alpha_value) == 1)){
+  #   text_output <- "Control pre test 019: Object 'alpha_value' must be vector of length 1."
+  #   return(Hmisc::llist(dt_ok, text_output))
+  # }
+  #
+  # # 19) alpha_value is not NA
+  # if(is.na(alpha_value)){
+  #   text_output <- "Control pre test 020: Object 'alpha_value' can not be NA."
+  #   return(Hmisc::llist(dt_ok, text_output))
+  # }
+  #
+  # # 20) alpha_value is numeric
+  # if(!is.numeric(alpha_value)){
+  #   text_output <- "Control pre test 021: Object 'alpha_value' must be numeric."
+  #   return(Hmisc::llist(dt_ok, text_output))
+  # }
+  #
+  #
+  # # 20) alpha_value is between 0 and 1
+  # if(!(alpha_value >= 0 && alpha_value <= 1)){
+  #   text_output <- "Control pre test 022: Object 'alpha_value' must be a number between 0 and 1."
+  #   return(Hmisc::llist(dt_ok, text_output))
+  # }
+  #
+  #
+  #
+  # # # # # # # # # x_var_name and vr_var_name
+  # # 15) x_var_name is not NULL
+  # if(vr_var_name == x_var_name){
+  #   text_output <- "Control pre test 023: Objects 'vr_var_name' and 'x_var_name' can not be equal."
+  #   return(Hmisc::llist(dt_ok, text_output))
+  # }
+  #
+  #
+  #
+  # # New object
+  # vector_var_names <- c(vr_var_name, x_var_name)
+  #
+  # if(sum(vector_var_names %in% colnames(database)) != 2){
+  #   text_output <- "Control pre test 024: Objects 'vr_var_name', and 'x_var_name' must be colnames from database."
+  #   return(Hmisc::llist(dt_ok, text_output))
+  # }
+  #
+  #
+  #
+  # # # # # # # # # # # # minibase
+  # minibase <- na.omit(database[vector_var_names])
+  # colnames(minibase) <- c("VR", "X")
+  #
+  #
+  #
+  # # # # # # # minibase
+  # # 1) minibase can not be NULL
+  # if(is.null(minibase)){
+  #   text_output <- "Control pre test 025: Object 'minibase' can not be a NULL."
+  #   return(Hmisc::llist(dt_ok, text_output))
+  # }
+  #
+  # # 2) minibase must be a dataframe
+  # if(!is.data.frame(minibase)){
+  #   text_output <- "Control pre test 026: Object 'minibase' must be a dataframe."
+  #   return(Hmisc::llist(dt_ok, text_output))
+  # }
+  #
+  # # 3) minibase must has at exactly 2 columns
+  # if(!(ncol(minibase) == 2)){
+  #   text_output <- "Control pre test 027: Object 'minibase' must has exactly 3 columns."
+  #   return(Hmisc::llist(dt_ok, text_output))
+  # }
+  #
+  #
+  # # 4) minibase must has at least 2 rows
+  # if(!(nrow(minibase) >= 2)){
+  #   text_output <- "Control pre test 028: Object 'database' must has al least 2 rows."
+  #   return(Hmisc::llist(dt_ok, text_output))
+  # }
+  #
+  #
+  # # 4) minibase$VR can not be constant
+  # if(var(minibase$VR) == 0){
+  #   text_output <- "Control pre test 029: Object 'minibase$VR' can not be constant."
+  #   return(Hmisc::llist(dt_ok, text_output))
+  # }
+  #
+  # # 4) minibase$VR can not be constant
+  # if(length(unique(as.character(minibase$VR))) == 1){
+  #   text_output <- "Control pre test 030: Object 'minibase$VR' can not be constant."
+  #   return(Hmisc::llist(dt_ok, text_output))
+  # }
+  #
+  #
+  # # 4) minibase$VR can not be constant
+  # if(length(unique(as.character(minibase$VR))) == 1){
+  #   text_output <- "Control pre test 031: Object 'minibase$VR' can not be constant."
+  #   return(Hmisc::llist(dt_ok, text_output))
+  # }
+
+
+
+  # Final!
+  dt_ok <- TRUE
+  text_output <- ""
+  return(Hmisc::llist(dt_ok, text_output))
+
+
+
+}
+
+
+
+fn_cpiA012_code_p01_test_with <- function(database, vr_var_name, factor_var_name, cov_var_name, alpha_value){
+
+
+
+
+
+  # # # Selected vars
+  vector_all_var_names <- colnames(database)
+  vector_name_selected_vars <- c(vr_var_name, factor_var_name, cov_var_name)
+  vector_rol_vars <- c("VR", "FACTOR", "REG")
+
+  # Minibase
+  minibase <- na.omit(database[,vector_name_selected_vars])
+  colnames(minibase) <- vector_rol_vars
+  minibase[,2] <- as.factor(minibase[,2])
+  #
+  #
+  # dummy_vars <- model.matrix(~ FACTOR - 1, data = minibase)
+  # amount_dummy <- nlevels(minibase$FACTOR)
+  # amount_digits <- ceiling(log10(amount_dummy))
+  # if(amount_digits < 2) amount_digits <- 2
+  # formated_numbers <- sprintf(paste0("%0", amount_digits, "d"), 1:amount_dummy)
+  # colnames_dummy <- paste0("dummy_", formated_numbers)
+  # colnames(dummy_vars) <- colnames_dummy
+
+
+  #
+  # df_ref_levels <- data.frame(
+  #   "order" = 1:nlevels(minibase$FACTOR),
+  #   "lvl" = levels(minibase$FACTOR),
+  #   "colname_dummy" = colnames_dummy
+  # )
+  #colnames(minibase) <- selected_role_vars
+
+
+  # # # Selected vars info as dataframe
+  df_selected_vars <- data.frame(
+    "order" = 1:length(vector_name_selected_vars),
+    "var_name" = vector_name_selected_vars,
+    "var_number" = match(vector_name_selected_vars, vector_all_var_names),
+    "var_letter" = openxlsx::int2col(match(vector_name_selected_vars, vector_all_var_names)),
+    "var_role" = vector_rol_vars,
+    "doble_reference" = paste0(vector_rol_vars, "(", vector_name_selected_vars, ")")
+  )
+  df_selected_vars
+
+  df_control_minibase <- data.frame(
+    "order" = 1:length(vector_rol_vars),
+    "var_name" = df_selected_vars$var_name,
+    "var_role" = df_selected_vars$var_role,
+    "control" = c("is.numeric()", "is.factor()", "is.numeric()"),
+    "verify" = c(is.numeric(minibase[,1]), is.factor(minibase[,2]), is.numeric(minibase[,3]))
+  )
+
+
+  df_show_n <- data.frame(
+    "object" = c("database", "minibase"),
+    "n_col" = c(ncol(database), ncol(minibase)),
+    "n_row" = c(nrow(database), nrow(minibase))
+  )
+
+  #
+  df_factor_info <- data.frame(
+    "order" = 1:nlevels(minibase[,2]),
+    "level" = levels(minibase[,2]),
+    "n" = as.vector(table(minibase[,2])),
+    "color" = rainbow(nlevels(minibase[,2]))
+  )
+
+  # check_unbalanced_reps <- length(unique(df_factor_info$n)) > 1
+
+  #####################################################################################
+
+  # Medidas de posicion particionadas (VR)
+  df_position_vr_levels <- data.frame(
+    "order" = 1:nlevels(minibase[,2]),
+    "level" = levels(minibase[,2]),
+    "min" = tapply(minibase[,1], minibase[,2], min),
+    "mean" = tapply(minibase[,1], minibase[,2], mean),
+    "median" = tapply(minibase[,1], minibase[,2], median),
+    "max" = tapply(minibase[,1], minibase[,2], max),
+    "n" = tapply(minibase[,1], minibase[,2], length)
+  )
+
+
+
+  # Medidas de dispersion particionadas (VR)
+  df_dispersion_vr_levels <- data.frame(
+    "order" = 1:nlevels(minibase[,2]),
+    "level" = levels(minibase[,2]),
+    "range" = tapply(minibase[,1], minibase[,2], function(x){max(x) - min(x)}),
+    "variance" = tapply(minibase[,1], minibase[,2], var),
+    "standard_deviation" = tapply(minibase[,1], minibase[,2], sd),
+    "standard_error" = tapply(minibase[,1], minibase[,2], function(x){sd(x)/sqrt(length(x))}),
+    "n" = tapply(minibase[,1], minibase[,2], length)
+  )
+
+
+  # Medidas de posicion particionadas (VR)
+  df_position_vr_general <- data.frame(
+    "min" = min(minibase[,1]),
+    "mean" = mean(minibase[,1]),
+    "median" = median(minibase[,1]),
+    "max" = max(minibase[,1]),
+    "n" = length(minibase[,1])
+  )
+
+
+
+  # Medidas de dispersion particionadas (VR)
+  df_dispersion_vr_general <- data.frame(
+    "range" = max(minibase[,1]) - min(minibase[,1]),
+    "variance" = var(minibase[,1]),
+    "standard_deviation" = sd(minibase[,1]),
+    "standard_error" = sd(minibase[,1])/(sqrt(length(minibase[,1]))),
+    "n" = length(minibase[,1])
+  )
+
+
+  #########################################################################################
+
+  # Medidas de posicion particionadas (REG)
+  df_position_reg_levels <- data.frame(
+    "order" = 1:nlevels(minibase[,2]),
+    "level" = levels(minibase[,2]),
+    "min" = tapply(minibase[,3], minibase[,2], min),
+    "mean" = tapply(minibase[,3], minibase[,2], mean),
+    "median" = tapply(minibase[,3], minibase[,2], median),
+    "max" = tapply(minibase[,3], minibase[,2], max),
+    "n" = tapply(minibase[,3], minibase[,2], length)
+  )
+
+
+
+  # Medidas de dispersion particionadas  (REG)
+  df_dispersion_reg_levels <- data.frame(
+    "order" = 1:nlevels(minibase[,2]),
+    "level" = levels(minibase[,2]),
+    "range" = tapply(minibase[,3], minibase[,2], function(x){max(x) - min(x)}),
+    "variance" = tapply(minibase[,3], minibase[,2], var),
+    "standard_deviation" = tapply(minibase[,3], minibase[,2], sd),
+    "standard_error" = tapply(minibase[,3], minibase[,2], function(x){sd(x)/sqrt(length(x))}),
+    "n" = tapply(minibase[,3], minibase[,2], length)
+  )
+
+  # Medidas de posicion particionadas (REG)
+  df_position_reg_general <- data.frame(
+    "min" = min(minibase[,3]),
+    "mean" = mean(minibase[,3]),
+    "median" = median(minibase[,3]),
+    "max" = max(minibase[,3]),
+    "n" = length(minibase[,3])
+  )
+
+
+
+  # Medidas de dispersion particionadas (REG)
+  df_dispersion_reg_general <- data.frame(
+    "range" = max(minibase[,3]) - min(minibase[,3]),
+    "variance" = var(minibase[,3]),
+    "standard_deviation" = sd(minibase[,3]),
+    "standard_error" = sd(minibase[,3])/(sqrt(length(minibase[,3]))),
+    "n" = length(minibase[,3])
+  )
+
+
+
+  ################################################################################
+
+  # Analisis
+  lm_dummy_with <- lm(VR ~ REG + FACTOR + FACTOR:REG, data = minibase)
+  summary_dummy_with <- summary(lm_dummy_with)
+  df_coefficients <-  as.data.frame(summary_dummy_with$coefficients)
+  # vector_coeff <- df_coefficients$Estimate
+
+  # # # Standard error from model for each level
+  model_error_var <- var(lm_dummy_with$residuals)
+  model_error_sd <- sqrt(model_error_var)
+
+  df_model_error <- data.frame(
+    "order" = df_factor_info$order,
+    "level" = df_factor_info$level,
+    "n" = nrow(minibase),
+    "model_error_var" = model_error_var,
+    "model_error_sd" = model_error_sd
+  )
+
+
+  df_model_error["model_error_se"] <- df_model_error["model_error_sd"]/sqrt(df_model_error$n)
+  df_model_error
+
+
+  ######################################################################################
+
+  dt_rows_database_ok <- rowSums(is.na(database[vector_name_selected_vars])) == 0
+
+
+  minibase_mod <- minibase
+  minibase_mod$"fitted.values" <- lm_dummy_with$fitted.values
+  minibase_mod$"residuals" <- lm_dummy_with$residuals
+  minibase_mod$"id_database" <- c(1:nrow(database))[dt_rows_database_ok]
+  minibase_mod$"id_minibase" <- 1:nrow(minibase)
+  minibase_mod$"lvl_order_number" <- as.numeric(minibase[,2])
+  minibase_mod$"lvl_color" <- df_factor_info$color[minibase_mod$"lvl_order_number"]
+
+  minibase_mod$"VR_mod"  <- minibase$"VR"  - df_position_vr_levels$"mean"[minibase_mod$"lvl_order_number"]
+  minibase_mod$"REG_mod" <- minibase$"REG" - df_position_reg_levels$"mean"[minibase_mod$"lvl_order_number"]
+
+
+  ######################################################################################
+
+  # Medidas de posicion particionadas (residuals)
+  df_position_residuals_levels <- data.frame(
+    "order" = 1:nlevels(minibase_mod[,2]),
+    "level" = levels(minibase_mod[,2]),
+    "min" = tapply(minibase_mod$residuals, minibase_mod[,2], min),
+    "mean" = tapply(minibase_mod$residuals, minibase_mod[,2], mean),
+    "median" = tapply(minibase_mod$residuals, minibase_mod[,2], median),
+    "max" = tapply(minibase_mod$residuals, minibase_mod[,2], max),
+    "n" = tapply(minibase_mod$residuals, minibase_mod[,2], length)
+  )
+
+
+
+  # Medidas de dispersion particionadas  (residuals)
+  df_dispersion_residuals_levels <- data.frame(
+    "order" = 1:nlevels(minibase_mod[,2]),
+    "level" = levels(minibase_mod[,2]),
+    "range" = tapply(minibase_mod$residuals, minibase_mod[,2], function(x){max(x) - min(x)}),
+    "variance" = tapply(minibase_mod$residuals, minibase_mod[,2], var),
+    "standard_deviation" = tapply(minibase_mod$residuals, minibase_mod[,2], sd),
+    "standard_error" = tapply(minibase_mod$residuals, minibase_mod[,2], function(x){sd(x)/sqrt(length(x))}),
+    "n" = tapply(minibase_mod$residuals, minibase_mod[,2], length)
+  )
+
+
+
+  # Medidas de posicion particionadas (residuals)
+  df_position_residuals_general <- data.frame(
+    "min" = min(minibase_mod$residuals),
+    "mean" = mean(minibase_mod$residuals),
+    "median" = median(minibase_mod$residuals),
+    "max" = max(minibase_mod$residuals),
+    "n" = length(minibase_mod$residuals)
+  )
+
+
+
+  # Medidas de dispersion particionadas (residuals)
+  df_dispersion_residuals_general <- data.frame(
+    "range" = max(minibase_mod$residuals) - min(minibase_mod$residuals),
+    "variance" = var(minibase_mod$residuals),
+    "standard_deviation" = sd(minibase_mod$residuals),
+    "standard_error" = sd(minibase_mod$residuals)/(sqrt(length(minibase_mod$residuals))),
+    "n" = length(minibase_mod$residuals)
+  )
+
+
+
+
+
+  # # # Seccion 09 - Requisitos del modelo de Ancova con interacción ------------------
+  # Test de Normalidad de Shapiro-Wilk
+  test_residuals_normality <- shapiro.test(minibase_mod$residuals)
+  test_residuals_normality
+
+
+
+  sum_residuos <- sum(minibase_mod$residuals)
+  sum_residuos
+
+
+
+
+
+
+
+  # # Sección 09-3) Tabla con las pendientes y ordenadas de cada factor ----------
+  # Ecuaciones de cada recta
+  # Ordenadas de los niveles del factor
+  pos_mod_intercept <- c((1:(nlevels(minibase[,2])-1)) + 2)
+  vector_mod_intercept_levels <- c(0, df_coefficients$"Estimate"[pos_mod_intercept])
+  names(vector_mod_intercept_levels) <- levels(minibase[,2])
+  vector_intercept_levels <- vector_mod_intercept_levels + df_coefficients$"Estimate"[1]
+  names(vector_intercept_levels) <- levels(minibase[,2])
+
+
+  # Pendientes de los niveles dle factor
+  pos_mod_slope <- c((nlevels(minibase[,2]) + 2):nrow(df_coefficients))
+  vector_mod_slope_levels <- c(0, df_coefficients$"Estimate"[pos_mod_slope])
+  names(vector_mod_slope_levels) <- levels(minibase[,2])
+
+  vector_slope_levels <- vector_mod_slope_levels + df_coefficients$"Estimate"[2]
+  names(vector_slope_levels) <- levels(minibase[,2])
+
+
+  df_lines <- data.frame(
+    "order" = 1:length(vector_slope_levels),
+    "level" = names(vector_slope_levels),
+    "slope" = vector_slope_levels,
+    "intercept" = vector_intercept_levels
+  )
+
+
+
+
+  # # Sección 09-4) Tabla con las estimaciones del modelo ------------------------
+  # Estimacion de la interaccion en las combinaciones COV:FACTOR
+  slope_general <- mean(vector_slope_levels)
+  vector_slope_general <- rep(slope_general, length(vector_slope_levels))
+  names(vector_slope_general) <- names(vector_slope_levels)
+
+
+  # Efectos de interaccion
+  vector_interaction <- vector_slope_levels - vector_slope_general
+  names(vector_interaction) <- names(vector_interaction)
+
+  df_interaction <- data.frame(
+    "order" = 1:length(vector_interaction),
+    "level" = names(vector_interaction),
+    "beta" = vector_slope_general,
+    "gamma_i" = vector_interaction,
+    "beta_i" = vector_slope_levels
+  )
+
+  df_slop <- data.frame(
+    "orden" = df_interaction$"order",
+    "level" = names(vector_interaction),
+    "slop" = df_interaction$"beta_i"
+  )
+  df_slop
+
+  # Suma de las interacciones
+  sum_interaction <- sum(vector_interaction)
+  sum_interaction
+
+
+
+
+  ###############################################################
+
+  vector_initial_point_y_levels <- df_lines$intercept + (df_lines$slope*df_position_reg_levels$min)
+  vector_end_point_y_levels     <- df_lines$intercept + (df_lines$slope*df_position_reg_levels$max)
+
+
+  df_segments <- data.frame(
+    "order" = df_position_reg_levels$order,
+    "level" = df_position_reg_levels$level,
+    "min_reg_i_x" = df_position_reg_levels$min,
+    "max_reg_i_x" = df_position_reg_levels$max,
+    "initial_point_i_y" = vector_initial_point_y_levels,
+    "end_point_i_x" = vector_end_point_y_levels,
+    "color" = df_factor_info$color
+  )
+
+
+
+  ################
+
+
+  # Medidas de posicion particionadas (REG)
+  df_position_regMOD_levels <- data.frame(
+    "order" = 1:nlevels(minibase[,2]),
+    "level" = levels(minibase[,2]),
+    "min" = tapply(minibase_mod$"REG_mod",  minibase_mod$"FACTOR", min),
+    "mean" = tapply(minibase_mod$"REG_mod",  minibase_mod$"FACTOR", mean),
+    "median" = tapply(minibase_mod$"REG_mod",  minibase_mod$"FACTOR", median),
+    "max" = tapply(minibase_mod$"REG_mod",  minibase_mod$"FACTOR", max),
+    "n" = tapply(minibase_mod$"REG_mod",  minibase_mod$"FACTOR", length)
+  )
+
+  vector_initial_point_y_levels_mod <- vector_slope_levels*(df_position_regMOD_levels$min)
+  vector_end_point_y_levels_mod     <- vector_slope_levels*(df_position_regMOD_levels$max)
+
+  df_segments_mod <- data.frame(
+    "order" = df_position_regMOD_levels$order,
+    "level" = df_position_regMOD_levels$level,
+    "min_reg_i_x" = df_position_regMOD_levels$min,
+    "max_reg_i_x" = df_position_regMOD_levels$max,
+    "initial_point_i_y" = vector_initial_point_y_levels_mod,
+    "end_point_i_x" = vector_end_point_y_levels_mod,
+    "color" = df_factor_info$color
+  )
+
+
+  general_min_reg_mod <- min(df_position_regMOD_levels$min)
+  general_max_reg_mod <- max(df_position_regMOD_levels$max)
+  general_initial_point_mod <- general_min_reg_mod*slope_general
+  general_end_point_mod <- general_max_reg_mod*slope_general
+
+  df_beta_mod <- data.frame(
+    "description" = "beta",
+    "min_reg_i_x" = general_min_reg_mod,
+    "max_reg_i_x" = general_max_reg_mod,
+    "initial_point_i_y" = general_initial_point_mod,
+    "end_point_i_x" = general_end_point_mod,
+    "color" = "black"
+  )
+
+
+
+  # # # # # Section 13 - Special table to plots ----------------------------------
+
+
+
+
+
+
+  # --- # hide_: Proccesing objects order
+  hide_correct_order <- fn_cpiA012_ObjNamesInOrder(selected_fn = fn_cpiA012_code_p01_test_with)
+  hide_output_list_objects <- mget(hide_correct_order)
+
+  # --- # hide_: return!
+  return(hide_output_list_objects)
+
+}
+
+
+
+fn_cpiA012_code_p02_plot001 <- function(results_p01_test){
+
+
+
+  new_plot <-  with(results_p01_test,{
+
+
+    # # # Create a new plot...
+    plot001 <- plotly::plot_ly()
+
+
+    # # # Adding errors...
+    plot001 <- plotly::add_trace(p = plot001,
+                                 type = "scatter",
+                                 mode = "markers",
+                                 x = minibase$REG,
+                                 y = minibase$VR,
+                                 color = minibase$FACTOR,
+                                 colors = df_factor_info$color,
+                                 marker = list(size = 15, opacity = 0.7))
+
+
+    # plot001<-  add_text(p = plot001,
+    #                      x = df_table_plot002$level,
+    #                      y = df_table_plot002$mean,
+    #                      text = df_table_plot002$group, name = "Tukey Group",
+    #                      size = 20)
+
+    # # # Title and settings...
+    plot001 <- plotly::layout(p = plot001,
+                              xaxis = list(title = "COV"),
+                              yaxis = list(title = "VR"),
+                              title = "Plot 001 - Scatterplot",
+                              font = list(size = 20),
+                              margin = list(t = 100))
+
+
+
+    # # # Without zerolines
+    plot001 <-plotly::layout(p = plot001,
+                             xaxis = list(zeroline = FALSE),
+                             yaxis = list(zeroline = FALSE))
+
+
+    for (x in 1:nrow(df_segments)){
+      plot001 <- add_segments(p = plot001,
+                              x = df_segments$min_reg_i_x[x],
+                              y = df_segments$initial_point_i_y[x],
+                              xend = df_segments$max_reg_i_x[x],
+                              yend = df_segments$end_point_i_x[x],
+                              line = list(color = df_segments$color[x],
+                                          width = 4),
+                              name = df_segments$level[x])
+    }
+    # Plot output
+    plot001
+    #NULL
+  })
+
+
+
+  return(new_plot)
+
+}
+
+
+
+fn_cpiA012_code_p02_plot002 <- function(results_p01_test){
+
+
+
+  new_plot <-  with(results_p01_test,{
+
+
+    # Crear el gráfico interactivo con Plotly
+
+    plot002 <- plotly::plot_ly()
+
+    plot002 <- add_trace(p = plot002,
+                         x = minibase_mod$fitted.values,
+                         y = minibase_mod$residuals,
+                         type = 'scatter',
+                         mode = 'markers',
+                         name = "data",
+                         marker = list(size = 15, color = 'blue'))
+
+
+    # # Agregar la recta
+    # selected_slop <- df_table_reg[2,1]# Pendiente
+    # selected_constant <- df_table_reg[1,1]  # Ordenada al origen
+    #
+    # x_recta <- c(min(minibase$X), max(minibase$X))
+    # y_recta <- selected_slop * x_recta + selected_constant
+    # plot002 <- add_trace(p = plot002,
+    #                      x = x_recta, y = y_recta,
+    #                      type = 'scatter',
+    #                      mode = 'lines',
+    #                      name = 'slop',
+    #                      line = list(width = 5, color = 'orange'))
+
+
+    plot002 <- plotly::layout(p = plot002,
+                              xaxis = list(title = "Fitted values"),
+                              yaxis = list(title = "Residuals"),
+                              title = "Plot 002 - Residuals vs. Fitted values",
+                              font = list(size = 20),
+                              margin = list(t = 100))
+
+
+
+    plot002 <- plotly::layout(p = plot002,
+                              xaxis = list(zeroline = FALSE),
+                              yaxis = list(zeroline = TRUE))
+
+    # Mostrar el gráfico interactivo
+    plot002
+
+
+  })
+
+
+
+  return(new_plot)
+
+}
+
+
+
+
+fn_cpiA012_code_p02_plot003 <- function(results_p01_test){
+
+
+
+  new_plot <-  with(results_p01_test,{
+
+
+    # # # # Create a new plot...
+    # plot003 <- plotly::plot_ly()
+    #
+    #
+    # # # # Adding errors...
+    # plot003 <-   plotly::add_trace(p = plot003,
+    #                                type = "scatter",
+    #                                mode = "markers",
+    #                                x = df_table_factor_plot003$level,
+    #                                y = df_table_factor_plot003$mean,
+    #                                color = df_table_factor_plot003$level,
+    #                                colors = df_table_factor_plot003$color,
+    #                                marker = list(symbol = "line-ew-open",
+    #                                              size = 50,
+    #                                              opacity = 1,
+    #                                              line = list(width = 5)),
+    #                                error_y = list(type = "data", array = df_table_factor_plot003$model_error_se)
+    # )
+    #
+    #
+    # plot003 <-  add_text(p = plot003,
+    #                      x = df_table_factor_plot003$level,
+    #                      y = df_table_factor_plot003$mean,
+    #                      text = df_table_factor_plot003$group, name = "Tukey Group",
+    #                      size = 20)
+    #
+    # # # # Title and settings...
+    # plot003 <- plotly::layout(p = plot003,
+    #                           xaxis = list(title = "FACTOR"),
+    #                           yaxis = list(title = "VR"),
+    #                           title = "Plot 003 - Mean y model standard error",
+    #                           font = list(size = 20),
+    #                           margin = list(t = 100))
+    #
+    # # # # Without zerolines
+    # plot003 <-plotly::layout(p = plot003,
+    #                          xaxis = list(zeroline = FALSE),
+    #                          yaxis = list(zeroline = FALSE))
+    #
+    # # # # Plot output
+    # plot003
+    NULL
+
+  })
+
+
+
+  return(new_plot)
+
+}
+
+
+
+
+fn_cpiA012_code_p02_plot004 <- function(results_p01_test){
+
+
+
+
+  new_plot <-  with(results_p01_test,{
+
+
+    # # # # Create a new plot...
+    # plot004 <- plotly::plot_ly()
+    #
+    #
+    # # # # Adding errors...
+    # plot004 <- plotly::add_trace(p = plot004,
+    #                              type = "scatter",
+    #                              mode = "markers",
+    #                              x = minibase_mod$COV_mod,
+    #                              y = minibase_mod$VR_mod,
+    #                              color = minibase_mod$FACTOR,
+    #                              colors = df_factor_info$color,
+    #                              marker = list(size = 15, opacity = 0.7))
+    #
+    #
+    # # plot001<-  add_text(p = plot001,
+    # #                      x = df_table_plot002$level,
+    # #                      y = df_table_plot002$mean,
+    # #                      text = df_table_plot002$group, name = "Tukey Group",
+    # #                      size = 20)
+    #
+    # # # # Title and settings...
+    # plot004 <- plotly::layout(p = plot004,
+    #                           xaxis = list(title = "COV_mod"),
+    #                           yaxis = list(title = "VR_mod"),
+    #                           title = "Plot 004 - Scatterplot",
+    #                           font = list(size = 20),
+    #                           margin = list(t = 100))
+    #
+    #
+    #
+    # # # # Without zerolines
+    # plot004 <-plotly::layout(p = plot004,
+    #                          xaxis = list(zeroline = TRUE),
+    #                          yaxis = list(zeroline = TRUE))
+    #
+    # for (x in 1:nrow(df_segments_mod)){
+    #   plot004 <- add_segments(p = plot004,
+    #                           x = df_segments_mod$min_cov_i_x[x],
+    #                           y = df_segments_mod$initial_point_i_y[x],
+    #                           xend = df_segments_mod$max_cov_i_x[x],
+    #                           yend = df_segments_mod$end_point_i_x[x],
+    #                           line = list(color = df_segments_mod$color[x],
+    #                                       width = 4),
+    #                           name = df_segments_mod$level[x])
+    # }
+    #
+    # plot004 <- add_segments(p = plot004,
+    #                         x = df_beta_mod$min_cov_i_x[1],
+    #                         y = df_beta_mod$initial_point_i_y[1],
+    #                         xend = df_beta_mod$max_cov_i_x[1],
+    #                         yend = df_beta_mod$end_point_i_x[1],
+    #                         line = list(color = df_beta_mod$color[1],
+    #                                     width = 4),
+    #                         name = df_beta_mod$description[1])
+    # # # # Plot output
+    # plot004
+    # # for (x in 1:nrow(df_segments)){
+    # #   plot001 <- add_segments(p = plot001,
+    # #                           x = df_segments$min_cov_i_x[x],
+    # #                           y = df_segments$initial_point_i_y[x],
+    # #                           xend = df_segments$max_cov_i_x[x],
+    # #                           yend = df_segments$end_point_i_x[x],
+    # #                           line = list(color = df_segments$color[x],
+    # #                                       width = 4),
+    # #                           name = df_segments$level[x])
+    # # }
+    # # # # Plot output
+    # plot004
+    NULL
+  })
+
+
+
+  return(new_plot)
+
+}
+
+
+# Control post
+fn_cpiA012_control_p01_test <- function(all_results){
+
+  if(is.null(all_results)){
+    text_output <- "Control post test 001: Object 'all_results' can not be NULL."
+    check_ok <- FALSE
+    return(Hmisc::llist(check_ok, text_output))
+  }
+
+
+
+  obj_name01 <- "df_table_anova"
+  spected_col_names <- c("Df", "Sum Sq", "Mean Sq", "F value", "Pr(>F)")
+
+
+  if(!(obj_name01 %in% names(all_results))){
+    text_output <- "Control post test 002: Object 'df_table_anova' doesn't exist in 'all_results'."
+    check_ok <- FALSE
+    return(Hmisc::llist(check_ok, text_output))
+  }
+
+
+  # # # 1) About the table
+  if(is.null(all_results[obj_name01])){
+    text_output <- "Control post test 003: Object '_obj_name01_' can not be NULL."
+    text_output <- gsub("_obj_name01_", "obj_name01", text_output)
+    check_ok <- FALSE
+    return(Hmisc::llist(check_ok, text_output))
+  }
+
+
+  selected_obj01 <- all_results[[obj_name01]]
+
+
+  if(!identical(spected_col_names, colnames(selected_obj01))){
+    text_output <- "Control post test 004: Object '_obj_name01_' has unexpected column names."
+    text_output <- gsub("_obj_name01_", "obj_name01", text_output)
+    check_ok <- FALSE
+    return(Hmisc::llist(check_ok, text_output))
+  }
+
+
+  if(!is.data.frame(selected_obj01)){
+    text_output <- "Control post test 005: Object '_obj_name01_' must be a data.frame."
+    text_output <- gsub("_obj_name01_", "obj_name01", text_output)
+    check_ok <- FALSE
+    return(Hmisc::llist(check_ok, text_output))
+  }
+
+
+  if(nrow(selected_obj01) != 3){
+    text_output <- "Control post test 006: Object '_obj_name01_' must has 3 rows."
+    text_output <- gsub("_obj_name01_", "obj_name01", text_output)
+    check_ok <- FALSE
+    return(Hmisc::llist(check_ok, text_output))
+  }
+
+
+  if(ncol(selected_obj01) != 5){
+    text_output <- "Control post test 007: Object '_obj_name01_' must have 5 cols."
+    text_output <- gsub("_obj_name01_", "obj_name01", text_output)
+    check_ok <- FALSE
+    return(Hmisc::llist(check_ok, text_output))
+  }
+
+
+
+
+
+  # All OK!
+  check_ok <- TRUE
+  text_output <- ""
+  return(Hmisc::llist(check_ok, text_output))
+
+}
+
+
+fn_cpiA012_control_p02_plots <- function(all_results){
+
+  if(is.null(all_results)){
+    text_output <- "Control post test 001: Object 'all_results' can not be NULL."
+    check_ok <- FALSE
+    return(Hmisc::llist(check_ok, text_output))
+  }
+
+
+
+
+  # All OK!
+  check_ok <- TRUE
+  text_output <- ""
+  return(Hmisc::llist(check_ok, text_output))
+
+}
+
+
+
+
+
+fn_cpiA012_gen01 <- function(database,  vr_var_name, factor_var_name, cov_var_name,alpha_value){
+
+  output_list <- list()
+  output_list$"R_code" <- list()
+  output_list$"R_code"$"p01_test" <- NULL
+  output_list$"R_code"$"p02_plots" <- list()
+  output_list$"R_code"$"p02_plots"$"plot001" <- NULL
+  output_list$"R_code"$"p02_plots"$"plot002" <- NULL
+  output_list$"R_code"$"p02_plots"$"plot003" <- NULL
+  output_list$"R_code"$"p02_plots"$"plot004" <- NULL
+
+  output_list$"check_control_previous" <- NULL
+
+  output_list$"check_control_post" <- list()
+  output_list$"check_control_post"$"p01_test" <- NULL
+
+
+  output_list$"R_results" <- list()
+  output_list$"R_results"$"p01_test" <- NULL
+  output_list$"R_results"$"p02_plots" <- list()
+  output_list$"R_results"$"p02_plots"$"plot001" <- NULL
+  output_list$"R_results"$"p02_plots"$"plot002" <- NULL
+  output_list$"R_results"$"p02_plots"$"plot003" <- NULL
+  output_list$"R_results"$"p02_plots"$"plot004" <- NULL
+
+  # Step 01 - R_code
+  output_list$"R_code"$"p01_test"    <- fn_cpiA012_TakeCode(selected_fn = fn_cpiA012_code_p01_test_with)
+  output_list$"R_code"$"p02_plots"$"plot001"   <- fn_cpiA012_TakeCode(selected_fn = fn_cpiA012_code_p02_plot001)
+  output_list$"R_code"$"p02_plots"$"plot002"   <- fn_cpiA012_TakeCode(selected_fn = fn_cpiA012_code_p02_plot002)
+  output_list$"R_code"$"p02_plots"$"plot003"   <- fn_cpiA012_TakeCode(selected_fn = fn_cpiA012_code_p02_plot003)
+  output_list$"R_code"$"p02_plots"$"plot004"   <- fn_cpiA012_TakeCode(selected_fn = fn_cpiA012_code_p02_plot004)
+
+
+  # Step 02 - Pre Control ------------------------------------------------------
+  output_list$"check_control"$"previous" <- fn_cpiA012_control_previous(database, vr_var_name,
+                                                                        factor_var_name,
+                                                                        cov_var_name,
+                                                                        alpha_value)
+
+
+
+
+
+  # Step 03 - Results ----------------------------------------------------------
+  output_list$"R_results"$"p01_test" <- fn_cpiA012_code_p01_test_with(database,  vr_var_name, factor_var_name, cov_var_name, alpha_value)
+
+
+  output_list$"R_results"$"p02_plots"$"plot001" <- fn_cpiA012_code_p02_plot001(results_p01_test = output_list$"R_results"$"p01_test")
+  output_list$"R_results"$"p02_plots"$"plot002" <- fn_cpiA012_code_p02_plot002(results_p01_test = output_list$"R_results"$"p01_test")
+  output_list$"R_results"$"p02_plots"$"plot003" <- fn_cpiA012_code_p02_plot003(results_p01_test = output_list$"R_results"$"p01_test")
+  output_list$"R_results"$"p02_plots"$"plot004" <- fn_cpiA012_code_p02_plot004(results_p01_test = output_list$"R_results"$"p01_test")
+
+
+
+
+
+  return(output_list)
+
+}
+
+
+fn_cpiA012_gen02 <- function(database,  vr_var_name, factor_var_name, cov_var_name, alpha_value){
+
+
+  all_results <- fn_cpiA012_gen01(database,  vr_var_name, factor_var_name, cov_var_name, alpha_value)
+
+
+
+  output_list <- list()
+
+
+  # Out01 - Analysis -------------------------------------------------------------
+  selection01 <- c("df_selected_vars",
+                   "df_factor_info",
+                   "summary_dummy_with",
+                   "df_coefficients",
+                   "df_lines")
+
+  output_list$"out01_analysis" <- all_results$R_results$p01_test[selection01]
+
+
+
+
+  # Out02 - Requeriments ---------------------------------------------------------
+  selection02 <- c("test_residuals_normality", "test_residuals_homogeneity")
+
+  output_list$"out02_requeriments" <- all_results$R_results$p01_test[selection02]
+
+
+
+  # Out03 - Plots and Tables - Factor --------------------------------------------
+  output_list$"out03A_plots" <- all_results$R_results$p02_plots
+
+
+  selection03B <- c("df_table_plot001", "df_table_plot002",
+                    "df_table_plot003", "df_table_plot004")
+  output_list$"out03B_tableplots" <- all_results$R_results$p01_test[selection03B]
+
+
+
+
+  # Out04 - Plots and Tables - Residuals -----------------------------------------
+  output_list$"out04A_plots_residuals" <- all_results$R_results$p02_plots
+
+
+  selection04B <- c("df_table_plot001", "df_table_plot002",
+                    "df_table_plot003", "df_table_plot004")
+  output_list$"out04B_tables_residuals" <- all_results$R_results$p01_test[selection04B]
+
+
+
+  # Out05 - Full Results ---------------------------------------------------------
+  output_list$"out05_full_results" <- all_results$R_results$p01_test
+
+
+
+  # Out06 - R Code ---------------------------------------------------------------
+  output_list$"out06_R_code" <- paste0(unlist(all_results$R_code), collapse = "\n\n\n")
+
+
+  return(output_list)
+}
+
+

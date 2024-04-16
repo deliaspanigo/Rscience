@@ -1401,7 +1401,7 @@ cpiA001_anova1way_factor_plot002 <- function(df_table_factor_plot002){
                                              size = 50,
                                              opacity = 1,
                                              line = list(width = 5)),
-                               error_y = list(type = "data", array = df_table_factor_plot002$model_error_se)
+                               error_y = list(type = "data", array = df_table_factor_plot002$model_error_sd)
   )
 
 
