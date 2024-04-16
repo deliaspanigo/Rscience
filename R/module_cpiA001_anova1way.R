@@ -666,15 +666,15 @@ module02_anova_s02_rscience_server <- function(id, input_general, input_01_anova
         ns <- shiny::NS(id)
 
         div(
-          h2("Requeriments 1) Normaility test - Residuals"),
+          h2("1) Requeriment - Normaility test - Residuals"),
           verbatimTextOutput(ns("tab02_requeriments_obj01")),
           br(), br(), br(),
 
-          h2("Requeriments 2) Homogeneity test - Residuals"),
+          h2("2) Requeriment - Homogeneity test - Residuals"),
           verbatimTextOutput(ns("tab02_requeriments_obj02")),
           br(), br(), br(),
 
-          h2("Estimated variances - Residuals"),
+          h2("3) Estimated variances - Residuals"),
           verbatimTextOutput(ns("tab02_requeriments_obj03")),
           br(), br(), br()
         )

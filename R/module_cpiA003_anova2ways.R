@@ -83,7 +83,7 @@ module_cpiA003_s01_varselection_server <- function(id, input_general){
         # # # UI content
         div(
           fluidRow(
-            actionButton(ns("action_load"), label = "LOAD", style = output_style_button_load),
+            actionButton(ns("action_load"), label = "RUN", style = output_style_button_load),
             actionButton(ns("action_reset_all"), "RESET ALL", style = output_style_button_reset)
           )
         )
@@ -486,14 +486,199 @@ module_cpiA003_s02_rscience_server <- function(id, input_general, input_01_anova
 
 ##############################################################
       # # # Tab01 - Analysis
-      output$tab01_analysis <- renderPrint({
+      output$tab01_analysis_obj01 <- renderPrint({
 
         req(control_user_02())
 
-        RR_general()$"out01_analysis"
+        selected_item <- c("df_selected_vars")
+        RR_general()$"out01_analysis"[selected_item]
+      })
+
+      output$tab01_analysis_obj02 <- renderPrint({
+
+        req(control_user_02())
+
+        selected_item <- c("df_table_anova")
+        RR_general()$"out01_analysis"[selected_item]
+      })
+
+      output$tab01_analysis_obj03 <- renderPrint({
+
+        req(control_user_02())
+
+        selected_item <- c("df_factor01_info", "check_unbalanced_reps_factor01")
+        RR_general()$"out01_analysis"[selected_item]
+      })
+
+      output$tab01_analysis_obj04 <- renderPrint({
+
+        req(control_user_02())
+
+        selected_item <- c("df_tukey_table_factor01")
+        RR_general()$"out01_analysis"[selected_item]
+      })
+
+      output$tab01_analysis_obj05 <- renderPrint({
+
+        req(control_user_02())
+
+        selected_item <- c("df_model_error_factor01")
+        RR_general()$"out01_analysis"[selected_item]
+      })
+
+      ### F2
+      output$tab01_analysis_obj06 <- renderPrint({
+
+        req(control_user_02())
+
+        selected_item <- c("df_factor02_info", "check_unbalanced_reps_factor02")
+        RR_general()$"out01_analysis"[selected_item]
+      })
+
+      output$tab01_analysis_obj07 <- renderPrint({
+
+        req(control_user_02())
+
+        selected_item <- c("df_tukey_table_factor02")
+        RR_general()$"out01_analysis"[selected_item]
+      })
+
+      output$tab01_analysis_obj08 <- renderPrint({
+
+        req(control_user_02())
+
+        selected_item <- c("df_model_error_factor02")
+        RR_general()$"out01_analysis"[selected_item]
+      })
+
+      ### Combination
+      output$tab01_analysis_obj09 <- renderPrint({
+
+        req(control_user_02())
+
+        selected_item <- c("df_combination_info", "check_unbalanced_reps_combination")
+        RR_general()$"out01_analysis"[selected_item]
+      })
+
+      output$tab01_analysis_obj10 <- renderPrint({
+
+        req(control_user_02())
+
+        selected_item <- c("df_tukey_table_combination")
+        RR_general()$"out01_analysis"[selected_item]
+      })
+
+      output$tab01_analysis_obj11 <- renderPrint({
+
+        req(control_user_02())
+
+        selected_item <- c("df_model_error_combination")
+        RR_general()$"out01_analysis"[selected_item]
+      })
+      ##########################################################
+
+
+
+
+      output$tab01_analysis_FULL <- renderUI({
+
+        ns <- shiny::NS(id)
+
+        div(
+          h2("1) Reference"),
+          verbatimTextOutput(ns("tab01_analysis_obj01")),
+          br(), br(), br(),
+
+          h2("2) Anova 2 ways - Table"),
+          verbatimTextOutput(ns("tab01_analysis_obj02")),
+          br(), br(), br(),
+
+          h2("3) Resumen Factor01"),
+          verbatimTextOutput(ns("tab01_analysis_obj03")),
+          br(), br(), br(),
+
+          h2("4) Multiple Comparation Test (Tukey) - Factor01"),
+          verbatimTextOutput(ns("tab01_analysis_obj04")),
+          br(), br(), br(),
+
+          h2("5) Estimated standard error from model - Factor01"),
+          verbatimTextOutput(ns("tab01_analysis_obj05")),
+          br(), br(), br(),
+
+
+          # F2
+          h2("6) Resumen Factor02"),
+          verbatimTextOutput(ns("tab01_analysis_obj06")),
+          br(), br(), br(),
+
+          h2("7) Multiple Comparation Test (Tukey) - Factor02"),
+          verbatimTextOutput(ns("tab01_analysis_obj07")),
+          br(), br(), br(),
+
+          h2("8) Estimated standard error from model - Factor02"),
+          verbatimTextOutput(ns("tab01_analysis_obj08")),
+          br(), br(), br(),
+
+
+          # Interaction
+          h2("9) Resumen - Combinated factors"),
+          verbatimTextOutput(ns("tab01_analysis_obj09")),
+          br(), br(), br(),
+
+          h2("10) Multiple Comparation Test (Tukey) - Combinated factors"),
+          verbatimTextOutput(ns("tab01_analysis_obj10")),
+          br(), br(), br(),
+
+          h2("11) Estimated standard error from model - Combinated factors"),
+          verbatimTextOutput(ns("tab01_analysis_obj11")),
+          br(), br(), br()
+        )
+
       })
 
 
+
+##########################################################################
+      output$tab02_requeriments_obj01 <- renderPrint({
+
+        req(control_user_02())
+
+        RR_general()$"out02_requeriments"[[1]]
+      })
+
+      output$tab02_requeriments_obj02 <- renderPrint({
+
+        req(control_user_02())
+
+        RR_general()$"out02_requeriments"[[2]]
+      })
+
+      output$tab02_requeriments_obj03 <- renderPrint({
+
+        req(control_user_02())
+
+        RR_general()$"out02_requeriments"[[3]]
+      })
+
+      output$tab02_requeriments_FULL <- renderUI({
+
+        ns <- shiny::NS(id)
+
+        div(
+          h2("1) Requeriment - Normality test - Residuals"),
+          verbatimTextOutput(ns("tab02_requeriments_obj01")),
+          br(), br(), br(),
+
+          h2("2) Requeriment - Homogeinity test - Residuals"),
+          verbatimTextOutput(ns("tab02_requeriments_obj02")),
+          br(), br(), br(),
+
+          h2("3) Estimated variance from residuals"),
+          verbatimTextOutput(ns("tab02_requeriments_obj03")),
+          br(), br(), br()
+        )
+
+      })
 
       output$tab02_requeriments <- renderPrint({
 
@@ -501,7 +686,7 @@ module_cpiA003_s02_rscience_server <- function(id, input_general, input_01_anova
 
         RR_general()$"out02_requeriments"
       })
-
+#########################################################################
 
       output$tab03_plot_factor <- renderUI({
         ns <- shiny::NS(id)
@@ -634,24 +819,24 @@ module_cpiA003_s02_rscience_server <- function(id, input_general, input_01_anova
                              tabPanel("Analysis",
                                       fluidRow(
                                         column(12,
-                                               h2("Anova 2 ways"),
-                                               verbatimTextOutput(ns("tab01_analysis"))
+                                               h1("Anova 2 ways"),
+                                               uiOutput(ns("tab01_analysis_FULL"))
                                         )
                                       )
                              ),
                              tabPanel("Requeriments",
-                                      h2("Anova 2 ways"),
+                                      h1("Anova 2 ways"),
                                       fluidRow(
                                         column(12,
-
-                                               verbatimTextOutput(ns("tab02_requeriments"))
+                                                uiOutput(ns("tab02_requeriments_FULL"))
+                                               #verbatimTextOutput(ns("tab02_requeriments"))
                                         )
                                       )
                              ),
                              tabPanel("Plots - Factor",
                                       fluidRow(
                                         column(12,
-                                               h2("Anova 2 ways"),
+                                               h1("Anova 2 ways"),
                                                uiOutput(ns("tab03_plot_factor"))
                                         )
                                       )
@@ -659,7 +844,7 @@ module_cpiA003_s02_rscience_server <- function(id, input_general, input_01_anova
                              tabPanel("Full Results",
                                       fluidRow(
                                         column(12,
-                                               h2("Anova 2 ways"),
+                                               h1("Anova 2 ways"),
                                                verbatimTextOutput(ns("tab05_full_results"))
                                         )
                                       )
@@ -667,7 +852,7 @@ module_cpiA003_s02_rscience_server <- function(id, input_general, input_01_anova
                              tabPanel("R Code",
                                       fluidRow(
                                         column(12,
-                                               h2("Anova 2 ways"),
+                                               h1("Anova 2 ways"),
                                                verbatimTextOutput(ns("tab06_R_code"))
                                         )
                                       )

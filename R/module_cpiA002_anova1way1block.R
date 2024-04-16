@@ -83,7 +83,7 @@ module_cpiA002_s01_varselection_server <- function(id, input_general){
         # # # UI content
         div(
           fluidRow(
-            actionButton(ns("action_load"), label = "LOAD", style = output_style_button_load),
+            actionButton(ns("action_load"), label = "RUN", style = output_style_button_load),
             actionButton(ns("action_reset_all"), "RESET ALL", style = output_style_button_reset)
           )
         )
@@ -588,28 +588,28 @@ if(FALSE){
       ######################################################################
 
 
-      # # #Tab02 - Residuals Requeriments
-      output$tab02_requeriments <- renderPrint({
-
-        req(control_user_02())
-
-
-        mi_lista <- RR_general()
-
-
-
-
-        # Vector con nombres de elementos a ver
-        nombres_a_ver <- c("test_residuals_normality",
-                           "test_residuals_homogeneity",
-                           "df_residuals_variance_levels")
-
-        # Usar lapply para mostrar los elementos deseados
-        elementos_a_ver <- lapply(nombres_a_ver, function(nombre) mi_lista[[nombre]])
-        names(elementos_a_ver) <- nombres_a_ver
-        elementos_a_ver
-
-      })
+      # # # #Tab02 - Residuals Requeriments
+      # output$tab02_requeriments <- renderPrint({
+      #
+      #   req(control_user_02())
+      #
+      #
+      #   mi_lista <- RR_general()
+      #
+      #
+      #
+      #
+      #   # Vector con nombres de elementos a ver
+      #   nombres_a_ver <- c("test_residuals_normality",
+      #                      "test_residuals_homogeneity",
+      #                      "df_residuals_variance_levels")
+      #
+      #   # Usar lapply para mostrar los elementos deseados
+      #   elementos_a_ver <- lapply(nombres_a_ver, function(nombre) mi_lista[[nombre]])
+      #   names(elementos_a_ver) <- nombres_a_ver
+      #   elementos_a_ver
+      #
+      # })
 
       ##########################################################################
 
@@ -720,6 +720,82 @@ if(FALSE){
       })
 
 
+      # # # Tab01 - Analysis
+      output$tab01_analysis_v02_obj01 <- renderPrint({
+
+        req(control_user_02())
+
+        all_resutls <- RR_general()$"out01_analysis"
+        selected_results <- "df_selected_vars"
+
+        all_resutls[selected_results]
+      })
+      output$tab01_analysis_v02_obj02 <- renderPrint({
+
+        req(control_user_02())
+
+        all_resutls <- RR_general()$"out01_analysis"
+        selected_results <- "df_table_anova"
+
+        all_resutls[selected_results]
+      })
+      output$tab01_analysis_v02_obj03 <- renderPrint({
+
+        req(control_user_02())
+
+        all_resutls <- RR_general()$"out01_analysis"
+        selected_results <- c("df_factor_info", "check_unbalanced_reps")
+
+        all_resutls[selected_results]
+      })
+      output$tab01_analysis_v02_obj04 <- renderPrint({
+
+        req(control_user_02())
+
+        all_resutls <- RR_general()$"out01_analysis"
+        selected_results <- "df_tukey_table"
+
+        all_resutls[selected_results]
+      })
+      output$tab01_analysis_v02_obj05 <- renderPrint({
+
+        req(control_user_02())
+
+        all_resutls <- RR_general()$"out01_analysis"
+        selected_results <- "df_model_error"
+
+        all_resutls[selected_results]
+      })
+
+
+      output$tab01_analysis_FULL <- renderUI({
+
+        ns <- shiny::NS(id)
+
+        div(
+          h2("1) References"),
+          verbatimTextOutput(ns("tab01_analysis_v02_obj01")),
+          br(), br(), br(),
+
+          h2("2) Anova 1 way and 1 block - Table"),
+          verbatimTextOutput(ns("tab01_analysis_v02_obj02")),
+          br(), br(), br(),
+
+          h2("3)Factor resumen"),
+          verbatimTextOutput(ns("tab01_analysis_v02_obj03")),
+          br(), br(), br(),
+
+          h2("4) Multiple comparation test (Tukey)"),
+          verbatimTextOutput(ns("tab01_analysis_v02_obj04")),
+          br(), br(), br(),
+
+          h2("5) Model Error"),
+          verbatimTextOutput(ns("tab01_analysis_v02_obj05")),
+          br(), br(), br()
+        )
+
+      })
+####################################################################
       # # # Tab02 - Requeriments
       output$tab02_table_req <- renderPrint({
 
@@ -732,6 +808,7 @@ if(FALSE){
         RR_general()$"out03A_plots_factor"[[1]]
       })
 
+      #########################################################
       output$tab02_requeriments <- renderPrint({
 
         req(control_user_02())
@@ -739,6 +816,47 @@ if(FALSE){
         RR_general()$"out02_requeriments"
       })
 
+      output$tab02_requeriments_obj01 <- renderPrint({
+
+        req(control_user_02())
+
+        RR_general()$"out02_requeriments"[[1]]
+      })
+      output$tab02_requeriments_obj02 <- renderPrint({
+
+        req(control_user_02())
+
+        RR_general()$"out02_requeriments"[[2]]
+      })
+
+      output$tab02_requeriments_obj03 <- renderPrint({
+
+        req(control_user_02())
+
+        RR_general()$"out02_requeriments"[[2]]
+      })
+
+
+      output$tab02_requeriments_FULL <- renderUI({
+
+        ns <- shiny::NS(id)
+
+        div(
+          h2("2) Requeriment - Normal distribution from residuals"),
+          verbatimTextOutput(ns("tab02_requeriments_obj01")),
+          br(), br(), br(),
+
+          h2("3) Requeriment - Homogeinity from residuals"),
+          verbatimTextOutput(ns("tab02_requeriments_obj02")),
+          br(), br(), br(),
+
+          h2("4) Estimated variance from residuals"),
+          verbatimTextOutput(ns("tab02_requeriments_obj03")),
+          br(), br(), br()
+        )
+
+      })
+      ############################################################
 
       output$tab03_plot_factor <- renderUI({
         ns <- shiny::NS(id)
@@ -871,14 +989,15 @@ if(FALSE){
                              tabPanel("Analysis",
                                       fluidRow(
                                         column(12,
-                                               h2("Anova 1 way with block"),
-                                               verbatimTextOutput(ns("tab01_analysis"))
+                                               h1("Anova 1 way with block"),
+                                               uiOutput(ns("tab01_analysis_FULL"))
                                         )
                                       )
                              ),
-                             tabPanel("Requeriments",
-                                      h2("Anova 1 way with block"),
+                             tabPanel("Requeriment",
+                                      h1("Anova 1 way with block"), br(),
                                       fluidRow(
+                                        column(12, h2("1) Requeriments - No interaction Factor-Block")),
                                         column(6,
                                           plotlyOutput(ns("tab02_plot_req"), height = "100%", width = "100%")
                                           ),
@@ -890,15 +1009,15 @@ if(FALSE){
                                       br(), br(),
                                       fluidRow(
                                         column(12,
-
-                                               verbatimTextOutput(ns("tab02_requeriments"))
+                                                uiOutput(ns("tab02_requeriments_FULL"))
+                                               #verbatimTextOutput(ns("tab02_requeriments"))
                                         )
                                       )
                              ),
                              tabPanel("Plots - Factor",
                                       fluidRow(
                                         column(12,
-                                               h2("Anova 1 way with block"),
+                                               h1("Anova 1 way with block"),
                                                uiOutput(ns("tab03_plot_factor"))
                                         )
                                       )
@@ -906,7 +1025,7 @@ if(FALSE){
                              tabPanel("Full Results",
                                       fluidRow(
                                         column(12,
-                                               h2("Anova 1 way with block"),
+                                               h1("Anova 1 way with block"),
                                                verbatimTextOutput(ns("tab05_full_results"))
                                         )
                                       )
@@ -914,7 +1033,7 @@ if(FALSE){
                              tabPanel("R Code",
                                       fluidRow(
                                         column(12,
-                                               h2("Anova 1 way with block"),
+                                               h1("Anova 1 way with block"),
                                                verbatimTextOutput(ns("tab06_R_code"))
                                         )
                                       )

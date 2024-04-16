@@ -456,6 +456,123 @@ module_cpiA007_s02_rscience_server <- function(id, input_general, input_01_anova
 
 ##############################################################
       # # # Tab01 - Analysis
+      output$tab01_analysis_obj01 <- renderPrint({
+
+        req(control_user_02())
+
+
+        mi_lista <- RR_general()$"out01_analysis"
+
+
+
+
+        # Vector con nombres de elementos a ver
+        nombres_a_ver <- c("df_selected_vars")
+
+        # Usar lapply para mostrar los elementos deseados
+        mi_lista[nombres_a_ver]
+
+      })
+      output$tab01_analysis_obj02 <- renderPrint({
+
+        req(control_user_02())
+
+
+        mi_lista <- RR_general()$"out01_analysis"
+
+
+
+
+        # Vector con nombres de elementos a ver
+        nombres_a_ver <- c("df_table_reg")
+
+        # Usar lapply para mostrar los elementos deseados
+        mi_lista[nombres_a_ver]
+
+      })
+      output$tab01_analysis_obj03 <- renderPrint({
+
+        req(control_user_02())
+
+
+        mi_lista <- RR_general()$"out01_analysis"
+
+
+
+
+        # Vector con nombres de elementos a ver
+        nombres_a_ver <- c("df_table_det_coef")
+
+        # Usar lapply para mostrar los elementos deseados
+        mi_lista[nombres_a_ver]
+
+      })
+      output$tab01_analysis_obj04 <- renderPrint({
+
+        req(control_user_02())
+
+
+        mi_lista <- RR_general()$"out01_analysis"
+
+
+
+
+        # Vector con nombres de elementos a ver
+        nombres_a_ver <- c("df_position")
+
+        # Usar lapply para mostrar los elementos deseados
+        mi_lista[nombres_a_ver]
+
+      })
+      output$tab01_analysis_obj05 <- renderPrint({
+
+        req(control_user_02())
+
+
+        mi_lista <- RR_general()$"out01_analysis"
+
+
+
+
+        # Vector con nombres de elementos a ver
+        nombres_a_ver <- c("df_dispersion")
+
+        # Usar lapply para mostrar los elementos deseados
+        mi_lista[nombres_a_ver]
+
+      })
+
+
+
+      output$tab01_analysis_FULL <- renderUI({
+
+        ns <- shiny::NS(id)
+
+        div(
+          h2("1) References"),
+          verbatimTextOutput(ns("tab01_analysis_obj01")),
+          br(), br(), br(),
+
+          h2("2)Linear Regresion - Table"),
+          verbatimTextOutput(ns("tab01_analysis_obj02")),
+          br(), br(), br(),
+
+          h2("3) R^2 and Ajusted R^2"),
+          verbatimTextOutput(ns("tab01_analysis_obj03")),
+          br(), br(), br(),
+
+          h2("4) Position"),
+          verbatimTextOutput(ns("tab01_analysis_obj04")),
+          br(), br(), br(),
+
+          h2("5) Dispersion"),
+          verbatimTextOutput(ns("tab01_analysis_obj05")),
+          br(), br(), br()
+        )
+
+      })
+
+
       output$tab01_analysis <- renderPrint({
 
         req(control_user_02())
@@ -713,15 +830,16 @@ module_cpiA007_s02_rscience_server <- function(id, input_general, input_01_anova
                              tabPanel("Analysis",
                                       fluidRow(
                                         column(12,
-                                               h2("Doble Linear Regresion"),
-                                               verbatimTextOutput(ns("tab01_analysis"))
+                                               h1("Doble Linear Regresion"),
+                                               uiOutput(ns("tab01_analysis_FULL"))
+                                               #verbatimTextOutput(ns("tab01_analysis"))
                                         )#,
                                         #column(6, plotlyOutput(ns("tab03_specialplot2"), height = "100%", width = "100%")),
 
                                       )
                              ),
                              tabPanel("Requeriments",
-                                      h2("Doble Linear Regresion"),
+                                      h1("Doble Linear Regresion"),
                                       # fluidRow(
                                       #   column(12,
                                       #          h2("Resumen Correlation test selection"),
@@ -733,7 +851,7 @@ module_cpiA007_s02_rscience_server <- function(id, input_general, input_01_anova
 
                                       fluidRow(
                                         column(12,
-                                               h2("Requeriment 01 - Residuals normality"),
+                                               h2("1) Requeriment - Normality test - Residuals"),
                                                verbatimTextOutput(ns("tab02_requerimentsC"))
 
                                         )
@@ -742,8 +860,8 @@ module_cpiA007_s02_rscience_server <- function(id, input_general, input_01_anova
                                       br(), br(), br(),
 
                                       fluidRow(
-                                        column(6,
-                                               h2("Requeriment 02 - Residuals homogeneity"),
+                                        column(12,
+                                               h2("2) Requeriment - Homogeneity visual evaluation - Residuals"),
                                                plotlyOutput(ns("tab02_homogeneityplot"), height = "100%", width = "100%")),
 
                                       ),
@@ -751,7 +869,7 @@ module_cpiA007_s02_rscience_server <- function(id, input_general, input_01_anova
                                       br(), br(), br(),
                                       fluidRow(
                                         column(12,
-                                               h2("Requeriment 03 - Non correlation X01 and X02 (Selected correlation test)"),
+                                               h2("3) Requeriment - Non correlation X01 and X02 (AutoSelected correlation test)"),
 
                                                uiOutput(ns("tab02_requerimentsB_03"))
                                         )
@@ -761,7 +879,7 @@ module_cpiA007_s02_rscience_server <- function(id, input_general, input_01_anova
 
                                       fluidRow(
                                         column(12,
-                                              h2("Extra - Details about requeriments for Person Correlation test"),
+                                              h2("4) Extra - Details about requeriments for Person Correlation test"),
                                               verbatimTextOutput(ns("tab02_requerimentsD"))
                                               )
                                         ),
@@ -771,9 +889,13 @@ module_cpiA007_s02_rscience_server <- function(id, input_general, input_01_anova
                              tabPanel("Plots",
                                       fluidRow(
                                         column(12,
-                                               h2("Doble Linear Regresion"),
+                                               h1("Doble Linear Regresion"), br(),
+
+                                               h2("1) Plot 3D"),
                                                uiOutput(ns("tab03_plot_factor2")),
                                                br(), br(),br(),
+                                               br(),
+                                               h2("2) Regression Resumen"),
                                                verbatimTextOutput(ns("tab03_special"))
 
                                         )
@@ -782,7 +904,7 @@ module_cpiA007_s02_rscience_server <- function(id, input_general, input_01_anova
                              tabPanel("Full Results",
                                       fluidRow(
                                         column(12,
-                                               h2("Doble Linear Regresion"),
+                                               h1("Doble Linear Regresion"),
                                                verbatimTextOutput(ns("tab05_full_results"))
                                         )
                                       )
@@ -790,7 +912,7 @@ module_cpiA007_s02_rscience_server <- function(id, input_general, input_01_anova
                              tabPanel("R Code",
                                       fluidRow(
                                         column(12,
-                                               h2("Doble Linear Regresion"),
+                                               h1("Doble Linear Regresion"),
                                                verbatimTextOutput(ns("tab06_R_code"))
                                         )
                                       )
