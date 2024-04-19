@@ -222,9 +222,24 @@ app_02_Rscience <- function(){
 
         # 2) ANOVA
         shinydashboard::tabItem(tabName = "tab02_anova_01",
-                                module_cpiB001_s01_varselection_ui(id = "anova01"),
+                                module_cpiB001_s01_varselection_ui(id = "anova01_A"),
                                 br(), br(), br(),
-                                module_cpiB001_s02_rscience_ui(id = "anova02")
+                                module_cpiB001_s02_rscience_ui(id = "anova01_B")
+        ),
+        shinydashboard::tabItem(tabName = "tab02_anova_02",
+                                module_cpiB002_s01_varselection_ui(id = "anova02_A"),
+                                br(), br(), br(),
+                                module_cpiB002_s02_rscience_ui(id = "anova02_B")
+        ),
+        shinydashboard::tabItem(tabName = "tab02_anova_03",
+                                module_cpiB003_s01_varselection_ui(id = "anova03_A"),
+                                br(), br(), br(),
+                                module_cpiB003_s02_rscience_ui(id = "anova03_B")
+        ),
+        shinydashboard::tabItem(tabName = "tab02_anova_04",
+                                module_cpiB004_s01_varselection_ui(id = "anova04_A"),
+                                br(), br(), br(),
+                                module_cpiB004_s02_rscience_ui(id = "anova04_B")
         )
 
       )
@@ -265,17 +280,46 @@ app_02_Rscience <- function(){
 
 
     ##################################################################################
-    input_01_anova <- module_cpiB001_s01_varselection_server(id = "anova01",
+    input_01_anova <- module_cpiB001_s01_varselection_server(id = "anova01_A",
                                                              input_general = input_general)
 
 
 
-    module_cpiB001_s02_rscience_server(id = "anova02",
+    module_cpiB001_s02_rscience_server(id = "anova01_B",
                                        input_general = input_general,
                                        input_01_anova = input_01_anova)
     ##################################################################################
 
+    input_02_anova <- module_cpiB002_s01_varselection_server(id = "anova02_A",
+                                                             input_general = input_general)
 
+
+
+    module_cpiB002_s02_rscience_server(id = "anova02_B",
+                                       input_general = input_general,
+                                       input_01_anova = input_02_anova)
+    ##################################################################################
+
+
+    input_03_anova <- module_cpiB003_s01_varselection_server(id = "anova03_A",
+                                                             input_general = input_general)
+
+
+
+    module_cpiB003_s02_rscience_server(id = "anova03_B",
+                                       input_general = input_general,
+                                       input_01_anova = input_03_anova)
+    ##################################################################################
+
+    input_04_anova <- module_cpiB004_s01_varselection_server(id = "anova04_A",
+                                                             input_general = input_general)
+
+
+
+    module_cpiB004_s02_rscience_server(id = "anova04_B",
+                                       input_general = input_general,
+                                       input_01_anova = input_04_anova)
+    ##################################################################################
 
 
   }
