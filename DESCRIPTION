@@ -24,4 +24,8 @@ Imports:
   stringr,
   tools,
   DT,
-  EnvStats
+  EnvStats,
+  emmeans
+Depends: 
+    R (>= 4.3.0)
+LazyData: true
