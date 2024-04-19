@@ -4,7 +4,7 @@ module01_database_s03_UNC_ui <- function(id){
   ns <- shiny::NS(id)
 
   vector_opt <- c("Select one..." = "",
-                  "01 - Ejer_13_03" = "Rscience::Rscience_Ejer_13_03",
+                  "01 - Ejer_13_03" = "Rscience_Ejer_13_03",
                   "02 - iris" = "iris")
 
   div(shinyjs::useShinyjs(), id = ns("input-panel"),

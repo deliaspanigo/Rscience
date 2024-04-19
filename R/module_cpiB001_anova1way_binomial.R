@@ -148,7 +148,8 @@ module_cpiB001_s01_varselection_server <- function(id, input_general){
                      fluidRow(
                        column(12,
                               selectInput(inputId = ns("alpha_value"), label = "Alpha value",
-                                          choices = c(0.10, 0.05, 0.01),
+                                          # choices = c(0.10, 0.05, 0.01),
+                                          choices = c(0.05),
                                           selected = 0.05)
                        ))),
               column(4, uiOutput(ns("action_buttons"))),
