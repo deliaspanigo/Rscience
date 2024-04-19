@@ -41,7 +41,13 @@ app_02_Rscience <- function(){
                                  menuSubItem("Poisson",  tabName = "tab02_anova_02"),
                                  menuSubItem("Gamma",    tabName = "tab02_anova_03"),
                                  menuSubItem("Gaussian", tabName = "tab02_anova_04")
-                                 )
+                                 ),
+        shinydashboard::menuItem(text = "Simple Linear Regresion", tabName = "tab03_slr", icon = shiny::icon("th"),
+                                 menuSubItem("Binomial", tabName = "tab03_slr_01"),
+                                 menuSubItem("Poisson",  tabName = "tab03_slr_02"),
+                                 menuSubItem("Gamma",    tabName = "tab03_slr_03"),
+                                 menuSubItem("Gaussian", tabName = "tab03_slr_04")
+        )
 
 
 
@@ -240,6 +246,29 @@ app_02_Rscience <- function(){
                                 module_cpiB004_s01_varselection_ui(id = "anova04_A"),
                                 br(), br(), br(),
                                 module_cpiB004_s02_rscience_ui(id = "anova04_B")
+        ),
+
+
+        # SLR
+        shinydashboard::tabItem(tabName = "tab03_slr_01",
+                                module_cpiB005_s01_varselection_ui(id = "slr01_A"),
+                                br(), br(), br(),
+                                module_cpiB005_s02_rscience_ui(id = "slr01_B")
+        ),
+        shinydashboard::tabItem(tabName = "tab03_slr_02",
+                                module_cpiB006_s01_varselection_ui(id = "slr02_A"),
+                                br(), br(), br(),
+                                module_cpiB006_s02_rscience_ui(id = "slr02_B")
+        ),
+        shinydashboard::tabItem(tabName = "tab03_slr_03",
+                                module_cpiB007_s01_varselection_ui(id = "slr03_A"),
+                                br(), br(), br(),
+                                module_cpiB007_s02_rscience_ui(id = "slr03_B")
+        ),
+        shinydashboard::tabItem(tabName = "tab03_slr_04",
+                                module_cpiB008_s01_varselection_ui(id = "slr04_A"),
+                                br(), br(), br(),
+                                module_cpiB008_s02_rscience_ui(id = "slr04_B")
         )
 
       )
@@ -319,6 +348,54 @@ app_02_Rscience <- function(){
     module_cpiB004_s02_rscience_server(id = "anova04_B",
                                        input_general = input_general,
                                        input_01_anova = input_04_anova)
+    ##################################################################################
+
+
+
+
+
+    input_01_slr <- module_cpiB005_s01_varselection_server(id = "slr01_A",
+                                                             input_general = input_general)
+
+
+
+    module_cpiB005_s02_rscience_server(id = "slr01_B",
+                                       input_general = input_general,
+                                       input_01_anova = input_01_slr)
+    ##################################################################################
+
+
+    input_02_slr <- module_cpiB006_s01_varselection_server(id = "slr02_A",
+                                                           input_general = input_general)
+
+
+
+    module_cpiB006_s02_rscience_server(id = "slr02_B",
+                                       input_general = input_general,
+                                       input_01_anova = input_02_slr)
+    ##################################################################################
+
+
+
+    input_03_slr <- module_cpiB007_s01_varselection_server(id = "slr03_A",
+                                                           input_general = input_general)
+
+
+
+    module_cpiB007_s02_rscience_server(id = "slr03_B",
+                                       input_general = input_general,
+                                       input_01_anova = input_03_slr)
+    ##################################################################################
+
+
+    input_04_slr <- module_cpiB008_s01_varselection_server(id = "slr04_A",
+                                                           input_general = input_general)
+
+
+
+    module_cpiB008_s02_rscience_server(id = "slr04_B",
+                                       input_general = input_general,
+                                       input_01_anova = input_04_slr)
     ##################################################################################
 
 
