@@ -4,6 +4,9 @@ Binding: app_01_Rscience
 Interactive: true
 
 
-
+Name: Rscience - 02) Generalized Linear Models
+Description: R for Science.
+Binding: app_02_Rscience
+Interactive: true
 
 
