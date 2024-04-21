@@ -106,7 +106,7 @@ module_cpiC001_s01_varselection_server <- function(id, input_general){
 
 
 
-      # # # Var selection for anova 1 way
+      # # # Var selection for t Test - 2 independet samplesy
       output$vars_selection <- renderUI({
 
         ns <- shiny::NS(id)
@@ -121,7 +121,7 @@ module_cpiC001_s01_varselection_server <- function(id, input_general){
 
         div(shinyjs::useShinyjs(), id = ns("input-var-selection"),
             fluidRow(
-              column(12, h1("Generalized Linear Modelo - ANOVA 1 Way - Binomial"))
+              column(12, h1("t Test  for 2 independent samples"))
             ),
             fluidRow(
               column(6,
@@ -148,8 +148,8 @@ module_cpiC001_s01_varselection_server <- function(id, input_general){
                      fluidRow(
                        column(12,
                               selectInput(inputId = ns("alpha_value"), label = "Alpha value",
-                                          # choices = c(0.10, 0.05, 0.01),
-                                          choices = c(0.05),
+                                          choices = c(0.10, 0.05, 0.01),
+                                          #choices = c(0.05),
                                           selected = 0.05)
                        ))),
               column(4, uiOutput(ns("action_buttons"))),
@@ -276,7 +276,15 @@ module_cpiC001_s01_varselection_server <- function(id, input_general){
 
       })
 
+      observeEvent(input$alpha_value, {
 
+        # Not show yet
+        color_button_load(hardcorded_initial_color)
+        color_button_show(hardcorded_initial_color)
+        action_button_load(FALSE)
+        action_button_show(FALSE)
+
+      })
 
       observeEvent(input$action_load, {
 
@@ -634,7 +642,7 @@ module_cpiC001_s02_rscience_server <- function(id, input_general, input_01_anova
 
 
         # Vector con nombres de elementos a ver
-        selected_objs <- c("df_factor_info", "check_unbalanced_reps")
+        selected_objs <- c("df_factor_info")
 
 
         # Usar lapply para mostrar los elementos deseados
@@ -751,9 +759,12 @@ module_cpiC001_s02_rscience_server <- function(id, input_general, input_01_anova
 
           # # # Title and settings...
           plot001_factor <-   plotly::layout(p = plot001_factor,
+                                             xaxis = list(title = "FACTOR"),
+                                             yaxis = list(title = "VR"),
                                              title = "Plot 001 - Scatterplot",
                                              font = list(size = 20),
                                              margin = list(t = 100))
+
 
 
           # # # Without zerolines
@@ -1044,7 +1055,7 @@ module_cpiC001_s02_rscience_server <- function(id, input_general, input_01_anova
                              tabPanel("Analysis",  # 05
                                       fluidRow(
                                         column(12,
-                                               h1("Anova 1 way"),
+                                               h1("t Test - 2 independet samples"),
                                                uiOutput(ns("tab03_analysis_anova_FULL"))
                                         )
                                       )
@@ -1052,7 +1063,7 @@ module_cpiC001_s02_rscience_server <- function(id, input_general, input_01_anova
                              # tabPanel("Requeriments",  # 05
                              #          fluidRow(
                              #            column(12,
-                             #                   h1("Anova 1 way"),
+                             #                   h1("t Test - 2 independet samplesy"),
                              #                   uiOutput(ns("tab02_analysis_anova_FULL"))
                              #            )
                              #          )
@@ -1083,7 +1094,7 @@ module_cpiC001_s02_rscience_server <- function(id, input_general, input_01_anova
                                                #shinycssloaders::withSpinner(uiOutput(ns("plot_outputs33"))),
                                         ),
                              # tabPanel("Plots - Residuals",  # 05,
-                             #          fluidRow(column(12, h1("Anova 1 way"))),
+                             #          fluidRow(column(12, h1("t Test - 2 independet samplesy"))),
                              #          fluidRow(
                              #            #column(1),
                              #            column(12,
@@ -1096,7 +1107,7 @@ module_cpiC001_s02_rscience_server <- function(id, input_general, input_01_anova
                              #          )
                              # ),
                              # tabPanel("Plots - Factor",  # 05,
-                             #          fluidRow(h1("Anova 1 way")),
+                             #          fluidRow(h1("t Test - 2 independet samplesy")),
                              #          fluidRow(
                              #            #column(1),
                              #            column(12,
@@ -1109,7 +1120,7 @@ module_cpiC001_s02_rscience_server <- function(id, input_general, input_01_anova
                              #          )
                              # ),
                              # tabPanel("Plots - Residuals",  # 05,
-                             #          fluidRow(h1("Anova 1 way")),
+                             #          fluidRow(h1("t Test - 2 independet samplesy")),
                              #          fluidRow(
                              #            #column(1),
                              #            column(12,
@@ -1122,7 +1133,7 @@ module_cpiC001_s02_rscience_server <- function(id, input_general, input_01_anova
                              #          )
                              # ),
                              # tabPanel("Plots2",  # 05,
-                             #          fluidRow(h1("Anova 1 way")),
+                             #          fluidRow(h1("t Test - 2 independet samplesy")),
                              #          fluidRow(
                              #            #column(1),
                              #            column(12,
@@ -1146,7 +1157,7 @@ module_cpiC001_s02_rscience_server <- function(id, input_general, input_01_anova
                              tabPanel("R code",  # 05
                                       fluidRow(
                                         column(10,
-                                               h1("Anova 1 way"),
+                                               h1("t Test - 2 independet samplesy"),
                                                verbatimTextOutput(ns("tab05_code"))
                                         ),
                                         br(), br(),
