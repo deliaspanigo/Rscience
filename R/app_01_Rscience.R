@@ -28,7 +28,7 @@ app_01_Rscience <- function(){
 ui <- shinydashboard::dashboardPage(
 
   # # # Dashboard title
-  shinydashboard::dashboardHeader(title = "R-Science 0.0.1"),
+  shinydashboard::dashboardHeader(title = "R-Science 0.0.2"),
 
   # # # Sidebar content
   shinydashboard::dashboardSidebar(
@@ -41,6 +41,8 @@ ui <- shinydashboard::dashboardPage(
       shinydashboard::menuItem(text = "Anova 2 ways", tabName = "tab04_anova", icon = shiny::icon("th")),
       shinydashboard::menuItem(text = "Simple Linear Regresion", tabName = "tab06_anova", icon = shiny::icon("th")),
       shinydashboard::menuItem(text = "Doble Linear Regresion", tabName = "tab07_anova", icon = shiny::icon("th")),
+      shinydashboard::menuItem(text = "Multiple Linear Regresion", tabName = "tab20_anova", icon = shiny::icon("th")),
+      shinydashboard::menuItem(text = "MLR Selection", tabName = "tab21_anova", icon = shiny::icon("th")),
       #shinydashboard::menuItem(text = "Ancova with", tabName = "tab09_anova", icon = shiny::icon("th")),
       #shinydashboard::menuItem(text = "Ancova without", tabName = "tab10_anova", icon = shiny::icon("th")),
       shinydashboard::menuItem(text = "Ancova", tabName = "tab11_anova", icon = shiny::icon("th")),
@@ -245,6 +247,16 @@ ui <- shinydashboard::dashboardPage(
                               br(), br(), br(),
                               module_cpiA007_s02_rscience_ui(id = "cpiA007_B")
       ),
+      shinydashboard::tabItem(tabName = "tab20_anova",
+                              module_cpiA020_s01_varselection_ui(id = "cpiA020_A"),
+                              br(), br(), br(),
+                              module_cpiA020_s02_rscience_ui(id = "cpiA020_B")
+      ),
+      shinydashboard::tabItem(tabName = "tab21_anova",
+                              module_cpiA021_s01_varselection_ui(id = "cpiA021_A"),
+                              br(), br(), br(),
+                              module_cpiA021_s02_rscience_ui(id = "cpiA021_B")
+      ),
       # shinydashboard::tabItem(tabName = "tab09_anova",
       #                         module_cpiA009_s01_varselection_ui(id = "cpiA009_A"),
       #                         br(), br(), br(),
@@ -355,6 +367,26 @@ input_03_anova <- module_cpiA002_s01_varselection_server(id = "anova03_A",
   module_cpiA007_s02_rscience_server(id = "cpiA007_B",
                                      input_general = input_general,
                                      input_01_anova = input_cpiA007)
+  ##################################################################################
+
+  input_cpiA020 <- module_cpiA020_s01_varselection_server(id = "cpiA020_A",
+                                                          input_general = input_general)
+
+
+
+  module_cpiA020_s02_rscience_server(id = "cpiA020_B",
+                                     input_general = input_general,
+                                     input_01_anova = input_cpiA020)
+  ##################################################################################
+
+  input_cpiA021 <- module_cpiA021_s01_varselection_server(id = "cpiA021_A",
+                                                          input_general = input_general)
+
+
+
+  module_cpiA021_s02_rscience_server(id = "cpiA021_B",
+                                     input_general = input_general,
+                                     input_01_anova = input_cpiA021)
   ##################################################################################
 
 
