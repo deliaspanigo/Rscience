@@ -77,9 +77,9 @@ fn_cpiC001_tTest_2SampleInd_control_previous <- function(database, vr_var_name, 
   }
 
 
-  # 4) Database must has at least 2 rows
-  if(!(nrow(database) >= 2)){
-    text_output <- "Control pre test 004: Object 'database' must has al least 2 rows."
+  # 4) Database must has at least 4 rows
+  if(!(nrow(database) >= 4)){
+    text_output <- "Control pre test 004: Object 'database' must has al least 4 rows."
     return(Hmisc::llist(dt_ok, text_output))
   }
 
@@ -250,9 +250,9 @@ fn_cpiC001_tTest_2SampleInd_control_previous <- function(database, vr_var_name, 
   }
 
 
-  # 4) minibase must has at least 2 rows
-  if(!(nrow(minibase) >= 2)){
-    text_output <- "Control pre test 028: Object 'database' must has al least 2 rows."
+  # 4) minibase must has at least 4 rows
+  if(!(nrow(minibase) >= 4)){
+    text_output <- "Control pre test 028: Object 'database' must has al least 4 rows."
     return(Hmisc::llist(dt_ok, text_output))
   }
 
@@ -278,8 +278,8 @@ fn_cpiC001_tTest_2SampleInd_control_previous <- function(database, vr_var_name, 
 
 
   # Al least 2 levels in minibase$FACTOR
-  if(!(nlevels(minibase$FACTOR) >= 2)){
-    text_output <- "Control pre test 032: FACTOR must has al least 2 levels."
+  if(!(nlevels(minibase$FACTOR) == 2)){
+    text_output <- "Control pre test 032: for t Test FACTOR must has exactly 2 levels."
     return(Hmisc::llist(dt_ok, text_output))
   }
 

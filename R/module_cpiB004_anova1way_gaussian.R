@@ -121,7 +121,7 @@ module_cpiB004_s01_varselection_server <- function(id, input_general){
 
         div(shinyjs::useShinyjs(), id = ns("input-var-selection"),
             fluidRow(
-              column(12, h1("Generalized Linear Modelo - ANOVA 1 Way - Binomial"))
+              column(12, h1("Generalized Linear Modelo - ANOVA 1 Way - Gaussian"))
             ),
             fluidRow(
               column(6,

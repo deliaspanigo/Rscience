@@ -43,9 +43,9 @@ module_cpiC001_s01_varselection_server <- function(id, input_general){
 
 
         validate(
-          need(!is.null(input_general), "Error 01: Module anova s01 - input_general can not be NULL."),
-          need(!is.null(vector_var_names_database()), "Error 10: Module anova s01 - vector_var_names_database() can not be NULL."),
-          need(!is.null(intro_source_database()), "Error 11: Module anova s01 - intro_source_database() can not be NULL.")
+          need(!is.null(input_general), "Error 01: Module t test s01 - input_general can not be NULL."),
+          need(!is.null(vector_var_names_database()), "Error 10: Module t test s01 - vector_var_names_database() can not be NULL."),
+          need(!is.null(intro_source_database()), "Error 11: Module t test s01 - intro_source_database() can not be NULL.")
         )
 
 
@@ -106,7 +106,7 @@ module_cpiC001_s01_varselection_server <- function(id, input_general){
 
 
 
-      # # # Var selection for t Test - 2 independet samplesy
+      # # # Var selection for t Test - 2 independent samplesy
       output$vars_selection <- renderUI({
 
         ns <- shiny::NS(id)
@@ -198,21 +198,21 @@ module_cpiC001_s01_varselection_server <- function(id, input_general){
         req(control_user_01())
 
         validate(
-          need(!is.null(input$vr_var_name), "Error 09: Module anova s01 - input$vr_var_name can not be NULL."),
-          need(!is.null(input$factor_var_name), "Error 10: Module anova s01 - input$factor_var_name can not be NULL."),
-          need(!is.null(input$alpha_value), "Error 11: Module anova s01 - input$alpha_value can not be NULL.")
+          need(!is.null(input$vr_var_name), "Error 09: Module t test s01 - input$vr_var_name can not be NULL."),
+          need(!is.null(input$factor_var_name), "Error 10: Module t test s01 - input$factor_var_name can not be NULL."),
+          need(!is.null(input$alpha_value), "Error 11: Module t test s01 - input$alpha_value can not be NULL.")
         )
 
         validate(
-          need(is.vector(input$vr_var_name), "Error 12: Module anova s01 - input$vr_var_name must be a vector."),
-          need(is.vector(input$factor_var_name), "Error 13: Module anova s01 - input$vr_var_name must be a vector."),
-          need(is.vector(input$alpha_value), "Error 14: Module anova s01 - input$alpha_value must be a vector.")
+          need(is.vector(input$vr_var_name), "Error 12: Module t test s01 - input$vr_var_name must be a vector."),
+          need(is.vector(input$factor_var_name), "Error 13: Module t test s01 - input$vr_var_name must be a vector."),
+          need(is.vector(input$alpha_value), "Error 14: Module t test s01 - input$alpha_value must be a vector.")
         )
 
         validate(
-          need(length(input$vr_var_name) == 1, "Error 15: Module anova s01 - input$vr_var_name has length 1."),
-          need(length(input$factor_var_name) == 1, "Error 16: Module anova s01 - input$factor_var_name has length 1."),
-          need(length(input$alpha_value) == 1, "Error 17: Module anova s01 - input$alpha_value has length 1.")
+          need(length(input$vr_var_name) == 1, "Error 15: Module t test s01 - input$vr_var_name has length 1."),
+          need(length(input$factor_var_name) == 1, "Error 16: Module t test s01 - input$factor_var_name has length 1."),
+          need(length(input$alpha_value) == 1, "Error 17: Module t test s01 - input$alpha_value has length 1.")
         )
 
 
@@ -224,6 +224,8 @@ module_cpiC001_s01_varselection_server <- function(id, input_general){
         validate(
           need(input$vr_var_name != input$factor_var_name, "Selected variables can not be equal.")
         )
+
+
 
         return(TRUE)
       })
@@ -1055,7 +1057,7 @@ module_cpiC001_s02_rscience_server <- function(id, input_general, input_01_anova
                              tabPanel("Analysis",  # 05
                                       fluidRow(
                                         column(12,
-                                               h1("t Test - 2 independet samples"),
+                                               h1("t Test - 2 independent samples"),
                                                uiOutput(ns("tab03_analysis_anova_FULL"))
                                         )
                                       )
@@ -1063,7 +1065,7 @@ module_cpiC001_s02_rscience_server <- function(id, input_general, input_01_anova
                              # tabPanel("Requeriments",  # 05
                              #          fluidRow(
                              #            column(12,
-                             #                   h1("t Test - 2 independet samplesy"),
+                             #                   h1("t Test - 2 independent samplesy"),
                              #                   uiOutput(ns("tab02_analysis_anova_FULL"))
                              #            )
                              #          )
@@ -1094,7 +1096,7 @@ module_cpiC001_s02_rscience_server <- function(id, input_general, input_01_anova
                                                #shinycssloaders::withSpinner(uiOutput(ns("plot_outputs33"))),
                                         ),
                              # tabPanel("Plots - Residuals",  # 05,
-                             #          fluidRow(column(12, h1("t Test - 2 independet samplesy"))),
+                             #          fluidRow(column(12, h1("t Test - 2 independent samplesy"))),
                              #          fluidRow(
                              #            #column(1),
                              #            column(12,
@@ -1107,7 +1109,7 @@ module_cpiC001_s02_rscience_server <- function(id, input_general, input_01_anova
                              #          )
                              # ),
                              # tabPanel("Plots - Factor",  # 05,
-                             #          fluidRow(h1("t Test - 2 independet samplesy")),
+                             #          fluidRow(h1("t Test - 2 independent samplesy")),
                              #          fluidRow(
                              #            #column(1),
                              #            column(12,
@@ -1120,7 +1122,7 @@ module_cpiC001_s02_rscience_server <- function(id, input_general, input_01_anova
                              #          )
                              # ),
                              # tabPanel("Plots - Residuals",  # 05,
-                             #          fluidRow(h1("t Test - 2 independet samplesy")),
+                             #          fluidRow(h1("t Test - 2 independent samplesy")),
                              #          fluidRow(
                              #            #column(1),
                              #            column(12,
@@ -1133,7 +1135,7 @@ module_cpiC001_s02_rscience_server <- function(id, input_general, input_01_anova
                              #          )
                              # ),
                              # tabPanel("Plots2",  # 05,
-                             #          fluidRow(h1("t Test - 2 independet samplesy")),
+                             #          fluidRow(h1("t Test - 2 independent samplesy")),
                              #          fluidRow(
                              #            #column(1),
                              #            column(12,
@@ -1157,7 +1159,7 @@ module_cpiC001_s02_rscience_server <- function(id, input_general, input_01_anova
                              tabPanel("R code",  # 05
                                       fluidRow(
                                         column(10,
-                                               h1("t Test - 2 independet samplesy"),
+                                               h1("t Test - 2 independent samplesy"),
                                                verbatimTextOutput(ns("tab05_code"))
                                         ),
                                         br(), br(),
