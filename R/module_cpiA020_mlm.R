@@ -582,6 +582,125 @@ module_cpiA020_s02_rscience_server <- function(id, input_general, input_01_anova
       })
 
 
+      output$tab02_cor <- renderPrint({
+
+        req(control_user_02())
+        #phrase02_model_output
+        mi_lista <- RR_general()$"out05_full_results"
+        selected_obj <- c("phrase02_model_output","check_all_cor", "df_cor_resumen")
+        #selected_obj <- c("check_all_cor", "df_cor_resumen")
+
+        sublista <- mi_lista[selected_obj]
+        sublista[[1]] <- capture.output(write(sublista[[1]], file = ""))
+        names(sublista) <- selected_obj
+        sublista
+      })
+
+##############################################################
+
+      output$tab22_cor_01_01 <- renderPrint({
+
+        req(control_user_02())
+        #phrase02_model_output
+        mi_lista <- RR_general()$"out05_full_results"
+        selected_obj <- c("df_normality")
+        #selected_obj <- c("check_all_cor", "df_cor_resumen")
+
+        mi_lista[selected_obj]
+      })
+
+      output$tab22_cor_01_02 <- renderPrint({
+
+        req(control_user_02())
+        #phrase02_model_output
+        mi_lista <- RR_general()$"out05_full_results"
+        selected_obj <- c("list_normality_test")
+        #selected_obj <- c("check_all_cor", "df_cor_resumen")
+
+        mi_lista[selected_obj]
+      })
+
+      output$tab22_cor_02_01 <- renderPrint({
+
+        req(control_user_02())
+        #phrase02_model_output
+        mi_lista <- RR_general()$"out05_full_results"
+        selected_obj <- c("df_homogeneity")
+        #selected_obj <- c("check_all_cor", "df_cor_resumen")
+
+        mi_lista[selected_obj]
+      })
+
+      output$tab22_cor_02_02 <- renderPrint({
+
+        req(control_user_02())
+        #phrase02_model_output
+        mi_lista <- RR_general()$"out05_full_results"
+        selected_obj <- c("list_homogeneity")
+        #selected_obj <- c("check_all_cor", "df_cor_resumen")
+
+        mi_lista[selected_obj]
+      })
+
+
+      output$tab22_cor_03_01 <- renderPrint({
+
+        req(control_user_02())
+        #phrase02_model_output
+        mi_lista <- RR_general()$"out05_full_results"
+        selected_obj <- c("df_cor_pearson")
+        #selected_obj <- c("check_all_cor", "df_cor_resumen")
+
+        mi_lista[selected_obj]
+      })
+
+      output$tab22_cor_03_02 <- renderPrint({
+
+        req(control_user_02())
+        #phrase02_model_output
+        mi_lista <- RR_general()$"out05_full_results"
+        selected_obj <- c("list_cor_pearson")
+        #selected_obj <- c("check_all_cor", "df_cor_resumen")
+
+        mi_lista[selected_obj]
+      })
+
+
+      output$tab22_cor_04_01 <- renderPrint({
+
+        req(control_user_02())
+        #phrase02_model_output
+        mi_lista <- RR_general()$"out05_full_results"
+        selected_obj <- c("df_cor_spearman")
+        #selected_obj <- c("check_all_cor", "df_cor_resumen")
+
+        mi_lista[selected_obj]
+      })
+
+
+      output$tab22_cor_04_02 <- renderPrint({
+
+        req(control_user_02())
+        #phrase02_model_output
+        mi_lista <- RR_general()$"out05_full_results"
+        selected_obj <- c("list_cor_spearman")
+        #selected_obj <- c("check_all_cor", "df_cor_resumen")
+
+        mi_lista[selected_obj]
+      })
+
+      output$tab22_cor_05_01 <- renderPrint({
+
+        req(control_user_02())
+        #phrase02_model_output
+        mi_lista <- RR_general()$"out05_full_results"
+        selected_obj <- c("df_cor_mix")
+        #selected_obj <- c("check_all_cor", "df_cor_resumen")
+
+        mi_lista[selected_obj]
+      })
+
+###############################################################
       output$tab03_plot_factor <- renderUI({
         ns <- shiny::NS(id)
         #vector_for <- 1:length(RR_general()$"out03A_plots_factor")
@@ -736,7 +855,74 @@ module_cpiA020_s02_rscience_server <- function(id, input_general, input_01_anova
                                         column(12,
                                                h2("2) Requeriment - Homogeneity visual evaluation - Residuals"),
                                                plotlyOutput(ns("tab02_homogeneityplot"), height = "100%", width = "100%")),
+                                      ),
+                                      br(), br(), br(),
+                                      fluidRow(
+                                        column(12,
+                                               h2("3) Requeriment - No correlation between regresors"),
+                                               verbatimTextOutput(ns("tab02_cor"))),
                                       )
+                             ),
+                             tabPanel("Correlation",
+                                      h1("Multiple Linear Regresion"),
+                                      h2("Algunas explicaciones..."),
+                                      shiny::tabsetPanel(id = ns("super_cor_panel"),
+                                                         tabPanel("Normality",
+                                                                  fluidRow(
+                                                                    column(12,
+                                                                           h2("1) Normality test for regresors"),
+                                                                           verbatimTextOutput(ns("tab22_cor_01_01"))),
+                                                                  ), br(),br(),br(),
+                                                                  fluidRow(
+                                                                    column(12,
+                                                                           h2("2) List - Normality"),
+                                                                           verbatimTextOutput(ns("tab22_cor_01_02"))),
+                                                                  )
+                                                                  ),
+                                                         tabPanel("Homogeneity",
+                                                                  fluidRow(
+                                                                    column(12,
+                                                                           h2("1) Homogeneity between par of regresors"),
+                                                                           verbatimTextOutput(ns("tab22_cor_02_01"))),
+                                                                  ), br(),br(),br(),
+                                                                  fluidRow(
+                                                                    column(12,
+                                                                           h2("2) List - Homogeneity"),
+                                                                           verbatimTextOutput(ns("tab22_cor_02_02"))),
+                                                                  )
+                                                                  ),
+                                                         tabPanel("Cor Pearson",
+                                                                  fluidRow(
+                                                                    column(12,
+                                                                           h2("1) Requeriment - No correlation between regresors"),
+                                                                           verbatimTextOutput(ns("tab22_cor_03_01"))),
+                                                                  ), br(),br(),br(),
+                                                                  fluidRow(
+                                                                    column(12,
+                                                                           h2("2) List - Cor Pearson"),
+                                                                           verbatimTextOutput(ns("tab22_cor_03_02"))),
+                                                                  )
+                                                                  ),
+                                                         tabPanel("Cor Spearman",
+                                                                  fluidRow(
+                                                                    column(12,
+                                                                           h2("1) Requeriment - No correlation between regresors"),
+                                                                           verbatimTextOutput(ns("tab22_cor_04_01"))),
+                                                                  ), br(),br(),br(),
+                                                                  fluidRow(
+                                                                    column(12,
+                                                                           h2("2) List - Cor Spearman"),
+                                                                           verbatimTextOutput(ns("tab22_cor_04_02"))),
+                                                                  )
+                                                                  ),
+                                                         tabPanel("Mix",
+                                                                  fluidRow(
+                                                                    column(12,
+                                                                           h2("1) Requeriment - No correlation between regresors"),
+                                                                           verbatimTextOutput(ns("tab22_cor_05_01"))),
+                                                                  ))
+
+                                )
                              ),
                              tabPanel("Plots",
                                       fluidRow(

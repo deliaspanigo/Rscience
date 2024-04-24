@@ -94,7 +94,9 @@ minibase_mod$"id_minibase" <- 1:nrow(minibase)
 test_residuals_normality <- shapiro.test(minibase_mod$residuals)
 test_residuals_normality
 
-
+check_residuals_normality <- test_residuals_normality$p.value >= alpha_value
+if(check_residuals_normality) phrase01_model <- "The selected model meets the requirement of normality of the residuals." else
+  phrase01_model <- "The selected model does NOT meet the requirement of normality of the residuals."
 
 
 # # # Sum for residuals
@@ -279,23 +281,10 @@ df_cor_mix$"check_cor" <- ifelse(test = df_cor_mix$"check_req_pearson",
                                yes = df_cor_pearson$"check_cor",
                                no = df_cor_spearman$"check_cor")
 
-#################################################
 
+check_all_cor <- sum(df_cor_mix$check_cor) == length(df_cor_mix)
 
-####################################
+if(check_all_cor ) phrase02_model <- "The selected model meets the requirement of no correlation between the regressor variables." else
+  phrase02_model <- "The selected model does NOT meet the requirement of no correlation between the regressor variables."
 
-unlist(purrr::map(list_homogeneity, ~ .x$"test_homogeneity"$"statistic"))
-# Tabla plot 001
-df_table_plot001 <- df_position
-
-
-# Tabla plot 002
-df_table_plot002 <- df_position
-
-
-
-df_table_plot003 <- df_position
-
-
-df_table_plot004 <- df_position
 

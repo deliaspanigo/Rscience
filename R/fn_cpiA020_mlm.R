@@ -36,8 +36,13 @@ fn_cpiA020_TakeCode <- function(selected_fn){
 # List the cronologic order for objects in a function
 fn_cpiA020_ObjNamesInOrder <- function(selected_fn){
 
+
+  selected_fn = fn_cpiA020_code_p01_test
   selected_code <- deparse(body(selected_fn))
   selected_code <- grep("<-", selected_code, value = TRUE)
+  selected_code <- selected_code[grep("^ {0,4}[^ ]", selected_code)]
+  #selected_code <- selected_code[grep("^(\t{0,1}[^\t])", selected_code)]
+  #selected_code <- grep("^(\t{0,1}[^\t])", selected_code)
   selected_code <- trimws(selected_code)
   selected_code <- gsub("\\s", "", selected_code)
   selected_code <- sub("<-.*", "", selected_code)
@@ -47,9 +52,7 @@ fn_cpiA020_ObjNamesInOrder <- function(selected_fn){
   # # # # # #
   selected_code <- grep("^detail_name", selected_code, value = TRUE, invert = TRUE)
   selected_code <- grep("^selected_role", selected_code, value = TRUE, invert = TRUE)
-
-  # # # # # #
-  selected_code <- unique(selected_code)
+  selected_code
 
   return(selected_code)
 
@@ -447,10 +450,175 @@ fn_cpiA020_code_p01_test <- function(database, vr_var_name, x_var_name, alpha_va
   df_dispersion <- do.call(rbind.data.frame, list_dispersion)
   df_dispersion
 
+###################################################################
+  confidence_value <- 1 - alpha_value
+  ####################################
+  # Normality
+
+  list_normality_test <- sapply(vector_new_name_x, function(x){
+
+    shapiro.test(minibase[,x])
+  }, simplify = F)
 
 
+  all_pars_matrix <- combn(vector_new_name_x, 2)
 
 
+  list_homogeneity <- sapply(1:ncol(all_pars_matrix), function(x){
+
+    var01 <- all_pars_matrix[1,x]
+    var02 <- all_pars_matrix[2,x]
+    selected_vars <- c(var01, var02)
+    test_homogeneity <- bartlett.test(x = list(minibase[,var01], minibase[,var02]))
+
+    output_list <- Hmisc::llist(selected_vars, test_homogeneity)
+  }, simplify = F)
+
+  list_cor_pearson <- sapply(1:ncol(all_pars_matrix), function(x){
+
+    var01 <- all_pars_matrix[1,x]
+    var02 <- all_pars_matrix[2,x]
+    selected_vars <- c(var01, var02)
+    test_cor_pearson <- cor.test(x = minibase[,var01],
+                                 y = minibase[,var02],
+                                 alternative = "two.sided",
+                                 method = "pearson",
+                                 conf.level = confidence_value,
+                                 exact = FALSE,
+                                 continuity = FALSE)
+
+    output_list <- Hmisc::llist(selected_vars, test_cor_pearson)
+  }, simplify = F)
+
+
+  list_cor_spearman <- sapply(1:ncol(all_pars_matrix), function(x){
+
+    var01 <- all_pars_matrix[1,x]
+    var02 <- all_pars_matrix[2,x]
+    selected_vars <- c(var01, var02)
+    test_cor_spearman <- cor.test(x = minibase[,var01],
+                                  y = minibase[,var02],
+                                  alternative = "two.sided",
+                                  method = "spearman",
+                                  conf.level = confidence_value,
+                                  exact = FALSE,
+                                  continuity = FALSE)
+
+    output_list <- Hmisc::llist(selected_vars, test_cor_spearman)
+  }, simplify = F)
+
+
+  df_normality <- data.frame(
+    "orden" = 1:length(list_normality_test),
+    "variables" = names(list_normality_test),
+    "test" = rep("Normality - Shapiro-Wilk", length(list_normality_test)),
+    "p.value" = unlist(purrr::map(list_normality_test, "p.value")),
+    "alpha.value" = rep(alpha_value, length(list_normality_test))
+  )
+  df_normality$"h0_norm" <- df_normality$p.value < df_normality$alpha.value
+  df_normality$"h0_norm" <- ifelse(test = df_normality$"h0_norm",
+                                    yes = "Rejected H0",
+                                     no = "No rejected H0")
+  df_normality
+
+
+  df_homogeneity <- data.frame(
+    "orden" = 1:length(list_homogeneity),
+    "var01" = unlist(lapply(list_homogeneity, function(x){x$selected_vars[1]})),
+    "var02" = unlist(lapply(list_homogeneity, function(x){x$selected_vars[2]})),
+    "test" = "Homogeneity Test",
+    "p.value" = unlist(purrr::map(list_homogeneity, ~ .x$"test_homogeneity"$"p.value")),
+    "alpha.value" = alpha_value
+  )
+  df_homogeneity$"h0_homog" <- df_homogeneity$"p.value" < df_homogeneity$"alpha.value"
+  df_homogeneity$"h0_homog" <- ifelse(test = df_homogeneity$"h0_homog",
+                                   yes = "Rejected H0",
+                                   no = "No rejected H0")
+  df_homogeneity
+
+  ########################################################
+  df_cor_pearson <- data.frame(
+    "orden" = 1:length(list_cor_pearson),
+    "var01" = unlist(lapply(list_cor_pearson, function(x){x$selected_vars[1]})),
+    "var02" = unlist(lapply(list_cor_pearson, function(x){x$selected_vars[2]})),
+    "cor_test" = "Pearson",
+    "cor_est" = unlist(purrr::map(list_cor_pearson, ~ .x$"test_cor_pearson"$"estimate")),
+    "p.value" = unlist(purrr::map(list_cor_pearson, ~ .x$"test_cor_pearson"$"p.value")),
+    "alpha.value" = alpha_value
+  )
+  df_cor_pearson$"h0_cor_pearson" <- df_cor_pearson$"p.value" < df_cor_pearson$"alpha.value"
+  df_cor_pearson$"h0_cor_pearson" <- ifelse(test = df_cor_pearson$"h0_cor_pearson",
+                                             yes = "Rejected H0",
+                                              no = "No rejected H0")
+
+
+  ########################################################
+  df_cor_spearman <- data.frame(
+    "orden" = 1:length(list_cor_spearman),
+    "var01" = unlist(lapply(list_cor_spearman, function(x){x$selected_vars[1]})),
+    "var02" = unlist(lapply(list_cor_spearman, function(x){x$selected_vars[2]})),
+    "cor_test" = "Spearman",
+    "cor_est" = unlist(purrr::map(list_cor_spearman, ~ .x$"test_cor_spearman"$"estimate")),
+    "p.value" = unlist(purrr::map(list_cor_spearman, ~ .x$"test_cor_spearman"$"p.value")),
+    "alpha.value" = alpha_value
+  )
+  df_cor_spearman$"h0_cor_spearman" <- df_cor_spearman$"p.value" < df_cor_spearman$"alpha.value"
+  df_cor_spearman$"h0_cor_spearman" <- ifelse(test = df_cor_spearman$"h0_cor_spearman",
+                                               yes = "Rejected H0",
+                                                no = "No rejected H0")
+  df_cor_spearman
+
+
+  df_cor_mix <- data.frame(
+    "orden" = df_homogeneity$"orden",
+    "var01" = df_homogeneity$"var01",
+    "var02" = df_homogeneity$"var02",
+    "h0_norm_var01" = df_normality[df_homogeneity$"var01", "h0_norm"],
+    "h0_norm_var02" = df_normality[df_homogeneity$"var02", "h0_norm"],
+    "h0_homog" = df_homogeneity$"h0_homog"
+  )
+  selected_cols <- c("h0_norm_var01", "h0_norm_var02", "h0_homog")
+  #df_cor_mix$"check_req_pearson" <- rowSums(df_cor_mix[selected_cols]) == 3
+  df_cor_mix$"check_req_pearson" <- apply(df_cor_mix[selected_cols], 1, function(x){
+
+    vector_category <- unique(x)
+    output_value <- FALSE
+    if(length(vector_category) == 1) {
+      vector_category == "No rejected H0"
+    }
+
+    output_value
+
+  })
+  df_cor_mix$"cor_test" <- ifelse(test = df_cor_mix$"check_req_pearson",
+                                  yes = df_cor_pearson$"cor_test",
+                                  no = df_cor_spearman$"cor_test")
+
+  df_cor_mix$"cor_est" <- ifelse(test = df_cor_mix$"check_req_pearson",
+                                 yes = df_cor_pearson$"cor_est",
+                                 no = df_cor_spearman$"cor_est")
+
+  df_cor_mix$"p.value" <- ifelse(test = df_cor_mix$"check_req_pearson",
+                                 yes = df_cor_pearson$"p.value",
+                                 no = df_cor_spearman$"p.value")
+
+  df_cor_mix$"alpha.value" <- alpha_value
+
+  df_cor_mix$"h0_cor_selected" <- ifelse(test = df_cor_mix$"check_req_pearson",
+                                   yes = df_cor_pearson$"h0_cor_pearson",
+                                   no = df_cor_spearman$"h0_cor_spearman")
+
+
+  check_all_cor <- sum(df_cor_mix$"h0_cor_selected" == "No rejected H0") == length(df_cor_mix)
+
+  phrase02_model_A <- "The selected model meets the requirement of no correlation between the regressor variables."
+  phrase02_model_B <- "The selected model does NOT meet the requirement of no correlation between the regressor variables."
+  phrase02_model_output <- ifelse(check_all_cor, phrase02_model_A, phrase02_model_B)
+
+
+  df_cor_resumen <- df_cor_mix[c("orden", "var01", "var02", "cor_test", "cor_est", "p.value", "h0_cor_selected")]
+
+###################################################################
   # Tabla plot 001
   df_table_plot001 <- df_position
 
@@ -950,4 +1118,3 @@ fn_cpiA020_gen02 <- function(database,  vr_var_name, x_var_name, alpha_value){
 
   return(output_list)
 }
-
