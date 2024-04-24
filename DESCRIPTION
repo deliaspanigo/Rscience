@@ -25,7 +25,8 @@ Imports:
   tools,
   DT,
   EnvStats,
-  emmeans
+  emmeans,
+  reshape2
 Depends: 
     R (>= 4.3.0)
 LazyData: true
