@@ -256,19 +256,16 @@ fn_cpiC001_tTest_2SampleInd_control_previous <- function(database, vr_var_name, 
     return(Hmisc::llist(dt_ok, text_output))
   }
 
-
   # 4) minibase$VR can not be constant
-  if(var(minibase$VR) == 0){
-    text_output <- "Control pre test 029: Object 'minibase$VR' can not be constant."
+  if(!is.numeric(minibase$VR)){
+    text_output <- "Control pre test 029: Object 'minibase$VR' must be numeric."
     return(Hmisc::llist(dt_ok, text_output))
   }
-
   # 4) minibase$VR can not be constant
-  if(length(unique(as.character(minibase$VR))) == 1){
+  if(var(minibase$VR) == 0){
     text_output <- "Control pre test 030: Object 'minibase$VR' can not be constant."
     return(Hmisc::llist(dt_ok, text_output))
   }
-
 
   # 4) minibase$VR can not be constant
   if(length(unique(as.character(minibase$VR))) == 1){
@@ -277,9 +274,16 @@ fn_cpiC001_tTest_2SampleInd_control_previous <- function(database, vr_var_name, 
   }
 
 
+  # 4) minibase$VR can not be constant
+  if(length(unique(as.character(minibase$VR))) == 1){
+    text_output <- "Control pre test 032: Object 'minibase$VR' can not be constant."
+    return(Hmisc::llist(dt_ok, text_output))
+  }
+
+
   # Al least 2 levels in minibase$FACTOR
   if(!(nlevels(minibase$FACTOR) == 2)){
-    text_output <- "Control pre test 032: for t Test FACTOR must has exactly 2 levels."
+    text_output <- "Control pre test 033: for t Test FACTOR must has exactly 2 levels."
     return(Hmisc::llist(dt_ok, text_output))
   }
 
@@ -290,7 +294,7 @@ fn_cpiC001_tTest_2SampleInd_control_previous <- function(database, vr_var_name, 
   dt_reps_level <- reps_level >= 2
   check_01 <- sum(dt_reps_level) == length(dt_reps_level)
   if(!check_01){
-    text_output <- "Control pre test 033: On minibase from FACTOR each level must has al least 2 reps."
+    text_output <- "Control pre test 034: On minibase from FACTOR each level must has al least 2 reps."
     return(Hmisc::llist(dt_ok, text_output))
   }
 
@@ -300,7 +304,7 @@ fn_cpiC001_tTest_2SampleInd_control_previous <- function(database, vr_var_name, 
   dt_vars_level <- reps_level > 0
   check_02 <- sum(dt_vars_level) ==  length(dt_vars_level)
   if(!check_02){
-    text_output <- "Control pre test 034: On minibase from FACTOR each level can not be constant.
+    text_output <- "Control pre test 035: On minibase from FACTOR each level can not be constant.
 On each level variance must be greater than zero."
     return(Hmisc::llist(dt_ok, text_output))
   }
@@ -313,7 +317,7 @@ On each level variance must be greater than zero."
   dt_ndata_level <- ndata_level >= 2
   check_03 <- sum(dt_ndata_level) == length(dt_ndata_level)
   if(!check_03){
-    text_output <- "Control pre test 035: On minibase from FACTOR each level must not be constant."
+    text_output <- "Control pre test 036: On minibase from FACTOR each level must not be constant."
     return(Hmisc::llist(dt_ok, text_output))
   }
 
