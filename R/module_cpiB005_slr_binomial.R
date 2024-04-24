@@ -490,7 +490,7 @@ module_cpiB005_s02_rscience_server <- function(id, input_general, input_01_anova
         req(control_user_02())
         the_code <- cpiB005_slr_binomial_code_sectionALL(intro_source_database = input_01_anova()$intro_source_database,
                                                                vr_var_name = input_01_anova()$vr_var_name,
-                                                               x_var_name = input_01_anova()$x_var_name,
+                                                               factor_var_name = input_01_anova()$x_var_name,
                                                                alpha_value = input_01_anova()$alpha_value)
         the_code
       })

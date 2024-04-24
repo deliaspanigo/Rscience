@@ -449,7 +449,7 @@ input_03_anova <- module_cpiA002_s01_varselection_server(id = "anova03_A",
 
 
 
-shinyApp(ui, server)
+shinyApp(ui = ui, server = server, options = list(launch.browser = TRUE))
 
 }
 

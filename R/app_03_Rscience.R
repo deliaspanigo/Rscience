@@ -305,7 +305,7 @@ app_03_Rscience <- function(){
 
 
 
-  shinyApp(ui, server)
+  shinyApp(ui = ui, server = server, options = list(launch.browser = TRUE))
 
 }
 
