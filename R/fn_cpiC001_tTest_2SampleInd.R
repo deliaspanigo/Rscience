@@ -675,11 +675,62 @@ fn_cpiC001_tTest_2SampleInd_results <- function(database, vr_var_name, factor_va
 
   # Normality
   list_normality_test <- tapply(minibase$VR, minibase$FACTOR, shapiro.test)
-  homogeinity_test <- bartlett.test(VR ~ FACTOR, data = minibase)
+  df_normality <- data.frame(
+    "orden" = 1:length(list_normality_test),
+    "level" = names(list_normality_test),
+    "test" = "Normality",
+    "p.value" = sapply(list_normality_test, function(x){x$p.value}),
+    "alpha.value" = alpha_value
+  )
+  df_normality$"h0_normality" <- df_normality$"p.value" < df_normality$"alpha.value"
+  df_normality$"h0_normality" <- ifelse(test = df_normality$"h0_normality",
+                                        yes = "Rejected H0",
+                                        no = "No rejected H0")
+
+  check_normality <- sum(df_normality$"h0_normality" == "No rejected H0") == 2
+
+  phrase01_A <- "Normality on both group verifed."
+  phrase01_B <- "At least one group is has NOT normality."
+  phrase01_output <- ifelse(test = check_normality,
+                            yes = phrase01_A,
+                            no = phrase01_B)
+
+  phrase02_A <- "It is valid to perform the t test."
+  phrase02_B <- "It is NOT valid to perform the t test."
+  phrase02_output <- ifelse(test = check_normality,
+                            yes = phrase02_A,
+                             no = phrase02_B)
+
+  homogeneity_test <- bartlett.test(VR ~ FACTOR, data = minibase)
+
+  check_homogeneity <- homogeneity_test$p.value >= alpha_value
+
+  df_homogeneity <- data.frame(
+    "orden" = 1,
+    "test" = "Homogeneity",
+    "p.value" = homogeneity_test$"p.value",
+    "alpha.value" = alpha_value
+  )
+  df_homogeneity$"h0_homogeneity" <- df_homogeneity$"p.value" < df_homogeneity$"alpha.value"
+  df_homogeneity$"h0_homogeneity" <- ifelse(test = df_homogeneity$"h0_homogeneity",
+                                             yes = "Rejected H0",
+                                              no = "No rejected H0")
 
 
-  check_homogeinity <- FALSE
-  if(homogeinity_test$p.value >= alpha_value) check_homogeinity <- TRUE
+  phrase03_A <- "Groups are homogenious. Classic t Test will be apply."
+  phrase03_B <- "Groups are NOT homogenious. t Test with Welch approximation."
+  phrase03_output <- ifelse(test = check_homogeneity,
+                             yes = phrase03_A,
+                              no = phrase03_B)
+
+  phrase03_output <- ifelse(test = check_normality,
+                            yes = phrase03_output,
+                             no = phrase02_B)
+  # phrase02_A <- "Performed: Classic t Test."
+  # phrase02_B <- "Performed: t Test with Welch approximation."
+  # phrase02_output <- ifelse(test = check_homogeneity,
+  #                           yes = phrase01_A,
+  #                           no = phrase01_B)
 
   confidence_value <- 1 - alpha_value
 
@@ -687,10 +738,22 @@ fn_cpiC001_tTest_2SampleInd_results <- function(database, vr_var_name, factor_va
   results_t_test <- t.test(formula = VR ~ FACTOR, data = minibase,
                            alternative = "two.sided",
                            conf.level = confidence_value,
-                           var.equal = check_homogeinity)
+                           var.equal = check_homogeneity)
 
   results_t_test
 
+
+  df_t_test_2sample_ind <- data.frame(
+    "orden" = 1,
+    "test" = "t test",
+    #"details" = "2 independent sample",
+    "p.value" = results_t_test$"p.value",
+    "alpha.value" = alpha_value
+  )
+  df_t_test_2sample_ind$"h0_t_test" <- df_t_test_2sample_ind$"p.value" < df_t_test_2sample_ind$"alpha.value"
+  df_t_test_2sample_ind$"h0_t_test" <- ifelse(test = df_t_test_2sample_ind$"h0_t_test",
+                                            yes = "Rejected H0",
+                                            no = "No rejected H0")
 
   # # # Detect rows on database there are on minibase
   dt_rows_database_ok <- rowSums(!is.na(database[vector_name_selected_vars])) == ncol(minibase)
@@ -787,6 +850,7 @@ fn_cpiC001_tTest_2SampleInd_results <- function(database, vr_var_name, factor_va
   )
 
 
+  df_table_plot004 <-  df_vr_position_levels
   # --- # hide_: Proccesing objects order
   hide_correct_order <- fn_cpiC001_tTest_2SampleInd_ObjNamesInOrder(selected_fn = fn_cpiC001_tTest_2SampleInd_results)
   hide_output_list_objects <- mget(hide_correct_order)

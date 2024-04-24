@@ -7,6 +7,7 @@
 app_01_Rscience <- function(){
 
 
+  library("Rscience")
   library("bslib")
   library("dplyr")
   library("DT")
@@ -16,6 +17,7 @@ app_01_Rscience <- function(){
   library("plotly")
   library("rclipboard")
   library("rmarkdown")
+  library("reshape2")
   library("shiny")
   library("shinycssloaders")
   library("shinydashboard")

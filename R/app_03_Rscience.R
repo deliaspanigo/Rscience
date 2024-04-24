@@ -6,7 +6,7 @@
 
 app_03_Rscience <- function(){
 
-
+  library("Rscience")
   library("bslib")
   library("dplyr")
   library("DT")

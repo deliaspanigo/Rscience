@@ -618,6 +618,15 @@ fn_cpiA020_code_p01_test <- function(database, vr_var_name, x_var_name, alpha_va
 
   df_cor_resumen <- df_cor_mix[c("orden", "var01", "var02", "cor_test", "cor_est", "p.value", "h0_cor_selected")]
 
+  ################################################################
+
+  df_matrix_cor_pearson <- reshape2::dcast(data = df_cor_pearson,
+                                           formula = var02 ~ var01,
+                                           value.var = "cor_est")
+
+  df_matrix_cor_spearman <- reshape2::dcast(data = df_cor_spearman,
+                                           formula = var02 ~ var01,
+                                           value.var = "cor_est")
 ###################################################################
   # Tabla plot 001
   df_table_plot001 <- df_position

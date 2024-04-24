@@ -131,23 +131,25 @@ module_cpiA020_s01_varselection_server <- function(id, input_general){
 
 
             fluidRow(
-              column(2,
+              column(4,
                      selectInput(inputId = ns("vr_var_name"), label = "Response Variable",
                                  choices = set_options ,
                                  selected = set_options[1])
               ),
               column(2,
-                     selectInput(inputId = ns("x_var_name"), label = "X (Regresor)",
-                                 choices = set_options,
-                                 selected = set_options[1], multiple = TRUE)
-              ),
-
-              column(2,
                      selectInput(inputId = ns("alpha_value"), label = "Alpha value",
                                  choices = c(0.10, 0.05, 0.01),
                                  selected = 0.05)
               ),
+              column(2),
               column(4, br(), br(), uiOutput(ns("action_buttons"))
+              )
+            ),
+            fluidRow(
+              column(12,
+                                selectInput(inputId = ns("x_var_name"), label = "X (Regresor)",
+                                            choices = set_options,
+                                            selected = set_options[1], multiple = TRUE, width = "200%")
               )
             ),
             br(),
@@ -659,6 +661,17 @@ module_cpiA020_s02_rscience_server <- function(id, input_general, input_01_anova
         req(control_user_02())
         #phrase02_model_output
         mi_lista <- RR_general()$"out05_full_results"
+        selected_obj <- c("df_matrix_cor_pearson")
+        #selected_obj <- c("check_all_cor", "df_cor_resumen")
+
+        mi_lista[selected_obj]
+      })
+
+      output$tab22_cor_03_03 <- renderPrint({
+
+        req(control_user_02())
+        #phrase02_model_output
+        mi_lista <- RR_general()$"out05_full_results"
         selected_obj <- c("list_cor_pearson")
         #selected_obj <- c("check_all_cor", "df_cor_resumen")
 
@@ -677,8 +690,18 @@ module_cpiA020_s02_rscience_server <- function(id, input_general, input_01_anova
         mi_lista[selected_obj]
       })
 
-
       output$tab22_cor_04_02 <- renderPrint({
+
+        req(control_user_02())
+        #phrase02_model_output
+        mi_lista <- RR_general()$"out05_full_results"
+        selected_obj <- c("df_matrix_cor_spearman")
+        #selected_obj <- c("check_all_cor", "df_cor_resumen")
+
+        mi_lista[selected_obj]
+      })
+
+      output$tab22_cor_04_03 <- renderPrint({
 
         req(control_user_02())
         #phrase02_model_output
@@ -700,6 +723,57 @@ module_cpiA020_s02_rscience_server <- function(id, input_general, input_01_anova
         mi_lista[selected_obj]
       })
 
+
+      output$tab22_cor_05_02 <- renderDT({
+
+        req(control_user_02())
+        #phrase02_model_output
+        mi_lista <- RR_general()$"out05_full_results"
+        selected_objs <- c("df_cor_mix")
+        #selected_obj <- c("check_all_cor", "df_cor_resumen")
+
+        #mi_lista[selected_obj]
+
+        mi_tabla <- mi_lista[[selected_objs]]
+        #mi_tabla
+        #https://rstudio.github.io/DT/functions.html
+        vector_pos <- 1:nrow(mi_tabla)
+        vector_color <- rep(NA, length(vector_pos))
+        vector_color[c(T, F)] <- "lightblue"#'red'#
+        vector_color[c(F, T)] <- "lightgreen"#'blue'#
+        vector_color <- vector_color[vector_pos]
+
+
+        datatable(
+          mi_tabla,
+          rownames = FALSE,
+          options = list(
+
+            headerCallback = DT::JS(
+              "function(thead) {",
+              "  $(thead).css('font-size', '2em');",
+              "}"
+            ),
+            columnDefs = list(list(className = 'dt-center', targets = "_all")),
+            #pageLength = 5,
+            dom = "t",
+            scrollX = TRUE,
+            searching = FALSE,
+            scrollCollapse = TRUE,  # Permitir colapsar el scroll
+            fixedColumns = list(leftColumns = 3),  # Fijar las primeras 3 columnas
+            #lengthMenu = list(c(-1), c("All")), # Todas las filas
+            style = list(
+              'font-size' = '20px'  # Tamaño de letra para el nombre de las columnas
+            )
+          )
+
+        ) %>%formatStyle(
+          colnames(mi_tabla),
+          backgroundColor = styleRow(vector_pos, vector_color),#,
+          target = 'row',
+          fontSize = "26px"
+        )
+      })
 ###############################################################
       output$tab03_plot_factor <- renderUI({
         ns <- shiny::NS(id)
@@ -867,6 +941,19 @@ module_cpiA020_s02_rscience_server <- function(id, input_general, input_01_anova
                                       h1("Multiple Linear Regresion"),
                                       h2("Algunas explicaciones..."),
                                       shiny::tabsetPanel(id = ns("super_cor_panel"),
+                                                         tabPanel("Mix",
+                                                                  fluidRow(
+                                                                    column(12,
+                                                                           h2("1) Requeriment - No correlation between regresors"),
+                                                                           verbatimTextOutput(ns("tab22_cor_05_01"))),
+                                                                  ), br(), br(), br(),
+                                                                  fluidRow(
+                                                                    column(12,
+                                                                           h2("1) Requeriment - No correlation between regresors"),
+                                                                           h3("R object: df_cor_mix"),
+                                                                           DTOutput(ns("tab22_cor_05_02"))),
+                                                                  ), br(), br(), br(),
+                                                         ),
                                                          tabPanel("Normality",
                                                                   fluidRow(
                                                                     column(12,
@@ -899,8 +986,13 @@ module_cpiA020_s02_rscience_server <- function(id, input_general, input_01_anova
                                                                   ), br(),br(),br(),
                                                                   fluidRow(
                                                                     column(12,
-                                                                           h2("2) List - Cor Pearson"),
+                                                                           h2("1) Matrix Correlation - Pearson"),
                                                                            verbatimTextOutput(ns("tab22_cor_03_02"))),
+                                                                  ), br(),br(),br(),
+                                                                  fluidRow(
+                                                                    column(12,
+                                                                           h2("2) List - Cor Pearson"),
+                                                                           verbatimTextOutput(ns("tab22_cor_03_03"))),
                                                                   )
                                                                   ),
                                                          tabPanel("Cor Spearman",
@@ -911,16 +1003,16 @@ module_cpiA020_s02_rscience_server <- function(id, input_general, input_01_anova
                                                                   ), br(),br(),br(),
                                                                   fluidRow(
                                                                     column(12,
-                                                                           h2("2) List - Cor Spearman"),
+                                                                           h2("2) Matrix Correlation - Spearman"),
                                                                            verbatimTextOutput(ns("tab22_cor_04_02"))),
-                                                                  )
-                                                                  ),
-                                                         tabPanel("Mix",
+                                                                  ), br(),br(),br(),
                                                                   fluidRow(
                                                                     column(12,
-                                                                           h2("1) Requeriment - No correlation between regresors"),
-                                                                           verbatimTextOutput(ns("tab22_cor_05_01"))),
-                                                                  ))
+                                                                           h2("2) List - Cor Spearman"),
+                                                                           verbatimTextOutput(ns("tab22_cor_04_03"))),
+                                                                  )
+                                                                  )
+
 
                                 )
                              ),
