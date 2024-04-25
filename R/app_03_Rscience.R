@@ -19,7 +19,6 @@ app_03_Rscience <- function(){
   library("shiny")
   library("shinycssloaders")
   library("shinydashboard")
-  library("shinydashboardPlus")
   library("shinyjs")
   library("shinyWidgets")
   library("stringr")
