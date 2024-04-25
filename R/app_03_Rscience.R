@@ -19,6 +19,7 @@ app_03_Rscience <- function(){
   library("shiny")
   library("shinycssloaders")
   library("shinydashboard")
+  library("shinydashboardPlus")
   library("shinyjs")
   library("shinyWidgets")
   library("stringr")
@@ -230,15 +231,31 @@ app_03_Rscience <- function(){
 
         # 2) ANOVA
         shinydashboard::tabItem(tabName = "tab02_anova",
-                                h1("t Test - 2 independet samples"),
+                                h1("t Test - 2 independent samples"),
+                                fluidRow(
+                                  column(12,
+                                         box(
+                                           title = "Database info",
+                                           status = "primary",
+                                           id = "my_box01",
+                                           solidHeader = TRUE,
+                                           collapsible = TRUE,
+                                           collapsed = TRUE,
+                                           #closable = TRUE,# Colapsado por defecto
+                                           width = 12,
+                                           tableOutput("intro_source_database")
+                                           )
+                                  )
+                                ),
                         # https://cran.r-project.org/web/packages/shinydashboardPlus/vignettes/improved-boxes.html
-                                box(
+                        box(
                                   title = "Var selection",
                                   status = "primary",
-                                  id = "my_box",
+                                  id = "my_box02",
                                   solidHeader = TRUE,
                                   collapsible = TRUE,
                                   closable = FALSE,# Colapsado por defecto
+                                  collapsed = FALSE,
                                   width = 12,
                                   module_cpiC001_s01_varselection_ui(id = "anova01_A"),
                                   #actionButton("toggle_box", "Toggle Box"),
@@ -269,6 +286,9 @@ app_03_Rscience <- function(){
     # - all_var_names()
     # - database
 
+    # # # Intro source database
+
+
     input_general_01_xlsx <- module_cpiC000_database_s01_excel_server(id = "data_excel",
                                                                 input_file_source = input$file_source)
 
@@ -289,6 +309,18 @@ app_03_Rscience <- function(){
     })
 
 
+    ################################################
+    output$intro_source_database <- renderTable({
+
+
+      list_intro <- input_general()$intro_source_database
+      df_output <- as.data.frame(list_intro)
+      colnames(df_output) <- names(list_intro)
+      df_output
+
+
+
+    })
     ##################################################################################
     input_01_anova <- module_cpiC001_s01_varselection_server(id = "anova01_A",
                                                              input_general = input_general)

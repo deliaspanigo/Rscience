@@ -727,9 +727,6 @@ fn_cpiC001_tTest_2SampleInd_results <- function(database, vr_var_name, factor_va
                              yes = phrase03_A,
                               no = phrase03_B)
 
-  phrase03_output <- ifelse(test = check_normality,
-                            yes = phrase03_output,
-                             no = phrase02_B)
   # phrase02_A <- "Performed: Classic t Test."
   # phrase02_B <- "Performed: t Test with Welch approximation."
   # phrase02_output <- ifelse(test = check_homogeneity,

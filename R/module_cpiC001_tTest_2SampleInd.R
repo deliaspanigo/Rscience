@@ -120,14 +120,14 @@ module_cpiC001_s01_varselection_server <- function(id, input_general){
 
 
         div(shinyjs::useShinyjs(), id = ns("input-var-selection"),
-            fluidRow(
-              column(12, h1("t Test  for 2 independent samples"))
-            ),
-            fluidRow(
-              column(6,
-                     tableOutput(ns("intro_source_database")))
-            ),
-            br(), br(), br(),
+            # fluidRow(
+            #   column(12, h1("t Test  for 2 independent samples"))
+            # ),
+            # fluidRow(
+            #   column(6,
+            #          tableOutput(ns("intro_source_database")))
+            # ),
+            # br(), br(), br(),
 
 
             fluidRow(
@@ -380,6 +380,8 @@ module_cpiC001_s02_rscience_ui <- function(id){
 
   div(
   uiOutput(ns("page_test")),
+  br(), br(), br(),br(), br(), br(),br(), br(), br(),br(),br(), br(), br(),
+  br(), br(), br(),br(), br(), br(),br(), br(), br(),br(),br(), br(), br(),
   br(), br(), br(),br(), br(), br(),br(), br(), br(),br(),br(), br(), br()
   )
 
@@ -912,7 +914,7 @@ module_cpiC001_s02_rscience_server <- function(id, input_general, input_01_anova
 
 
         # Vector con nombres de elementos a ver
-        selected_objs <- c("results_t_test", "df_t_test_2sample_ind")
+        selected_objs <- c("results_t_test")
 
 
         # Usar lapply para mostrar los elementos deseados
@@ -983,6 +985,7 @@ module_cpiC001_s02_rscience_server <- function(id, input_general, input_01_anova
           mi_tabla,
           rownames = FALSE,
           options = list(
+
             headerCallback = DT::JS(
               "function(thead) {",
               "  $(thead).css('font-size', '2em');",
@@ -990,7 +993,12 @@ module_cpiC001_s02_rscience_server <- function(id, input_general, input_01_anova
             ),
             columnDefs = list(list(className = 'dt-center', targets = "_all")),
             #pageLength = 5,
-            dom = "",
+            dom = "t",
+            scrollX = TRUE,
+            searching = FALSE,
+            scrollCollapse = TRUE,  # Permitir colapsar el scroll
+            fixedColumns = list(leftColumns = 3),  # Fijar las primeras 3 columnas
+            #lengthMenu = list(c(-1), c("All")), # Todas las filas
             style = list(
               'font-size' = '20px'  # Tamaño de letra para el nombre de las columnas
             )
@@ -1030,23 +1038,25 @@ module_cpiC001_s02_rscience_server <- function(id, input_general, input_01_anova
           # verbatimTextOutput(ns("tab03_analysis_anova_obj04_B")),
           # br(), br(), br(),
 
-          h2("5) t Test"),
+          h2("3) Phrases"),
           verbatimTextOutput(ns("tab03_analysis_anova_obj05_B")),
           #br(), br(), br(),
          # h2("1) Requeriment - Resumen - Normality"),
 
           br(), br(), br(),
-
-          h2("6) t Test Full"),
-          verbatimTextOutput(ns("tab03_analysis_anova_obj06_B")),
+          h2("4) t Test - Resumen Table"),
           DTOutput(ns("tab03_analysis_anova_obj22_Bextra")),
           br(), br(), br(),
+          h2("5) Original R results for t Test"),
+          verbatimTextOutput(ns("tab03_analysis_anova_obj06_B")),
 
-          h2("7) Position"),
+          br(), br(), br(),
+
+          h2("6) Position"),
           verbatimTextOutput(ns("tab03_analysis_anova_obj07_B")),
           br(), br(), br(),
 
-          h2("8) Dispersion"),
+          h2("7) Dispersion"),
           verbatimTextOutput(ns("tab03_analysis_anova_obj08_B")),
           br(), br(), br()
         )
@@ -1190,6 +1200,7 @@ module_cpiC001_s02_rscience_server <- function(id, input_general, input_01_anova
         mi_tabla,
         rownames = FALSE,
         options = list(
+
           headerCallback = DT::JS(
             "function(thead) {",
             "  $(thead).css('font-size', '2em');",
@@ -1197,7 +1208,12 @@ module_cpiC001_s02_rscience_server <- function(id, input_general, input_01_anova
           ),
           columnDefs = list(list(className = 'dt-center', targets = "_all")),
           #pageLength = 5,
-          dom = "",
+          dom = "t",
+          scrollX = TRUE,
+          searching = FALSE,
+          scrollCollapse = TRUE,  # Permitir colapsar el scroll
+          fixedColumns = list(leftColumns = 3),  # Fijar las primeras 3 columnas
+          #lengthMenu = list(c(-1), c("All")), # Todas las filas
           style = list(
             'font-size' = '20px'  # Tamaño de letra para el nombre de las columnas
           )
@@ -1238,6 +1254,7 @@ module_cpiC001_s02_rscience_server <- function(id, input_general, input_01_anova
           mi_tabla,
           rownames = FALSE,
           options = list(
+
             headerCallback = DT::JS(
               "function(thead) {",
               "  $(thead).css('font-size', '2em');",
@@ -1245,7 +1262,12 @@ module_cpiC001_s02_rscience_server <- function(id, input_general, input_01_anova
             ),
             columnDefs = list(list(className = 'dt-center', targets = "_all")),
             #pageLength = 5,
-            dom = "",
+            dom = "t",
+            scrollX = TRUE,
+            searching = FALSE,
+            scrollCollapse = TRUE,  # Permitir colapsar el scroll
+            fixedColumns = list(leftColumns = 3),  # Fijar las primeras 3 columnas
+            #lengthMenu = list(c(-1), c("All")), # Todas las filas
             style = list(
               'font-size' = '20px'  # Tamaño de letra para el nombre de las columnas
             )
@@ -1673,19 +1695,19 @@ module_cpiC001_s02_rscience_server <- function(id, input_general, input_01_anova
                                       # h2("2) Requeriment - Resumen - Homogeneity"),
                                       # tableOutput(ns("tab22_analysis_anova_obj06")),
                                       # br(), br(), br(),
-                                      h1("Resumen"),
-                                      h2("1) Requeriment - Resumen - Normality"),
-                                      verbatimTextOutput(ns("tab22_analysis_anova_obj01")),
-                                      br(), br(), br(),
-                                      h2("2) Requeriment - Resumen - Homogeneity"),
-                                      verbatimTextOutput(ns("tab22_analysis_anova_obj02")),
-                                      br(), br(), br(),
+                                      # h1("Resumen"),
+                                      # h2("1) Requeriment - Resumen - Normality"),
+                                      # verbatimTextOutput(ns("tab22_analysis_anova_obj01")),
+                                      # br(), br(), br(),
+                                      # h2("2) Requeriment - Resumen - Homogeneity"),
+                                      # verbatimTextOutput(ns("tab22_analysis_anova_obj02")),
+                                      # br(), br(), br(),
 
                                       h1("Original R Results"),
-                                      h2("1) Requeriment - R - Normality"),
+                                      h2("1) Requeriment Normality"),
                                       verbatimTextOutput(ns("tab22_analysis_anova_obj03")),
                                       br(), br(), br(),
-                                      h2("2) Requeriment - R - Homogeneity"),
+                                      h2("2) Requeriment Homogeneity"),
                                       verbatimTextOutput(ns("tab22_analysis_anova_obj04")),
                                       br(), br(), br()
 

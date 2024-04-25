@@ -942,11 +942,11 @@ module_cpiA020_s02_rscience_server <- function(id, input_general, input_01_anova
                                       h2("Algunas explicaciones..."),
                                       shiny::tabsetPanel(id = ns("super_cor_panel"),
                                                          tabPanel("Mix",
-                                                                  fluidRow(
-                                                                    column(12,
-                                                                           h2("1) Requeriment - No correlation between regresors"),
-                                                                           verbatimTextOutput(ns("tab22_cor_05_01"))),
-                                                                  ), br(), br(), br(),
+                                                                  # fluidRow(
+                                                                  #   column(12,
+                                                                  #          h2("1) Requeriment - No correlation between regresors"),
+                                                                  #          verbatimTextOutput(ns("tab22_cor_05_01"))),
+                                                                  # ), br(), br(), br(),
                                                                   fluidRow(
                                                                     column(12,
                                                                            h2("1) Requeriment - No correlation between regresors"),

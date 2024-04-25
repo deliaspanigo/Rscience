@@ -515,8 +515,8 @@ fn_cpiA020_code_p01_test <- function(database, vr_var_name, x_var_name, alpha_va
     "p.value" = unlist(purrr::map(list_normality_test, "p.value")),
     "alpha.value" = rep(alpha_value, length(list_normality_test))
   )
-  df_normality$"h0_norm" <- df_normality$p.value < df_normality$alpha.value
-  df_normality$"h0_norm" <- ifelse(test = df_normality$"h0_norm",
+  df_normality$"h0_normality" <- df_normality$p.value < df_normality$alpha.value
+  df_normality$"h0_normality" <- ifelse(test = df_normality$"h0_normality",
                                     yes = "Rejected H0",
                                      no = "No rejected H0")
   df_normality
@@ -530,8 +530,8 @@ fn_cpiA020_code_p01_test <- function(database, vr_var_name, x_var_name, alpha_va
     "p.value" = unlist(purrr::map(list_homogeneity, ~ .x$"test_homogeneity"$"p.value")),
     "alpha.value" = alpha_value
   )
-  df_homogeneity$"h0_homog" <- df_homogeneity$"p.value" < df_homogeneity$"alpha.value"
-  df_homogeneity$"h0_homog" <- ifelse(test = df_homogeneity$"h0_homog",
+  df_homogeneity$"h0_homogeneity" <- df_homogeneity$"p.value" < df_homogeneity$"alpha.value"
+  df_homogeneity$"h0_homogeneity" <- ifelse(test = df_homogeneity$"h0_homogeneity",
                                    yes = "Rejected H0",
                                    no = "No rejected H0")
   df_homogeneity
@@ -573,11 +573,11 @@ fn_cpiA020_code_p01_test <- function(database, vr_var_name, x_var_name, alpha_va
     "orden" = df_homogeneity$"orden",
     "var01" = df_homogeneity$"var01",
     "var02" = df_homogeneity$"var02",
-    "h0_norm_var01" = df_normality[df_homogeneity$"var01", "h0_norm"],
-    "h0_norm_var02" = df_normality[df_homogeneity$"var02", "h0_norm"],
-    "h0_homog" = df_homogeneity$"h0_homog"
+    "h0_normality_var01" = df_normality[df_homogeneity$"var01", "h0_normality"],
+    "h0_normality_var02" = df_normality[df_homogeneity$"var02", "h0_normality"],
+    "h0_homogeneity" = df_homogeneity$"h0_homogeneity"
   )
-  selected_cols <- c("h0_norm_var01", "h0_norm_var02", "h0_homog")
+  selected_cols <- c("h0_normality_var01", "h0_normality_var02", "h0_homogeneity")
   #df_cor_mix$"check_req_pearson" <- rowSums(df_cor_mix[selected_cols]) == 3
   df_cor_mix$"check_req_pearson" <- apply(df_cor_mix[selected_cols], 1, function(x){
 
