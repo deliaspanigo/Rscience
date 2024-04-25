@@ -254,7 +254,51 @@ module_cpiC000_database_s02_example_server <- function(id, input_file_source){
       }, rownames = TRUE, align = "c")
 
 
-
+      # output$df_database2 <- renderDT({
+      #
+      #   req(control_database(), database(), action_button_show())
+      #
+      #
+      #
+      #   mi_tabla <- database()
+      #   #https://rstudio.github.io/DT/functions.html
+      #   vector_pos <- 1:nrow(mi_tabla)
+      #   vector_color <- rep(NA, length(vector_pos))
+      #   vector_color[c(T, F)] <- "lightblue"#'red'#
+      #   vector_color[c(F, T)] <- "lightgreen"#'blue'#
+      #   vector_color <- vector_color[vector_pos]
+      #
+      #   datatable(
+      #     mi_tabla,
+      #     rownames = TRUE,
+      #     options = list(
+      #       pageLength = -1,
+      #       headerCallback = DT::JS(
+      #         "function(thead) {",
+      #         "  $(thead).css('font-size', '2em');",
+      #         "}"
+      #       ),
+      #       columnDefs = list(list(className = 'dt-center', targets = "_all")),
+      #       #pageLength = 5,
+      #       dom = "t",
+      #       scrollX = TRUE,
+      #       searching = FALSE,
+      #       scrollCollapse = TRUE,  # Permitir colapsar el scroll
+      #       fixedColumns = list(leftColumns = 3),  # Fijar las primeras 3 columnas
+      #       #lengthMenu = list(c(-1), c("All")), # Todas las filas
+      #       style = list(
+      #         'font-size' = '20px'  # Tamaño de letra para el nombre de las columnas
+      #       )
+      #     )
+      #
+      #   ) %>%formatStyle(
+      #     colnames(mi_tabla),
+      #     backgroundColor = styleRow(vector_pos, vector_color),#,
+      #     target = 'row',
+      #     fontSize = "26px"
+      #   )
+      #
+      # })
 
 
 
@@ -333,8 +377,10 @@ module_cpiC000_database_s02_example_server <- function(id, input_file_source){
           br(), br(), br(),
           fluidRow(column(12,
                           h2("Database"),
-                          tableOutput(ns("df_database")))
-          )
+                          shinycssloaders::withSpinner(tableOutput(ns("df_database"))))
+                          #shinycssloaders::withSpinner(DTOutput(ns("df_database2")))                          )
+          ),
+          br(), br(), br(),br(), br(), br(),br(), br(), br()
         )
 
       })
