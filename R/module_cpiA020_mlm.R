@@ -748,7 +748,7 @@ module_cpiA020_s02_rscience_server <- function(id, input_general, input_01_anova
           mi_tabla,
           rownames = FALSE,
           options = list(
-
+          pageLength = -1,
             headerCallback = DT::JS(
               "function(thead) {",
               "  $(thead).css('font-size', '2em');",
@@ -756,7 +756,7 @@ module_cpiA020_s02_rscience_server <- function(id, input_general, input_01_anova
             ),
             columnDefs = list(list(className = 'dt-center', targets = "_all")),
             #pageLength = 5,
-            dom = "t",
+            #dom = "t",
             scrollX = TRUE,
             searching = FALSE,
             scrollCollapse = TRUE,  # Permitir colapsar el scroll
