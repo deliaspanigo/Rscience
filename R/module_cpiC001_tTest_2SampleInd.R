@@ -1411,7 +1411,7 @@ module_cpiC001_s02_rscience_server <- function(id, input_general, input_01_anova
           plot003_factor <- plotly::layout(p = plot003_factor,
                                            xaxis = list(title = "FACTOR"),
                                            yaxis = list(title = "VR"),
-                                           title = "Plot 003 - Mean and Standard Deviation",
+                                           title = "Plot 003 - Mean and Standard Error",
                                            font = list(size = 20),
                                            margin = list(t = 100))
 
