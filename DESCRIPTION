@@ -10,23 +10,28 @@ Encoding: UTF-8
 RoxygenNote: 7.3.1
 Imports:
   bslib,
+  DT,
   dplyr,
+  emmeans,
+  EnvStats, 
+  factoextra,
   Hmisc,
   openxlsx,
+  pacman,
+  plot3D,
   plotly,
   rclipboard,
   rmarkdown,
+  reshape2,
   shiny,
   shinycssloaders,
   shinydashboard,
   shinyjs,
   shinyWidgets,
   stringr,
+  tidyverse,
   tools,
-  DT,
-  EnvStats,
-  emmeans,
-  reshape2
+  vegan
 Depends: 
     R (>= 4.3.0)
 LazyData: true

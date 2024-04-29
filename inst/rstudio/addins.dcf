@@ -14,3 +14,10 @@ Name: Rscience - 03) t Test
 Description: R for Science.
 Binding: app_03_Rscience
 Interactive: true
+
+
+
+Name: Rscience - 04) Multivariate
+Description: R for Science.
+Binding: app_04_Rscience
+Interactive: true
