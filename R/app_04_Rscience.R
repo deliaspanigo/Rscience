@@ -36,9 +36,11 @@ app_04_Rscience <- function(){
       shinydashboard::sidebarMenu(
         " Multivariate- 0.0.1",br(),br(),
         shinydashboard::menuItem(text = "database", tabName = "tab00_database", icon = shiny::icon("th")),
+        br(), br(),
         shinydashboard::menuItem(text = "01 - Cluster - Binomial Vars", tabName = "tab01_anova", icon = shiny::icon("th")),
         shinydashboard::menuItem(text = "02 - Cluster - Cuanti Vars", tabName = "tab02_anova", icon = shiny::icon("th")),
-        shinydashboard::menuItem(text = "03 - PCA", tabName = "tab03_anova", icon = shiny::icon("th"))
+        shinydashboard::menuItem(text = "03 - PCA", tabName = "tab03_anova", icon = shiny::icon("th")),
+        shinydashboard::menuItem(text = "04 - Correspondence Analysis", tabName = "tab04_anova", icon = shiny::icon("th"))
 
 
       )
@@ -122,8 +124,10 @@ app_04_Rscience <- function(){
                                                                         "01 - R examples" = "R_example",
                                                                         "02 - xlsx" = "xlsx",
                                                                         "03 - UNC - Bio01" = "UNC_bio01"))
+                                  )
                                   ),
-                                  column(9,
+                                fluidRow(
+                                  column(12,
                                          shiny::conditionalPanel(condition = 'input.file_source == "xlsx"',
                                                                  module_cpiD000_database_s01_excel_ui(id = "data_excel")
                                          ),
@@ -255,6 +259,41 @@ app_04_Rscience <- function(){
                                 br(), br(),br(), br(),br(), br(),
 
                                 module_cpiD003_s02_rscience_ui(id = "anova03_B")
+        ),
+        shinydashboard::tabItem(tabName = "tab04_anova",
+                                h1("04 - Correspondence Analysis"),
+                                fluidRow(
+                                  column(12,
+                                         box(
+                                           title = "Database info",
+                                           status = "primary",
+                                           id = "my_box04A",
+                                           solidHeader = TRUE,
+                                           collapsible = TRUE,
+                                           collapsed = TRUE,
+                                           #closable = TRUE,# Colapsado por defecto
+                                           width = 12,
+                                           module_cpiD004_s02B_varselection_ui(id = "anova04_B")
+                                           #tableOutput("intro_source_database")
+                                         )
+                                  )
+                                ),
+                                # https://cran.r-project.org/web/packages/shinydashboardPlus/vignettes/improved-boxes.html
+                                box(
+                                  title = "Var selection",
+                                  status = "primary",
+                                  id = "my_box04B",
+                                  solidHeader = TRUE,
+                                  collapsible = TRUE,
+                                  closable = FALSE,# Colapsado por defecto
+                                  collapsed = FALSE,
+                                  width = 12,
+                                  module_cpiD004_s01_varselection_ui(id = "anova04_A"),
+                                  #actionButton("toggle_box", "Toggle Box"),
+                                  br(), br(), br()),
+                                br(), br(),br(), br(),br(), br(),
+
+                                module_cpiD004_s02_rscience_ui(id = "anova04_B")
         )
 
       )
@@ -343,6 +382,15 @@ app_04_Rscience <- function(){
     module_cpiD003_s02_rscience_server(id = "anova03_B",
                                        input_general = input_general,
                                        input_01_anova = input_03_anova)
+    ##################################################################################
+    input_04_anova <- module_cpiD004_s01_varselection_server(id = "anova04_A",
+                                                             input_general = input_general)
+
+
+
+    module_cpiD004_s02_rscience_server(id = "anova04_B",
+                                       input_general = input_general,
+                                       input_01_anova = input_04_anova)
   }
 
 

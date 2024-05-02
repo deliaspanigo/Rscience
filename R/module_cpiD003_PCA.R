@@ -3,7 +3,7 @@
 # UI and SERVER for all modules respect to ANOVA
 
 
-module_cpiD002_s02B_varselection_ui <- function(id){
+module_cpiD003_s02B_varselection_ui <- function(id){
 
   ns <- shiny::NS(id)
 
@@ -16,7 +16,7 @@ module_cpiD002_s02B_varselection_ui <- function(id){
 
 
 
-module_cpiD002_s01_varselection_ui <- function(id){
+module_cpiD003_s01_varselection_ui <- function(id){
 
   ns <- shiny::NS(id)
 
@@ -29,7 +29,7 @@ module_cpiD002_s01_varselection_ui <- function(id){
 
 
 
-module_cpiD002_s01_varselection_server <- function(id, input_general){
+module_cpiD003_s01_varselection_server <- function(id, input_general){
   moduleServer(
     id,
     function(input, output, session) {
@@ -134,7 +134,7 @@ module_cpiD002_s01_varselection_server <- function(id, input_general){
 
 
 
-      # # # Var selection for t Test - 2 independent samplesy
+      # # # Var selection forPCA - Principal Component Analysisy
       output$vars_selection <- renderUI({
 
         ns <- shiny::NS(id)
@@ -166,7 +166,7 @@ module_cpiD002_s01_varselection_server <- function(id, input_general){
 
                        column(12,
                               radioButtons(inputId = ns("selected_var_labels"),
-                                           label = "Col var labels",
+                                           label = "Labels/id for units.",
                                            choices = set_options,
                                            selected = set_options[pos01])
                        ))),
@@ -384,7 +384,7 @@ module_cpiD002_s01_varselection_server <- function(id, input_general){
 
 
 
-module_cpiD002_s02_rscience_ui <- function(id){
+module_cpiD003_s02_rscience_ui <- function(id){
 
   ns <- shiny::NS(id)
 
@@ -406,7 +406,7 @@ module_cpiD002_s02_rscience_ui <- function(id){
 
 
 
-module_cpiD002_s02_rscience_server <- function(id, input_general, input_01_anova){
+module_cpiD003_s02_rscience_server <- function(id, input_general, input_01_anova){
   moduleServer(
     id,
     function(input, output, session) {
@@ -422,7 +422,7 @@ module_cpiD002_s02_rscience_server <- function(id, input_general, input_01_anova
           need(!is.null(input_01_anova()), "Error 02: Module anova s02 - input_01_anova can not be NULL.")
         )
 
-        check_previous <- fn_cpiD002_control_previous(database = input_general()$database,
+        check_previous <- fn_cpiD003_control_previous(database = input_general()$database,
                                                       selected_var_name = input_01_anova()$selected_var_name,
                                                       alpha_value = input_01_anova()$alpha_value)
 
@@ -452,7 +452,7 @@ module_cpiD002_s02_rscience_server <- function(id, input_general, input_01_anova
 
         req(control_user_01())
 
-        the_output <- fn_cpiD002_results(database = input_general()$database,
+        the_output <- fn_cpiD003_results(database = input_general()$database,
                                          selected_var_name = input_01_anova()$selected_var_name,
                                          selected_var_labels = input_01_anova()$selected_var_labels,
                                          alpha_value = input_01_anova()$alpha_value)
@@ -477,7 +477,7 @@ module_cpiD002_s02_rscience_server <- function(id, input_general, input_01_anova
         #
         #
         #         # Control post
-        # check_post <- fn_cpiD002_tTest_2SampleInd_control_post(list_results_from_cpiA001_anova1way = RR_general())
+        # check_post <- fn_cpiD003_control_post(list_results_from_cpiA001_anova1way = RR_general())
         # #
         # validate(
         #   need(check_post$check_ok, check_post$text_output)
@@ -493,7 +493,7 @@ module_cpiD002_s02_rscience_server <- function(id, input_general, input_01_anova
       RR_code <- reactive({
 
         req(control_user_02())
-        the_code <- fn_cpiD002_tTest_2SampleInd_code_sectionALL(intro_source_database = input_01_anova()$intro_source_database,
+        the_code <- fn_cpiD003_code_sectionALL(intro_source_database = input_01_anova()$intro_source_database,
                                                                 vr_var_name = input_01_anova()$vr_var_name,
                                                                 factor_var_name = input_01_anova()$factor_var_name,
                                                                 alpha_value = input_01_anova()$alpha_value)
@@ -544,7 +544,7 @@ module_cpiD002_s02_rscience_server <- function(id, input_general, input_01_anova
             scrollX = TRUE,
             searching = FALSE,
             scrollCollapse = TRUE,  # Permitir colapsar el scroll
-            fixedColumns = list(leftColumns = 3),  # Fijar las primeras 3 columnas
+            #fixedColumns = list(leftColumns = 3),  # Fijar las primeras 3 columnas
             #lengthMenu = list(c(-1), c("All")), # Todas las filas
             style = list(
               'font-size' = '20px'  # Tamaño de letra para el nombre de las columnas
@@ -584,10 +584,7 @@ module_cpiD002_s02_rscience_server <- function(id, input_general, input_01_anova
 
 
         # Vector con nombres de elementos a ver
-        nombres_a_ver <- c("matrix_distances", "matrix_distances02",
-                           "matrix_distances03", "amount_tde",
-                           "list_cluster", "matrix_cor_cophenetic",
-                           "cor_pearson_value")
+        nombres_a_ver <- c("list_pca", "autovalores","df_autovalores")
 
         # Usar lapply para mostrar los elementos deseados
         mi_lista[nombres_a_ver]
@@ -610,10 +607,9 @@ module_cpiD002_s02_rscience_server <- function(id, input_general, input_01_anova
 
 
       # # # Tab 05 - Analysis resume...
-      output$tab02_analysis_df01 <-  shiny::renderPrint({
+      output$tab02_analysis_df01 <- DT::renderDT({
 
         req(control_user_02())
-
 
         mi_lista <- RR_general()
 
@@ -621,17 +617,55 @@ module_cpiD002_s02_rscience_server <- function(id, input_general, input_01_anova
 
 
         # Vector con nombres de elementos a ver
-        nombres_a_ver <- c("matrix_distances")
+        selected_objs <- c("df_rotation_matrix")
+
 
         # Usar lapply para mostrar los elementos deseados
-        mi_lista[nombres_a_ver]
+        #mi_lista[selected_objs]
+
+        mi_tabla <- mi_lista[[selected_objs]]
+        #https://rstudio.github.io/DT/functions.html
+        vector_pos <- 1:nrow(mi_tabla)
+        vector_color <- rep(NA, length(vector_pos))
+        vector_color[c(T, F)] <- "lightblue"#'red'#
+        vector_color[c(F, T)] <- "lightgreen"#'blue'#
+        vector_color <- vector_color[vector_pos]
+
+        datatable(
+          mi_tabla,
+          rownames = TRUE,
+          options = list(
+
+            headerCallback = DT::JS(
+              "function(thead) {",
+              "  $(thead).css('font-size', '2em');",
+              "}"
+            ),
+            columnDefs = list(list(className = 'dt-center', targets = "_all")),
+            #pageLength = 5,
+            dom = "t",
+            scrollX = TRUE,
+            searching = FALSE,
+            scrollCollapse = TRUE,  # Permitir colapsar el scroll
+            fixedColumns = list(leftColumns = 3),  # Fijar las primeras 3 columnas
+            #lengthMenu = list(c(-1), c("All")), # Todas las filas
+            style = list(
+              'font-size' = '20px'  # Tamaño de letra para el nombre de las columnas
+            )
+          )
+
+        ) %>%formatStyle(
+          colnames(mi_tabla),
+          backgroundColor = styleRow(vector_pos, vector_color),#,
+          target = 'row',
+          fontSize = "26px"
+        )
 
       })
 
-      output$tab02_analysis_df02 <-  shiny::renderPrint({
+      output$tab02_analysis_df02 <- DT::renderDT({
 
         req(control_user_02())
-
 
         mi_lista <- RR_general()
 
@@ -639,17 +673,55 @@ module_cpiD002_s02_rscience_server <- function(id, input_general, input_01_anova
 
 
         # Vector con nombres de elementos a ver
-        nombres_a_ver <- c("matrix_distances02")
+        selected_objs <- c("df_eigenvalues")
+
 
         # Usar lapply para mostrar los elementos deseados
-        mi_lista[nombres_a_ver]
+        #mi_lista[selected_objs]
+
+        mi_tabla <- mi_lista[[selected_objs]]
+        #https://rstudio.github.io/DT/functions.html
+        vector_pos <- 1:nrow(mi_tabla)
+        vector_color <- rep(NA, length(vector_pos))
+        vector_color[c(T, F)] <- "lightblue"#'red'#
+        vector_color[c(F, T)] <- "lightgreen"#'blue'#
+        vector_color <- vector_color[vector_pos]
+
+        datatable(
+          mi_tabla,
+          rownames = TRUE,
+          options = list(
+
+            headerCallback = DT::JS(
+              "function(thead) {",
+              "  $(thead).css('font-size', '2em');",
+              "}"
+            ),
+            columnDefs = list(list(className = 'dt-center', targets = "_all")),
+            #pageLength = 5,
+            dom = "t",
+            scrollX = TRUE,
+            searching = FALSE,
+            scrollCollapse = TRUE,  # Permitir colapsar el scroll
+            fixedColumns = list(leftColumns = 3),  # Fijar las primeras 3 columnas
+            #lengthMenu = list(c(-1), c("All")), # Todas las filas
+            style = list(
+              'font-size' = '20px'  # Tamaño de letra para el nombre de las columnas
+            )
+          )
+
+        ) %>%formatStyle(
+          colnames(mi_tabla),
+          backgroundColor = styleRow(vector_pos, vector_color),#,
+          target = 'row',
+          fontSize = "26px"
+        )
 
       })
 
-      output$tab02_analysis_df03 <-  shiny::renderPrint({
+      output$tab02_analysis_df03 <- DT::renderDT({
 
         req(control_user_02())
-
 
         mi_lista <- RR_general()
 
@@ -657,10 +729,49 @@ module_cpiD002_s02_rscience_server <- function(id, input_general, input_01_anova
 
 
         # Vector con nombres de elementos a ver
-        nombres_a_ver <- c("matrix_distances03")
+        selected_objs <- c("df_table01_coord_var")
+
 
         # Usar lapply para mostrar los elementos deseados
-        mi_lista[nombres_a_ver]
+        #mi_lista[selected_objs]
+
+        mi_tabla <- mi_lista[[selected_objs]]
+        #https://rstudio.github.io/DT/functions.html
+        vector_pos <- 1:nrow(mi_tabla)
+        vector_color <- rep(NA, length(vector_pos))
+        vector_color[c(T, F)] <- "lightblue"#'red'#
+        vector_color[c(F, T)] <- "lightgreen"#'blue'#
+        vector_color <- vector_color[vector_pos]
+
+        datatable(
+          mi_tabla,
+          rownames = TRUE,
+          options = list(
+
+            headerCallback = DT::JS(
+              "function(thead) {",
+              "  $(thead).css('font-size', '2em');",
+              "}"
+            ),
+            columnDefs = list(list(className = 'dt-center', targets = "_all")),
+            #pageLength = 5,
+            dom = "t",
+            scrollX = TRUE,
+            searching = FALSE,
+            scrollCollapse = TRUE,  # Permitir colapsar el scroll
+            fixedColumns = list(leftColumns = 3),  # Fijar las primeras 3 columnas
+            #lengthMenu = list(c(-1), c("All")), # Todas las filas
+            style = list(
+              'font-size' = '20px'  # Tamaño de letra para el nombre de las columnas
+            )
+          )
+
+        ) %>%formatStyle(
+          colnames(mi_tabla),
+          backgroundColor = styleRow(vector_pos, vector_color),#,
+          target = 'row',
+          fontSize = "26px"
+        )
 
       })
 
@@ -674,7 +785,120 @@ module_cpiD002_s02_rscience_server <- function(id, input_general, input_01_anova
 
 
         # Vector con nombres de elementos a ver
-        selected_objs <- c("matrix_distances03")
+        selected_objs <- c("df_table02")
+
+
+        # Usar lapply para mostrar los elementos deseados
+        #mi_lista[selected_objs]
+
+        mi_tabla <- mi_lista[[selected_objs]]
+        #https://rstudio.github.io/DT/functions.html
+        vector_pos <- 1:nrow(mi_tabla)
+        vector_color <- rep(NA, length(vector_pos))
+        vector_color[c(T, F)] <- "lightblue"#'red'#
+        vector_color[c(F, T)] <- "lightgreen"#'blue'#
+        vector_color <- vector_color[vector_pos]
+
+        datatable(
+          mi_tabla,
+          rownames = TRUE,
+          options = list(
+
+            headerCallback = DT::JS(
+              "function(thead) {",
+              "  $(thead).css('font-size', '2em');",
+              "}"
+            ),
+            columnDefs = list(list(className = 'dt-center', targets = "_all")),
+            #pageLength = 5,
+            dom = "t",
+            scrollX = TRUE,
+            searching = FALSE,
+            scrollCollapse = TRUE,  # Permitir colapsar el scroll
+            fixedColumns = list(leftColumns = 3),  # Fijar las primeras 3 columnas
+            #lengthMenu = list(c(-1), c("All")), # Todas las filas
+            style = list(
+              'font-size' = '20px'  # Tamaño de letra para el nombre de las columnas
+            )
+          )
+
+        ) %>%formatStyle(
+          colnames(mi_tabla),
+          backgroundColor = styleRow(vector_pos, vector_color),#,
+          target = 'row',
+          fontSize = "26px"
+        )
+
+      })
+
+      output$tab02_analysis_df05 <- DT::renderDT({
+
+        req(control_user_02())
+
+        mi_lista <- RR_general()
+
+
+
+
+        # Vector con nombres de elementos a ver
+        selected_objs <- c("df_table03")
+
+
+        # Usar lapply para mostrar los elementos deseados
+        #mi_lista[selected_objs]
+
+        mi_tabla <- mi_lista[[selected_objs]]
+        #https://rstudio.github.io/DT/functions.html
+        vector_pos <- 1:nrow(mi_tabla)
+        vector_color <- rep(NA, length(vector_pos))
+        vector_color[c(T, F)] <- "lightblue"#'red'#
+        vector_color[c(F, T)] <- "lightgreen"#'blue'#
+        vector_color <- vector_color[vector_pos]
+
+        datatable(
+          mi_tabla,
+          rownames = TRUE,
+          options = list(
+
+            headerCallback = DT::JS(
+              "function(thead) {",
+              "  $(thead).css('font-size', '2em');",
+              "}"
+            ),
+            columnDefs = list(list(className = 'dt-center', targets = "_all")),
+            #pageLength = 5,
+            dom = "t",
+            scrollX = TRUE,
+            searching = FALSE,
+            scrollCollapse = TRUE,  # Permitir colapsar el scroll
+            fixedColumns = list(leftColumns = 3),  # Fijar las primeras 3 columnas
+            #lengthMenu = list(c(-1), c("All")), # Todas las filas
+            style = list(
+              'font-size' = '20px'  # Tamaño de letra para el nombre de las columnas
+            )
+          )
+
+        ) %>%formatStyle(
+          colnames(mi_tabla),
+          backgroundColor = styleRow(vector_pos, vector_color),#,
+          target = 'row',
+          fontSize = "26px"
+        )
+
+      })
+
+
+      output$tab02_analysis_df06 <- DT::renderDT({
+
+        req(control_user_02())
+
+        mi_lista <- RR_general()
+
+
+
+
+        # Vector con nombres de elementos a ver
+        selected_objs <- c("df_table04_coord_ind")
 
 
         # Usar lapply para mostrar los elementos deseados
@@ -727,22 +951,43 @@ module_cpiD002_s02_rscience_server <- function(id, input_general, input_01_anova
         ns <- shiny::NS(id)
 
         div(
-          h2("1) Requeriment - Normality test - Residuals"),
-          verbatimTextOutput(ns("tab02_analysis_df01")),
+          # h2("1) Requeriment - Normality test - Residuals"),
+          # verbatimTextOutput(ns("tab02_analysis_df01")),
+          # br(), br(), br(),
+          #
+          # h2("1) Requeriment - Normality test - Residuals"),
+          # verbatimTextOutput(ns("tab02_analysis_df02")),
+          # br(), br(), br(),
+
+          h2("1) EigenVectors (Rotation Matrix)"),
+          h3("R object: df_rotation_matrix"),
+          DTOutput(ns("tab02_analysis_df01")),
           br(), br(), br(),
 
-          h2("1) Requeriment - Normality test - Residuals"),
-          verbatimTextOutput(ns("tab02_analysis_df02")),
+          h2("2) EiginValues"),
+          h3("R object: df_eigenvalues"),
+          DTOutput(ns("tab02_analysis_df02")),
           br(), br(), br(),
 
-          h2("1) Requeriment - Normality test - Residuals"),
-          verbatimTextOutput(ns("tab02_analysis_df03")),
+          h2("3) Table01 - Variable Coords"),
+          h3("R object: df_table01_coord_var"),
+          DTOutput(ns("tab02_analysis_df03")),
           br(), br(), br(),
 
-          h2("1) References"),
+          h2("4) Table02 - ???"),
+          h3("R object: df_table02"),
           DTOutput(ns("tab02_analysis_df04")),
-          br(), br(), br()
+          br(), br(), br(),
 
+          h2("5) Table03 - ???"),
+          h3("R object: df_table03"),
+          DTOutput(ns("tab02_analysis_df05")),
+          br(), br(), br(),
+
+          h2("6) Table04 - Unit Coords"),
+          h3("R object: df_table04_coord_ind"),
+          DTOutput(ns("tab02_analysis_df06")),
+          br(), br(), br(),
         )
 
       })
@@ -773,15 +1018,43 @@ module_cpiD002_s02_rscience_server <- function(id, input_general, input_01_anova
           # # # Create a new plot...
           # # # Create a new plot...
           # # # Create a new plot...
-          plot(list_cluster, las = 1,
-               main="Cluster o conglomerado",
-               xlab="Muestra",
-               ylab="Distancia")
+
+          # # # Plot 001 - eigenvalues
+          set_width01 <- 1
+          set_space01 <- 0.2
+
+          barplot(height = df_eigenvalues$porc_eigenvalue,
+                  names.arg = df_eigenvalues$PC,
+                  xlab = "PC",
+                  ylab = "Eigenvalue (Variance)",
+                  main = "Plot 001 - Eigenvalues",
+                  ylim = c(0, 120),
+                  las = 1,
+                  axes = F,
+                  width = set_width01,
+                  space = set_space01, col = "blue")
+
+
+          axis(side = 2, col = "black", las = 1,
+               col.ticks = "black",
+               at = seq(0, 100, by = 10),
+               labels = seq(0, value_total_variance, length.out = 11))
+
+          pos_x_text01 <- (set_width01 + set_space01) * (c(1:nrow(df_eigenvalues))) - (set_width01/2)
+          pos_y_text01 <- df_eigenvalues$porc_eigenvalue
+          text_label01 <- df_eigenvalues$eigenvalue
+          text(x = pos_x_text01,
+               y = pos_y_text01,
+               labels = text_label01,
+               pos = 3,
+               font = 2)
 
         })
 
         new_plot
       })
+
+
 
       output$el_plot2 <- renderPlot({
 
@@ -793,69 +1066,335 @@ module_cpiD002_s02_rscience_server <- function(id, input_general, input_01_anova
           # # # Create a new plot...
           # # # Create a new plot...
           # # # Create a new plot...
-          plot(list_cluster, las = 1,
-               main="Cluster o conglomerado",
-               xlab="Muestra",
-               ylab="Distancia")
-          rect.hclust(list_cluster, 2, border="red")
-          rect.hclust(list_cluster, 4, border="blue")
-          rect.hclust(list_cluster, 5, border="darkgreen")
+          set_width02 <- 1
+          set_space02 <- 0.2
+
+          barplot(height = df_eigenvalues$acum_porc_eigenvalue,
+                  names.arg = df_eigenvalues$PC,
+                  xlab = "PC",
+                  ylab = "Acumulative Eigenvalue (Acumulative Variance)",
+                  main = "Plot 002 - Acumulative Eigenvalues",
+                  ylim = c(0, 120),
+                  las = 1,
+                  axes = F,
+                  width = set_width02,
+                  space = set_space02, col = "blue")
+
+          # Cambiar el color del eje Y a blanco
+          axis(side = 2, col = "black", las = 1,
+               col.ticks = "black",
+               at = seq(0, 100, by = 10),
+               labels = seq(0, value_total_variance, length.out = 11))
+
+          pos_x_text02 <- (set_width02 + set_space02) * (c(1:nrow(df_eigenvalues))) - (set_width02/2)
+          pos_y_text02 <- df_eigenvalues$acum_porc_eigenvalue
+          text_label02 <- df_eigenvalues$acum_eigenvalue
+          text(x = pos_x_text02,
+               y = pos_y_text02,
+               labels = text_label02,
+               pos = 3,
+               font = 2)
+
 
         })
 
         new_plot
       })
 
-      # output$el_plot3 <- renderPlotly({
-      #
-      #
-      #   mi_lista <- RR_general()
-      #
-      #
-      #   new_plot <-  with(mi_lista,{
-      #     # # # Create a new plot...
-      #     # # # Create a new plot...
-      #     plot003_factor <- plot_ly()
-      #
-      #
-      #     # # # Adding errors...
-      #     plot003_factor <-   add_trace(p = plot003_factor,
-      #                                   type = "scatter",
-      #                                   mode = "markers",
-      #                                   x = df_table_plot003$level,
-      #                                   y = df_table_plot003$mean,
-      #                                   color = df_table_plot003$level,
-      #                                   colors = df_table_plot003$color,
-      #                                   marker = list(symbol = "line-ew-open",
-      #                                                 size = 50,
-      #                                                 opacity = 1,
-      #                                                 line = list(width = 5)),
-      #                                   error_y = list(type = "data", array = df_table_plot003$standard_error)
-      #     )
-      #
-      #
-      #     #plot002_factor
-      #
-      #     plot003_factor <- plotly::layout(p = plot003_factor,
-      #                                      xaxis = list(title = "FACTOR"),
-      #                                      yaxis = list(title = "VR"),
-      #                                      title = "Plot 003 - Mean and Standard Error",
-      #                                      font = list(size = 20),
-      #                                      margin = list(t = 100))
-      #
-      #     # # # Without zerolines
-      #     plot003_factor <-plotly::layout(p = plot003_factor,
-      #                                     xaxis = list(zeroline = FALSE),
-      #                                     yaxis = list(zeroline = FALSE))
-      #
-      #
-      #     # # # Plot output
-      #     plot003_factor
-      #
-      #   })
-      #
-      #   new_plot
-      # })
+      output$el_plot3 <- renderPlot({
+
+
+        mi_lista <- RR_general()
+
+
+        new_plot <-  with(mi_lista,{
+          # # # Create a new plot...
+          # # # Create a new plot...
+          # # # Create a new plot...
+          # # # Plot 003 - Porcentaje eigenvalues
+          set_width03 <- 1
+          set_space03 <- 0.2
+
+          barplot(height = df_eigenvalues$porc_eigenvalue,
+                  names.arg = df_eigenvalues$PC,
+                  xlab = "PC",
+                  ylab = "Porcentaje Eigenvalue (Porcentaje Variance)",
+                  main = "Plot 003 - Porcentaje Eigenvalues",
+                  ylim = c(0, 120),
+                  las = 1,
+                  axes = F,
+                  width = set_width03,
+                  space = set_space03, col = "blue")
+
+          # Cambiar el color del eje Y a blanco
+          axis(side = 2, col = "black", las = 1,
+               col.ticks = "black", at = seq(0, 100, by = 10),
+               labels = T)
+
+          pos_x_text03 <- (set_width03 + set_space03) * (c(1:nrow(df_eigenvalues))) - (set_width03/2)
+          pos_y_text03 <- df_eigenvalues$porc_eigenvalue
+          text_label03 <- paste0(df_eigenvalues$porc_eigenvalue, "%")
+          text(x = pos_x_text03,
+               y = pos_y_text03,
+               labels = text_label03,
+               pos = 3,
+               font = 2)
+
+        })
+
+        new_plot
+      })
+
+      output$el_plot4 <- renderPlot({
+
+
+        mi_lista <- RR_general()
+
+
+        new_plot <-  with(mi_lista,{
+          # # # Plot 004 - Acumulative Porcentaje eigenvalues
+          set_width04 <- 1
+          set_space04 <- 0.2
+
+          barplot(height = df_eigenvalues$acum_porc_eigenvalue,
+                  names.arg = df_eigenvalues$PC,
+                  xlab = "PC",
+                  ylab = "Acumulative Porcentaje Eigenvalue (Acumulative Porcentaje Variance)",
+                  main = "Plot 004 - Acumulative Porcentaje Eigenvalues",
+                  ylim = c(0, 120),
+                  las = 1,
+                  axes = F,
+                  width = set_width04,
+                  space = set_space04, col = "blue")
+
+          # Cambiar el color del eje Y a blanco
+          axis(side = 2, col = "black", las = 1,
+               col.ticks = "black", at = seq(0, 100, by = 10),
+               labels = T)
+
+          pos_x_text04 <- (set_width04 + set_space04) * (c(1:nrow(df_eigenvalues))) - (set_width04/2)
+          pos_y_text04 <- df_eigenvalues$acum_porc_eigenvalue
+          text_label04 <- paste0(df_eigenvalues$acum_porc_eigenvalue, "%")
+          text(x = pos_x_text04,
+               y = pos_y_text04,
+               labels = text_label04,
+               pos = 3,
+               font = 2)
+
+        })
+
+        new_plot
+      })
+
+
+
+
+      output$el_plot5 <- renderPlot({
+
+
+        mi_lista <- RR_general()
+
+
+        new_plot <-  with(mi_lista,{
+          factoextra::fviz_pca_var(X = list_pca,
+                                   title = "Plot 005 PCA - Variables",
+                                   col.var = "red")
+
+
+
+        })
+
+        new_plot
+      })
+
+
+      output$el_plot6 <- renderPlot({
+
+
+        mi_lista <- RR_general()
+
+
+        new_plot <-  with(mi_lista,{
+          factoextra::fviz_pca_biplot(X= list_pca,
+                                      axes = c(1, 2),
+                                      #geom = c("point", "text"),
+                                      geom.ind = c(""),
+                                      geom.var = c("arrow", "text"),
+                                      col.ind = "blue",
+                                      col.var = "red",
+                                      repel =T, addEllipses = F,
+                                      habillage = "none",
+                                      title = "Plto 006 - PCA - Biplot - Variables")
+
+
+        })
+
+        new_plot
+      })
+
+      output$el_plot7 <- renderPlot({
+
+
+        mi_lista <- RR_general()
+
+
+        new_plot <-  with(mi_lista,{
+          factoextra::fviz_pca_biplot(X= list_pca,
+                                      axes = c(1, 2),
+                                      #geom = c("point", "text"),
+                                      geom.ind = c("point", "text"),
+                                      geom.var = c(""),
+                                      col.ind = "blue",
+                                      col.var = "red",
+                                      repel =T,
+                                      addEllipses = F,
+                                      habillage = "none",
+                                      title = "Plot 007 - PCA - Biplot - Units")
+
+
+        })
+
+        new_plot
+      })
+
+      output$el_plot8<- renderPlot({
+
+
+        mi_lista <- RR_general()
+
+
+        new_plot <-  with(mi_lista,{
+          factoextra::fviz_pca_biplot(X= list_pca,
+                                      axes = c(1, 2),
+                                      #geom = c("point", "text"),
+                                      geom.ind = c("point", "text"),
+                                      geom.var = c("arrow", "text"),
+                                      col.ind = "blue",
+                                      col.var = "red",
+                                      repel =T, addEllipses = F,
+                                      habillage = "none",
+                                      title = "Plot 008 - PCA - Biplot - Variables + Units")
+
+
+        })
+
+        new_plot
+      })
+
+      output$el_plot9 <- renderPlotly({
+
+
+        mi_lista <- RR_general()
+
+
+        new_plot <-  with(mi_lista,{
+          pos_x_graph <- "PC3"
+          pos_y_graph <- "PC1"
+          pos_z_graph <- "PC2"
+
+
+          seleceted_x_coord_ind <- df_table04_coord_ind[, pos_x_graph ]
+          seleceted_y_coord_ind <- df_table04_coord_ind[, pos_y_graph ]
+          seleceted_z_coord_ind <- df_table04_coord_ind[, pos_z_graph ]
+
+          seleceted_x_coord_var <- df_table01_coord_var[, pos_x_graph ]
+          seleceted_y_coord_var <- df_table01_coord_var[, pos_y_graph ]
+          seleceted_z_coord_var <- df_table01_coord_var[, pos_z_graph ]
+
+          plot005 <- plotly::plot_ly()
+
+          plot005 <- add_trace(p = plot005,
+                               x = seleceted_x_coord_ind,
+                               y = seleceted_y_coord_ind,
+                               z = seleceted_z_coord_ind,
+                               type = 'scatter3d',
+                               mode = 'markers',
+                               name = "coord_ind",
+                               marker = list(size = 10,
+                                             color = 'blue',
+                                             opacity = 0.7))
+
+
+          plot005 <- plotly::layout(p = plot005,
+                                    scene = list(xaxis = list(title = pos_x_graph , zeroline = TRUE),
+                                                 yaxis = list(title = pos_y_graph , zeroline = TRUE),
+                                                 zaxis = list(title = pos_z_graph ,  zeroline = TRUE)),
+                                    title = "Plot 009 - Biplot 3D",
+                                    font = list(size = 20),
+                                    margin = list(t = 100))
+
+
+          plot005 <- add_trace(p = plot005,
+                               x = 0,
+                               y = 0,
+                               z = 0,
+                               type = 'scatter3d',
+                               mode = 'markers',
+                               name = "center",
+                               marker = list(size = 10,
+                                             color = 'black',
+                                             opacity = 0.7))
+
+
+
+
+          plot005 <- add_trace(p = plot005,
+                               x = seleceted_x_coord_var,
+                               y = seleceted_y_coord_var,
+                               z = seleceted_z_coord_var,
+                               type = 'scatter3d',
+                               mode = 'markers',
+                               name = "coord_var",
+                               marker = list(size = 10,
+                                             color = 'red',
+                                             opacity = 0.7))
+
+          #
+          # plot005 <- add_trace(p = plot005,
+          #                      x = c(0, seleceted_x_coord_var),
+          #                      y = c(0, seleceted_y_coord_var),
+          #                      z = c(0, seleceted_z_coord_var),
+          #                      type = 'scatter3d',
+          #                      mode = 'segments',
+          #                      name = "vector_var",
+          #                      marker = list(size = 10,
+          #                                    color = 'green',
+          #                                    opacity = 0.7))
+          for(k in 1:length(seleceted_x_coord_var)){
+            plot005 <- add_trace(p = plot005,
+                                 x = c(0, seleceted_x_coord_var[k]),
+                                 y = c(0, seleceted_y_coord_var[k]),
+                                 z = c(0, seleceted_z_coord_var[k]),
+                                 type = "scatter3d",
+                                 mode = "lines",
+                                 name = df_table01_coord_var$variables[k])
+
+
+
+          }
+
+          plot005 <- add_trace(p = plot005,
+                               x = seleceted_x_coord_var,
+                               y = seleceted_y_coord_var,
+                               z = seleceted_z_coord_var,
+                               #marker = m,
+                               type = "scatter3d",
+                               mode = "text+markers",
+                               name = "var_labels", linetypes = NULL,
+                               text = df_table01_coord_var$variables)
+
+          #
+          # plot005 <- add_segments(p = plot005,
+          #              x = 0, xend = seleceted_x_coord_var,
+          #              y = 0, yend = seleceted_y_coord_var,
+          #              z = 0, zend = seleceted_z_coord_var)
+
+          plot005
+
+        })
+
+        new_plot
+      })
       #
       # output$el_plot4 <- renderPlotly({
       #
@@ -916,7 +1455,7 @@ module_cpiD002_s02_rscience_server <- function(id, input_general, input_01_anova
 
 
         # Vector con nombres de elementos a ver
-        selected_objs <- c("matrix_distances03")
+        selected_objs <- c("df_eigenvalues")
 
 
         # Usar lapply para mostrar los elementos deseados
@@ -934,7 +1473,7 @@ module_cpiD002_s02_rscience_server <- function(id, input_general, input_01_anova
 
 
         # Vector con nombres de elementos a ver
-        selected_objs <- c("matrix_distances02")
+        selected_objs <- c("df_eigenvalues")
 
 
         # Usar lapply para mostrar los elementos deseados
@@ -942,6 +1481,115 @@ module_cpiD002_s02_rscience_server <- function(id, input_general, input_01_anova
 
       })
 
+      output$tabla03 <- renderPrint({
+
+        req(control_user_02())
+
+        mi_lista <- RR_general()
+
+
+
+
+        # Vector con nombres de elementos a ver
+        selected_objs <- c("df_autovalores")
+
+
+        # Usar lapply para mostrar los elementos deseados
+        mi_lista[selected_objs]
+
+      })
+
+      output$tabla04 <- renderPrint({
+
+        req(control_user_02())
+
+        mi_lista <- RR_general()
+
+
+
+
+        # Vector con nombres de elementos a ver
+        selected_objs <- c("df_autovalores")
+
+
+        # Usar lapply para mostrar los elementos deseados
+        mi_lista[selected_objs]
+
+      })
+
+      output$tabla05 <- renderPrint({
+
+        req(control_user_02())
+
+        mi_lista <- RR_general()
+
+
+
+
+        # Vector con nombres de elementos a ver
+        selected_objs <- c("df_autovalores")
+
+
+        # Usar lapply para mostrar los elementos deseados
+        mi_lista[selected_objs]
+
+      })
+
+
+      output$tabla06 <- renderPrint({
+
+        req(control_user_02())
+
+        mi_lista <- RR_general()
+
+
+
+
+        # Vector con nombres de elementos a ver
+        selected_objs <- c("df_autovalores")
+
+
+        # Usar lapply para mostrar los elementos deseados
+        mi_lista[selected_objs]
+
+      })
+
+
+      output$tabla07 <- renderPrint({
+
+        req(control_user_02())
+
+        mi_lista <- RR_general()
+
+
+
+
+        # Vector con nombres de elementos a ver
+        selected_objs <- c("df_autovalores")
+
+
+        # Usar lapply para mostrar los elementos deseados
+        mi_lista[selected_objs]
+
+      })
+
+      output$tabla08 <- renderPrint({
+
+        req(control_user_02())
+
+        mi_lista <- RR_general()
+
+
+
+
+        # Vector con nombres de elementos a ver
+        selected_objs <- c("df_autovalores")
+
+
+        # Usar lapply para mostrar los elementos deseados
+        mi_lista[selected_objs]
+
+      })
       # output$tabla03 <- renderPrint({
       #
       #   req(control_user_02())
@@ -1099,32 +1747,37 @@ module_cpiD002_s02_rscience_server <- function(id, input_general, input_01_anova
             textOutput(ns("calling_help")),
 
             shiny::tabsetPanel(id = ns("super_tabset_panel"),
-                               tabPanel("Minibase",
+                               selected = "Analysis",
+                               tabPanel("minibase",
                                         fluidRow(
                                           column(12,
-                                                 h1("Multivariado 01"),
+                                                 h1("PCA - Principal Component Analysis"))),
+                                        fluidRow(
+                                          column(12,
+                                                 h3("R Object: minibase"),
+                                                 h3("Comment: Only selected cols - Only rows without NA values."),
                                                  uiOutput(ns("tab01_FULL"))
                                           )
                                         )),
-                               tabPanel("AnalysisB",  # 05
-                                        fluidRow(
-                                          column(12,
-                                                 h1("Multivariado 01"),
-                                                 uiOutput(ns("tab02_analysisB_FULL"))
-                                          )
-                                        )
-                               ),
+                               # tabPanel("AnalysisB",  # 05
+                               #          fluidRow(
+                               #            column(12,
+                               #                   h1("PCA - Principal Component Analysis"),
+                               #                   uiOutput(ns("tab02_analysisB_FULL"))
+                               #            )
+                               #          )
+                               # ),
                                tabPanel("Analysis",  # 05
                                         fluidRow(
                                           column(12,
-                                                 h1("Multivariado 01"),
+                                                 h1("PCA - Principal Component Analysis"),
                                                  uiOutput(ns("tab02_analysis_FULL"))
                                           )
                                         )
                                ),
 
-                               tabPanel("Plots - Raw Data",  # 05,
-                                        fluidRow(column(12, h1("t Test - 2 Independent Samples"))),
+                               tabPanel("Plots",  # 05,
+                                        fluidRow(column(12, h1("PCA - Principal Component Analysis"))),
                                         fluidRow(
                                           #column(1),
                                           column(6, plotOutput(ns("el_plot1"), height = "40vh", width = "70vh")),
@@ -1137,13 +1790,54 @@ module_cpiD002_s02_rscience_server <- function(id, input_general, input_01_anova
                                           column(6, plotOutput(ns("el_plot2"), height = "40vh", width = "70vh")),
                                           column(6, verbatimTextOutput(ns("tabla02"))),
                                         ),
-                                        br(),br(),br()
+                                        br(),br(),br(),
 
-                                        # fluidRow(
-                                        #   #column(1),
-                                        #   column(6, plotlyOutput(ns("el_plot3"), height = "40vh", width = "70vh")),
-                                        #   column(6, verbatimTextOutput(ns("tabla03"))),
-                                        # ),
+                                        fluidRow(
+                                          #column(1),
+                                          column(6, plotOutput(ns("el_plot3"), height = "40vh", width = "70vh")),
+                                          column(6, verbatimTextOutput(ns("tabla03"))),
+                                        ),
+                                        br(),br(),br(),
+
+                                        fluidRow(
+                                          #column(1),
+                                          column(6, plotOutput(ns("el_plot4"), height = "40vh", width = "70vh")),
+                                          column(6, verbatimTextOutput(ns("tabla04"))),
+                                        ),
+                                        br(),br(),br(),
+
+                                        fluidRow(
+                                          #column(1),
+                                          column(6, plotOutput(ns("el_plot5"), height = "40vh", width = "70vh")),
+                                          column(6, verbatimTextOutput(ns("tabla05"))),
+                                        ),
+                                        br(),br(),br(),
+
+                                        fluidRow(
+                                          #column(1),
+                                          column(6, plotOutput(ns("el_plot6"), height = "40vh", width = "70vh")),
+                                          column(6, verbatimTextOutput(ns("tabla06"))),
+                                        ),
+                                        br(),br(),br(),
+
+                                        fluidRow(
+                                          #column(1),
+                                          column(6, plotOutput(ns("el_plot7"), height = "40vh", width = "70vh")),
+                                          column(6, verbatimTextOutput(ns("tabla07"))),
+                                        ),
+                                        br(),br(),br(),
+
+                                        fluidRow(
+                                          #column(1),
+                                          column(6, plotOutput(ns("el_plot8"), height = "40vh", width = "70vh")),
+                                          column(6, verbatimTextOutput(ns("tabla08"))),
+                                        ),
+                                        br(),br(),br(),
+                                        fluidRow(
+                                          #column(1),
+                                          column(12, plotlyOutput(ns("el_plot9"), height = "100vh", width = "140vh"))#,
+                                          #column(6, verbatimTextOutput(ns("tabla07"))),
+                                        )
                                         # br(),br(),br(),
                                         # fluidRow(
                                         #   #column(1),
@@ -1154,7 +1848,7 @@ module_cpiD002_s02_rscience_server <- function(id, input_general, input_01_anova
                                         #shinycssloaders::withSpinner(uiOutput(ns("plot_outputs33"))),
                                ),
                                # tabPanel("Plots - Residuals",  # 05,
-                               #          fluidRow(column(12, h1("t Test - 2 independent samplesy"))),
+                               #          fluidRow(column(12, h1("PCA - Principal Component Analysisy"))),
                                #          fluidRow(
                                #            #column(1),
                                #            column(12,
@@ -1167,7 +1861,7 @@ module_cpiD002_s02_rscience_server <- function(id, input_general, input_01_anova
                                #          )
                                # ),
                                # tabPanel("Plots - Factor",  # 05,
-                               #          fluidRow(h1("t Test - 2 independent samplesy")),
+                               #          fluidRow(h1("PCA - Principal Component Analysisy")),
                                #          fluidRow(
                                #            #column(1),
                                #            column(12,
@@ -1180,7 +1874,7 @@ module_cpiD002_s02_rscience_server <- function(id, input_general, input_01_anova
                                #          )
                                # ),
                                # tabPanel("Plots - Residuals",  # 05,
-                               #          fluidRow(h1("t Test - 2 independent samplesy")),
+                               #          fluidRow(h1("PCA - Principal Component Analysisy")),
                                #          fluidRow(
                                #            #column(1),
                                #            column(12,
@@ -1193,7 +1887,7 @@ module_cpiD002_s02_rscience_server <- function(id, input_general, input_01_anova
                                #          )
                                # ),
                                # tabPanel("Plots2",  # 05,
-                               #          fluidRow(h1("t Test - 2 independent samplesy")),
+                               #          fluidRow(h1("PCA - Principal Component Analysisy")),
                                #          fluidRow(
                                #            #column(1),
                                #            column(12,
@@ -1206,7 +1900,7 @@ module_cpiD002_s02_rscience_server <- function(id, input_general, input_01_anova
                                tabPanel("Full Results",  # 05
                                         fluidRow(
                                           column(12,
-                                                 h1("t Test - 2 Independent Samples"),
+                                                 h1("PCA - Principal Component Analysis"),
                                                  verbatimTextOutput(ns("tab01_all_anova_results"))
                                           )
                                         )
@@ -1217,7 +1911,7 @@ module_cpiD002_s02_rscience_server <- function(id, input_general, input_01_anova
                                tabPanel("R code",  # 05
                                         fluidRow(
                                           column(10,
-                                                 h1("t Test - 2 independent samplesy"),
+                                                 h1("PCA - Principal Component Analysisy"),
                                                  verbatimTextOutput(ns("tab05_code"))
                                           ),
                                           br(), br(),

@@ -166,7 +166,7 @@ module_cpiD001_s01_varselection_server <- function(id, input_general){
 
                        column(12,
                               radioButtons(inputId = ns("selected_var_labels"),
-                                                 label = "Col var labels",
+                                                 label = "Labels/id for units.",
                                                  choices = set_options,
                                                  selected = set_options[pos01])
                        ))),
@@ -477,7 +477,7 @@ module_cpiD001_s02_rscience_server <- function(id, input_general, input_01_anova
         #
         #
         #         # Control post
-        # check_post <- fn_cpiD001_tTest_2SampleInd_control_post(list_results_from_cpiA001_anova1way = RR_general())
+        # check_post <- fn_cpiD001_ClusterBinomial_control_post(list_results_from_cpiA001_anova1way = RR_general())
         # #
         # validate(
         #   need(check_post$check_ok, check_post$text_output)
@@ -493,7 +493,7 @@ module_cpiD001_s02_rscience_server <- function(id, input_general, input_01_anova
       RR_code <- reactive({
 
         req(control_user_02())
-        the_code <- fn_cpiD001_tTest_2SampleInd_code_sectionALL(intro_source_database = input_01_anova()$intro_source_database,
+        the_code <- fn_cpiD001_ClusterBinomial_code_sectionALL(intro_source_database = input_01_anova()$intro_source_database,
                                                                 vr_var_name = input_01_anova()$vr_var_name,
                                                                 factor_var_name = input_01_anova()$factor_var_name,
                                                                 alpha_value = input_01_anova()$alpha_value)
@@ -566,6 +566,8 @@ module_cpiD001_s02_rscience_server <- function(id, input_general, input_01_anova
 
         div(
           h2("1) minibase"),
+          h3("R Object: minibase"),
+          h3("Comment: Only selected cols - Only rows without NA values."),
           DT::DTOutput(ns("tab01_minibase")),
           br(), br(), br()
         )
@@ -727,19 +729,19 @@ module_cpiD001_s02_rscience_server <- function(id, input_general, input_01_anova
         ns <- shiny::NS(id)
 
         div(
-          h2("1) Requeriment - Normality test - Residuals"),
+          h2("1) Matrix triangular inferior - Distancias Euclideas"),
           verbatimTextOutput(ns("tab02_analysis_df01")),
           br(), br(), br(),
 
-          h2("1) Requeriment - Normality test - Residuals"),
+          h2("2) Matriz triangular con diagonal - Distancias Euclideas"),
           verbatimTextOutput(ns("tab02_analysis_df02")),
           br(), br(), br(),
 
-          h2("1) Requeriment - Normality test - Residuals"),
+          h2("3) Matriz completa - Distancias Euclideas"),
           verbatimTextOutput(ns("tab02_analysis_df03")),
           br(), br(), br(),
 
-          h2("1) References"),
+          h2("4) Matriz completa - Distancias Euclideas"),
           DTOutput(ns("tab02_analysis_df04")),
           br(), br(), br()
 
@@ -1099,32 +1101,54 @@ module_cpiD001_s02_rscience_server <- function(id, input_general, input_01_anova
           textOutput(ns("calling_help")),
 
           shiny::tabsetPanel(id = ns("super_tabset_panel"),
-                             tabPanel("Minibase",
+                             selected = "Analysis",
+                             tabPanel("minibase",
                                       fluidRow(
                                         column(12,
-                                               h1("Multivariado 01"),
-                                               uiOutput(ns("tab01_FULL"))
-                                        )
-                                      )),
+                                               h1("Cluster - Binomial vars"),
+                                               h3("Method: ward.D2"),
+                                               h3("Distance: Euclidean"),
+                                        )),
+                                        fluidRow(
+                                          column(12,
+                                                 #h3("R Object: minibase"),
+                                                 #h3("Comment: Only selected cols - Only rows without NA values."),
+                                                 uiOutput(ns("tab01_FULL"))
+                                          )
+                                      )
+                                      ),
                              tabPanel("AnalysisB",  # 05
                                       fluidRow(
                                         column(12,
-                                               h1("Multivariado 01"),
-                                               uiOutput(ns("tab02_analysisB_FULL"))
+                                               h1("Cluster - Binomial vars"),
+                                               h3("Method: ward.D2"),
+                                               h3("Distance: Euclidean"),
+                                        )),
+                                      fluidRow(
+                                        column(12, uiOutput(ns("tab02_analysisB_FULL"))
                                         )
                                       )
                              ),
                              tabPanel("Analysis",  # 05
                                       fluidRow(
                                         column(12,
-                                               h1("Multivariado 01"),
-                                               uiOutput(ns("tab02_analysis_FULL"))
+                                               h1("Cluster - Binomial vars"),
+                                               h3("Method: ward.D2"),
+                                               h3("Distance: Euclidean"),
+                                        )),
+                                      fluidRow(
+                                        column(12, uiOutput(ns("tab02_analysis_FULL"))
                                         )
                                       )
                              ),
 
-                             tabPanel("Plots - Raw Data",  # 05,
-                                      fluidRow(column(12, h1("t Test - 2 Independent Samples"))),
+                             tabPanel("Plots",  # 05,
+                                      fluidRow(
+                                        column(12,
+                                               h1("Cluster - Binomial vars"),
+                                               h3("Method: ward.D2"),
+                                               h3("Distance: Euclidean"),
+                                        )),
                                       fluidRow(
                                         #column(1),
                                         column(6, plotOutput(ns("el_plot1"), height = "40vh", width = "70vh")),

@@ -3,7 +3,7 @@
 # UI and SERVER for all modules respect to ANOVA
 
 
-module_cpiD003_s02B_varselection_ui <- function(id){
+module_cpiD002_s02B_varselection_ui <- function(id){
 
   ns <- shiny::NS(id)
 
@@ -16,7 +16,7 @@ module_cpiD003_s02B_varselection_ui <- function(id){
 
 
 
-module_cpiD003_s01_varselection_ui <- function(id){
+module_cpiD002_s01_varselection_ui <- function(id){
 
   ns <- shiny::NS(id)
 
@@ -29,7 +29,7 @@ module_cpiD003_s01_varselection_ui <- function(id){
 
 
 
-module_cpiD003_s01_varselection_server <- function(id, input_general){
+module_cpiD002_s01_varselection_server <- function(id, input_general){
   moduleServer(
     id,
     function(input, output, session) {
@@ -134,7 +134,7 @@ module_cpiD003_s01_varselection_server <- function(id, input_general){
 
 
 
-      # # # Var selection for t Test - 2 independent samplesy
+      # # # Var selection for Cluster - Cuantitative vars
       output$vars_selection <- renderUI({
 
         ns <- shiny::NS(id)
@@ -384,7 +384,7 @@ module_cpiD003_s01_varselection_server <- function(id, input_general){
 
 
 
-module_cpiD003_s02_rscience_ui <- function(id){
+module_cpiD002_s02_rscience_ui <- function(id){
 
   ns <- shiny::NS(id)
 
@@ -406,7 +406,7 @@ module_cpiD003_s02_rscience_ui <- function(id){
 
 
 
-module_cpiD003_s02_rscience_server <- function(id, input_general, input_01_anova){
+module_cpiD002_s02_rscience_server <- function(id, input_general, input_01_anova){
   moduleServer(
     id,
     function(input, output, session) {
@@ -422,7 +422,7 @@ module_cpiD003_s02_rscience_server <- function(id, input_general, input_01_anova
           need(!is.null(input_01_anova()), "Error 02: Module anova s02 - input_01_anova can not be NULL.")
         )
 
-        check_previous <- fn_cpiD003_control_previous(database = input_general()$database,
+        check_previous <- fn_cpiD002_control_previous(database = input_general()$database,
                                                       selected_var_name = input_01_anova()$selected_var_name,
                                                       alpha_value = input_01_anova()$alpha_value)
 
@@ -447,22 +447,171 @@ module_cpiD003_s02_rscience_server <- function(id, input_general, input_01_anova
 
       })
 
-      # # # All anova results
-      RR_general <- reactive({
+      k_groups_01 <- reactive({ 6 })
 
-        req(control_user_01())
+      output$k_selection2 <- renderUI({
 
-        the_output <- fn_cpiD003_results(database = input_general()$database,
-                                         selected_var_name = input_01_anova()$selected_var_name,
-                                         selected_var_labels = input_01_anova()$selected_var_labels,
-                                         alpha_value = input_01_anova()$alpha_value)
+        req(k_groups_01())
+        ns <- shiny::NS(id)
+
+        vector_g <- 2:k_groups_01()
+        vector_g <- c("Select one..." = "", vector_g)
+        vector_g <- 4
+        div(
+        selectInput(inputId = ns("k_groups_02"),
+                    label = "Estudio previo de grupos",
+                    choices = vector_g)
+        )
+      })
+
+      k_groups_02 <- reactive({
+        req(input$k_groups_02)
+
+        as.numeric(as.character(input$k_groups_02))
+      })
 
 
-        the_output
+      RR01 <- reactive({
+
+        req(control_user_01(), k_groups_01())
+
+        #if(input$k_groups_01 == "") return(NULL)
+
+        database = input_general()$database
+        selected_var_name = input_01_anova()$selected_var_name
+        selected_var_labels = input_01_anova()$selected_var_labels
+        alpha_value = input_01_anova()$alpha_value
+        k_groups_01 <- k_groups_01()
+
+        ##############################################
+
+        # Rscience code
+        vector_all_vars <- c(selected_var_labels, selected_var_name)
+        minibase <- database[vector_all_vars]
+
+        vector_labels <- as.character(minibase[,selected_var_labels])
+
+        minibase2 <- minibase[selected_var_name]
+
+        k_colors_01 <- rainbow(k_groups_01)
+        #################################################
+        # Realiza la estandarizacion:
+
+        z <- scale(minibase2[, -1])
+        N <- ncol(z)
+        S <- dist(z, method = "euclidean")/sqrt(N)
+        #clusterS <- hclust(S, method = "single")
+        #clusterC <- hclust(S, method = "complete")
+        clusterA <- hclust(d = S, method = "average")
+        #clusterW <- hclust(S, method = "ward.D2")
+
+
+        # correlación cofenética:
+        matrix_cophenetic <- cophenetic(clusterA)
+        pearson_cor_value <- cor(matrix_cophenetic, S, method = "pearson")
+
+
+        ############ Agrupamiento jerarquico  (MODO R_ Variables) ############
+        t_z <- t(z)
+        t_N <- ncol(t_z)
+        t_S <- dist(t_z, method = "euclidean")/sqrt(t_N)
+        t_clusterA <- hclust(t_S, method = "average")
+
+
+
+        output_list <- Hmisc::llist(vector_all_vars, minibase, minibase2,
+                                    k_groups_01,  k_colors_01, z, N,
+                                    S, clusterA,
+                                    matrix_cophenetic, pearson_cor_value,
+                                    t_z, t_N, t_S, t_clusterA
+                                    )
+
+        #return(output_list)
+
+        output_list
+
+
+      })
+
+      RR02 <- reactive({
+
+        req(control_user_01(), input$k_groups_02)
+
+        #if(input$k_groups_01 == "") return(NULL)
+
+        database = input_general()$database
+        selected_var_name = input_01_anova()$selected_var_name
+        selected_var_labels = input_01_anova()$selected_var_labels
+        alpha_value = input_01_anova()$alpha_value
+        k_groups_02 <- as.numeric(as.character(input$k_groups_02)) #k_groups_02()
+
+        ##############################################
+
+        # Rscience code
+        vector_all_vars <- c(selected_var_labels, selected_var_name)
+        minibase <- database[vector_all_vars]
+
+        vector_labels <- as.character(minibase[,selected_var_labels])
+
+        minibase2 <- minibase[selected_var_name]
+
+        k_colors_02 <- rainbow(k_groups_02)
+        #################################################
+        # Realiza la estandarizacion:
+
+        z <- scale(minibase2[, -1])
+        N <- ncol(z)
+        S <- dist(z, method = "euclidean")/sqrt(N)
+        #clusterS <- hclust(S, method = "single")
+        #clusterC <- hclust(S, method = "complete")
+        clusterA <- hclust(d = S, method = "average")
+        #clusterW <- hclust(S, method = "ward.D2")
+
+
+        # correlación cofenética:
+        matrix_cophenetic <- cophenetic(clusterA)
+        pearson_cor_value <- cor(matrix_cophenetic, S, method = "pearson")
+
+
+        ############ Agrupamiento jerarquico  (MODO R_ Variables) ############
+        t_z <- t(z)
+        t_N <- ncol(t_z)
+        t_S <- dist(t_z, method = "euclidean")/sqrt(t_N)
+        t_clusterA <- hclust(t_S, method = "average")
+
+
+
+        output_list <- Hmisc::llist(vector_all_vars, minibase, minibase2,
+                                    k_groups_02,  k_colors_02, z, N,
+                                    S, clusterA,
+                                    matrix_cophenetic, pearson_cor_value,
+                                    t_z, t_N, t_S, t_clusterA
+        )
+
+        #return(output_list)
+
+        output_list
+
 
       })
 
 
+      # # # All anova results
+      # RR_general <- reactive({
+      #
+      #   req(control_user_01())
+      #
+      #   the_output <- fn_cpiD002_results(database = input_general()$database,
+      #                                    selected_var_name = input_01_anova()$selected_var_name,
+      #                                    selected_var_labels = input_01_anova()$selected_var_labels,
+      #                                    alpha_value = input_01_anova()$alpha_value)
+      #
+      #
+      #   the_output
+      #
+      # })
+      #
+      #
 
       # # # Control for initial inputs
       control_user_02 <- reactive({
@@ -470,14 +619,16 @@ module_cpiD003_s02_rscience_server <- function(id, input_general, input_01_anova
         req(control_user_01())
         #
         validate(
-          need(!is.null(RR_general()), "Error 03: Module anova s02 - RR_general() can not be NULL.")
+          #need(!is.null(RR_general()), "Error 03: Module anova s02 - RR_general() can not be NULL.")
+          need(!is.null(RR01()), "Error 03: Module anova s02 - RR01() can not be NULL.")
+
         )
         #
         #
         #
         #
         #         # Control post
-        # check_post <- fn_cpiD003_tTest_2SampleInd_control_post(list_results_from_cpiA001_anova1way = RR_general())
+        # check_post <- fn_cpiD002_control_post(list_results_from_cpiA001_anova1way = RR_general())
         # #
         # validate(
         #   need(check_post$check_ok, check_post$text_output)
@@ -493,7 +644,7 @@ module_cpiD003_s02_rscience_server <- function(id, input_general, input_01_anova
       RR_code <- reactive({
 
         req(control_user_02())
-        the_code <- fn_cpiD003_tTest_2SampleInd_code_sectionALL(intro_source_database = input_01_anova()$intro_source_database,
+        the_code <- fn_cpiD002_code_sectionALL(intro_source_database = input_01_anova()$intro_source_database,
                                                                 vr_var_name = input_01_anova()$vr_var_name,
                                                                 factor_var_name = input_01_anova()$factor_var_name,
                                                                 alpha_value = input_01_anova()$alpha_value)
@@ -508,19 +659,19 @@ module_cpiD003_s02_rscience_server <- function(id, input_general, input_01_anova
 
         req(control_user_02())
 
-        mi_lista <- RR_general()
-
+        #mi_lista <- RR_general()
+        mi_lista <- RR02()
 
 
 
         # Vector con nombres de elementos a ver
-        selected_objs <- c("minibase")
+        nombres_a_ver <- c("minibase")
 
 
         # Usar lapply para mostrar los elementos deseados
-        #mi_lista[selected_objs]
+        #mi_lista[nombres_a_ver]
 
-        mi_tabla <- mi_lista[[selected_objs]]
+        mi_tabla <- mi_lista[[nombres_a_ver]]
         #https://rstudio.github.io/DT/functions.html
         vector_pos <- 1:nrow(mi_tabla)
         vector_color <- rep(NA, length(vector_pos))
@@ -578,13 +729,17 @@ module_cpiD003_s02_rscience_server <- function(id, input_general, input_01_anova
         req(control_user_02())
 
 
-        mi_lista <- RR_general()
+        #mi_lista <- RR_general()
 
+        mi_lista <- RR02()
 
-
-
-        # Vector con nombres de elementos a ver
-        nombres_a_ver <- c("list_pca")
+        nombres_a_ver <- names(mi_lista)
+#
+#         # Vector con nombres de elementos a ver
+#         nombres_a_ver <- c("matrix_distances", "matrix_distances02",
+#                            "matrix_distances03", "amount_tde",
+#                            "list_cluster", "matrix_cor_cophenetic",
+#                            "cor_pearson_value")
 
         # Usar lapply para mostrar los elementos deseados
         mi_lista[nombres_a_ver]
@@ -612,13 +767,13 @@ module_cpiD003_s02_rscience_server <- function(id, input_general, input_01_anova
         req(control_user_02())
 
 
-        mi_lista <- RR_general()
+        #mi_lista <- RR_general()
+        mi_lista <- RR02()
 
 
-
-
+        nombres_a_ver <- c("S")
         # Vector con nombres de elementos a ver
-        nombres_a_ver <- c("matrix_distances")
+        #nombres_a_ver <- c("matrix_distances")
 
         # Usar lapply para mostrar los elementos deseados
         mi_lista[nombres_a_ver]
@@ -630,13 +785,14 @@ module_cpiD003_s02_rscience_server <- function(id, input_general, input_01_anova
         req(control_user_02())
 
 
-        mi_lista <- RR_general()
+        #mi_lista <- RR_general()
 
 
-
+        mi_lista <- RR02()
+        nombres_a_ver <- c("S")
 
         # Vector con nombres de elementos a ver
-        nombres_a_ver <- c("matrix_distances02")
+        #nombres_a_ver <- c("matrix_distances02")
 
         # Usar lapply para mostrar los elementos deseados
         mi_lista[nombres_a_ver]
@@ -648,13 +804,16 @@ module_cpiD003_s02_rscience_server <- function(id, input_general, input_01_anova
         req(control_user_02())
 
 
-        mi_lista <- RR_general()
+        #mi_lista <- RR_general()
+
+        mi_lista <- RR02()
 
 
+        nombres_a_ver <- c("S")
 
 
         # Vector con nombres de elementos a ver
-        nombres_a_ver <- c("matrix_distances03")
+        #nombres_a_ver <- c("matrix_distances03")
 
         # Usar lapply para mostrar los elementos deseados
         mi_lista[nombres_a_ver]
@@ -665,19 +824,23 @@ module_cpiD003_s02_rscience_server <- function(id, input_general, input_01_anova
 
         req(control_user_02())
 
-        mi_lista <- RR_general()
+        #mi_lista <- RR_general()
+
+        mi_lista <- RR02()
 
 
+        nombres_a_ver <- c("S")
 
 
         # Vector con nombres de elementos a ver
-        selected_objs <- c("rotation_matrix")
+        #nombres_a_ver <- c("matrix_distances03")
 
 
         # Usar lapply para mostrar los elementos deseados
-        #mi_lista[selected_objs]
+        #mi_lista[nombres_a_ver]
 
-        mi_tabla <- mi_lista[[selected_objs]]
+        mi_tabla <- mi_lista[[nombres_a_ver]]
+        mi_tabla <- as.data.frame(as.matrix(mi_tabla))
         #https://rstudio.github.io/DT/functions.html
         vector_pos <- 1:nrow(mi_tabla)
         vector_color <- rep(NA, length(vector_pos))
@@ -750,7 +913,10 @@ module_cpiD003_s02_rscience_server <- function(id, input_general, input_01_anova
 
         req(control_user_02())
 
-        RR_general()
+        #RR_general()
+        RR02()
+
+        #nombres_a_ver <- names(mi_lista)
       })
 
       ##########################################################################
@@ -760,85 +926,98 @@ module_cpiD003_s02_rscience_server <- function(id, input_general, input_01_anova
 
 
       #############################################################
+
       output$el_plot1 <- renderPlot({
 
+        req(RR01())
 
-        mi_lista <- RR_general()
-
-
+        mi_lista <- RR01()
         new_plot <-  with(mi_lista,{
           # # # Create a new plot...
           # # # Create a new plot...
           # # # Create a new plot...
-          factoextra::fviz_eig(list_pca, barfill = "gray70", barcolor = "black")
+          factoextra::fviz_nbclust(x = z, FUN = hcut,
+                                   diss = S, method = "wss",
+                                   #nboot = TRUE,
+                                   k.max = k_groups_01,
+                                   linecolor = "black")
 
         })
 
         new_plot
       })
+
+
 
       output$el_plot2 <- renderPlot({
 
+        req(RR02())
 
-        mi_lista <- RR_general()
-
-
+        mi_lista <- RR02()
         new_plot <-  with(mi_lista,{
-          # # # Create a new plot...
-          # # # Create a new plot...
-          # # # Create a new plot...
-          factoextra::fviz_pca_var(list_pca, col.var = "black")
+          # # # Plot 002
+          plot(clusterA, hang = -1,
+               main = "Plot 002 - Cluster o Conglomerado",
+               xlab="Muestra",
+               ylab="Distancia")
 
         })
 
         new_plot
       })
+
 
       output$el_plot3 <- renderPlot({
 
+        req(RR02())
 
-        mi_lista <- RR_general()
-
-
+        mi_lista <- RR02()
         new_plot <-  with(mi_lista,{
-          # # # Create a new plot...
-          # # # Create a new plot...
-          # # # Create a new plot...
-          factoextra::fviz_pca_biplot(list_pca, col.ind = "gray70", col.var = "black")
+          # # # Plot 003
+          factoextra::fviz_dend(clusterA, k = k_groups_02,
+                    k_colors = k_colors_02,
+                    rect = TRUE, rect_fill = TRUE, horiz = TRUE,
+                    color_labels_by_k = FALSE)
 
         })
 
         new_plot
       })
 
+
       output$el_plot4 <- renderPlot({
 
+        req(RR02())
 
-        mi_lista <- RR_general()
-
-
+        mi_lista <- RR02()
         new_plot <-  with(mi_lista,{
-          # # # Create a new plot...
-          # # # Create a new plot...
-          # # # Create a new plot...
-
-          x <- rotation_matrix[, 1]
-          y <- rotation_matrix[, 2]
-          z <- rotation_matrix[, 3]
-          plot3D::points3D(x , y, z, pch = 19, cex = 1, alpha = 0.2, bty = "g",
-                           colkey = FALSE, theta = -60, phi = 20, col = "black",
-                           xlab = "PC 1", ylab = "PC 2", zlab = "PC 3", ticktype = "detailed")
+          # # # Plot 003
+          plot(t_clusterA, hang = -1, main = "Plot 004 - Agrupamiento Jerárquico")
 
 
-          loadings <- rotation_matrix#pca$var$coord[, 1:3]
+        })
 
-          plot3D::text3D(x = 4*loadings[, 1] + 0.4, y = 4*loadings[, 2] + 0.4,
-                         z = 4*loadings[, 3] + 0.4, labels = rownames(loadings),
-                         col = "blue", cex = 0.8, add = TRUE)
-          plot3D::arrows3D(x0 = rep(0, nrow(loadings)), y0 = rep(0, nrow(loadings)), z0 =
-                             rep(0, nrow(loadings)), x1 = 4*loadings[, 1],
-                           y1 = 4*loadings[,2], z1 = 4*loadings[, 3],
-                           col = "blue", lwd = 1, add = TRUE)
+        new_plot
+      })
+
+
+      output$el_plot5 <- renderPlot({
+
+        req(RR02())
+
+        mi_lista <- RR02()
+        new_plot <-  with(mi_lista,{
+          # # # Plot 004
+
+          stats::heatmap(z, col = rev(heat.colors(256)),
+                         main = "Plot 005 - Heatmap")
+          leyenda <- as.raster(matrix(heat.colors(256), ncol = 1))
+          graphics::rasterImage(leyenda, xleft = 0.85, xright = 0.9, ybottom = 0.85,
+                      ytop = 0.95)
+          text(x = 0.92, y = c(0.85, 0.9, 0.95), labels = c(-2, 0, 2))
+          text(x = 0.875, y = 1, label = "z", cex = 2)
+
+
 
         })
 
@@ -948,17 +1127,20 @@ module_cpiD003_s02_rscience_server <- function(id, input_general, input_01_anova
 
         req(control_user_02())
 
-        mi_lista <- RR_general()
+        #mi_lista <- RR_general()
 
 
+        mi_lista <- RR02()
 
+
+        nombres_a_ver <- c("S")
 
         # Vector con nombres de elementos a ver
-        selected_objs <- c("rotation_matrix")
+        #nombres_a_ver <- c("matrix_distances03")
 
 
         # Usar lapply para mostrar los elementos deseados
-        mi_lista[selected_objs]
+        mi_lista[nombres_a_ver]
 
       })
 
@@ -966,17 +1148,20 @@ module_cpiD003_s02_rscience_server <- function(id, input_general, input_01_anova
 
         req(control_user_02())
 
-        mi_lista <- RR_general()
+        #mi_lista <- RR_general()
+
+        mi_lista <- RR02()
 
 
+        nombres_a_ver <- c("S")
 
 
         # Vector con nombres de elementos a ver
-        selected_objs <- c("rotation_matrix")
+        #nombres_a_ver <- c("matrix_distances02")
 
 
         # Usar lapply para mostrar los elementos deseados
-        mi_lista[selected_objs]
+        mi_lista[nombres_a_ver]
 
       })
 
@@ -984,17 +1169,20 @@ module_cpiD003_s02_rscience_server <- function(id, input_general, input_01_anova
 
         req(control_user_02())
 
-        mi_lista <- RR_general()
+        #mi_lista <- RR_general()
 
 
+        mi_lista <- RR02()
 
+
+        nombres_a_ver <- c("S")
 
         # Vector con nombres de elementos a ver
-        selected_objs <- c("rotation_matrix")
+        #nombres_a_ver <- c("matrix_distances02")
 
 
         # Usar lapply para mostrar los elementos deseados
-        mi_lista[selected_objs]
+        mi_lista[nombres_a_ver]
 
       })
 
@@ -1002,19 +1190,44 @@ module_cpiD003_s02_rscience_server <- function(id, input_general, input_01_anova
 
         req(control_user_02())
 
-        mi_lista <- RR_general()
+        #mi_lista <- RR_general()
+
+        mi_lista <- RR02()
 
 
+        nombres_a_ver <- c("S")
 
 
         # Vector con nombres de elementos a ver
-        selected_objs <- c("rotation_matrix")
+        #nombres_a_ver <- c("matrix_distances02")
 
 
         # Usar lapply para mostrar los elementos deseados
-        mi_lista[selected_objs]
+        mi_lista[nombres_a_ver]
 
       })
+
+      output$tabla05 <- renderPrint({
+
+        req(control_user_02())
+
+        #mi_lista <- RR_general()
+
+
+        mi_lista <- RR02()
+
+
+        nombres_a_ver <- c("S")
+
+        # Vector con nombres de elementos a ver
+        #nombres_a_ver <- c("matrix_distances02")
+
+
+        # Usar lapply para mostrar los elementos deseados
+        mi_lista[nombres_a_ver]
+
+      })
+
       # output$tabla03 <- renderPrint({
       #
       #   req(control_user_02())
@@ -1025,11 +1238,11 @@ module_cpiD003_s02_rscience_server <- function(id, input_general, input_01_anova
       #
       #
       #   # Vector con nombres de elementos a ver
-      #   selected_objs <- c("df_table_plot003")
+      #   nombres_a_ver <- c("df_table_plot003")
       #
       #
       #   # Usar lapply para mostrar los elementos deseados
-      #   mi_lista[selected_objs]
+      #   mi_lista[nombres_a_ver]
       #
       # })
       #
@@ -1043,11 +1256,11 @@ module_cpiD003_s02_rscience_server <- function(id, input_general, input_01_anova
       #
       #
       #   # Vector con nombres de elementos a ver
-      #   selected_objs <- c("df_table_plot004")
+      #   nombres_a_ver <- c("df_table_plot004")
       #
       #
       #   # Usar lapply para mostrar los elementos deseados
-      #   mi_lista[selected_objs]
+      #   mi_lista[nombres_a_ver]
       #
       # })
       ##########################################################################
@@ -1100,7 +1313,8 @@ module_cpiD003_s02_rscience_server <- function(id, input_general, input_01_anova
       })
 
 
-      observeEvent(RR_general(),{
+      # observeEvent(RR_general(),{
+      observeEvent(RR02(),{
         color_button_copy("orange")
       })
 
@@ -1171,18 +1385,23 @@ module_cpiD003_s02_rscience_server <- function(id, input_general, input_01_anova
             rclipboardSetup(),
             textOutput(ns("calling_help")),
 
+            fluidRow(column(12,plotOutput(ns("el_plot1")))),
+
+            fluidRow(column(12, uiOutput(ns("k_selection2")))),
+
+            br(), br(), br(), br(),
             shiny::tabsetPanel(id = ns("super_tabset_panel"),
                                tabPanel("Minibase",
                                         fluidRow(
                                           column(12,
-                                                 h1("Multivariado 01"),
+                                                 h1("Cluster - Cuantitative vars"),
                                                  uiOutput(ns("tab01_FULL"))
                                           )
                                         )),
                                tabPanel("AnalysisB",  # 05
                                         fluidRow(
                                           column(12,
-                                                 h1("Multivariado 01"),
+                                                 h1("Cluster - Cuantitative vars"),
                                                  uiOutput(ns("tab02_analysisB_FULL"))
                                           )
                                         )
@@ -1190,20 +1409,20 @@ module_cpiD003_s02_rscience_server <- function(id, input_general, input_01_anova
                                tabPanel("Analysis",  # 05
                                         fluidRow(
                                           column(12,
-                                                 h1("Multivariado 01"),
+                                                 h1("Cluster - Cuantitative vars"),
                                                  uiOutput(ns("tab02_analysis_FULL"))
                                           )
                                         )
                                ),
 
-                               tabPanel("Plots - Raw Data",  # 05,
-                                        fluidRow(column(12, h1("t Test - 2 Independent Samples"))),
-                                        fluidRow(
-                                          #column(1),
-                                          column(6, plotOutput(ns("el_plot1"), height = "40vh", width = "70vh")),
-                                          column(6, verbatimTextOutput(ns("tabla01"))),
-                                        ),
-                                        br(),br(),br(),
+                               tabPanel("Plots",  # 05,
+                                        # fluidRow(column(12, h1("Cluster - Cuantitative vars"))),
+                                        # fluidRow(
+                                        #   #column(1),
+                                        #   column(6, plotOutput(ns("el_plot1"), height = "40vh", width = "70vh")),
+                                        #   column(6, verbatimTextOutput(ns("tabla01"))),
+                                        # ),
+                                        # br(),br(),br(),
 
                                         fluidRow(
                                           #column(1),
@@ -1211,6 +1430,7 @@ module_cpiD003_s02_rscience_server <- function(id, input_general, input_01_anova
                                           column(6, verbatimTextOutput(ns("tabla02"))),
                                         ),
                                         br(),br(),br(),
+
 
                                         fluidRow(
                                           #column(1),
@@ -1224,8 +1444,14 @@ module_cpiD003_s02_rscience_server <- function(id, input_general, input_01_anova
                                           column(6, plotOutput(ns("el_plot4"), height = "40vh", width = "70vh")),
                                           column(6, verbatimTextOutput(ns("tabla04"))),
                                         ),
-                                        br(),br(),br()
+                                        br(),br(),br(),
 
+                                        fluidRow(
+                                          #column(1),
+                                          column(6, plotOutput(ns("el_plot5"), height = "40vh", width = "70vh")),
+                                          column(6, verbatimTextOutput(ns("tabla05"))),
+                                        ),
+                                        br(),br(),br()
                                         # fluidRow(
                                         #   #column(1),
                                         #   column(6, plotlyOutput(ns("el_plot3"), height = "40vh", width = "70vh")),
@@ -1241,7 +1467,7 @@ module_cpiD003_s02_rscience_server <- function(id, input_general, input_01_anova
                                         #shinycssloaders::withSpinner(uiOutput(ns("plot_outputs33"))),
                                ),
                                # tabPanel("Plots - Residuals",  # 05,
-                               #          fluidRow(column(12, h1("t Test - 2 independent samplesy"))),
+                               #          fluidRow(column(12, h1("Cluster - Cuantitative vars"))),
                                #          fluidRow(
                                #            #column(1),
                                #            column(12,
@@ -1254,7 +1480,7 @@ module_cpiD003_s02_rscience_server <- function(id, input_general, input_01_anova
                                #          )
                                # ),
                                # tabPanel("Plots - Factor",  # 05,
-                               #          fluidRow(h1("t Test - 2 independent samplesy")),
+                               #          fluidRow(h1("Cluster - Cuantitative vars")),
                                #          fluidRow(
                                #            #column(1),
                                #            column(12,
@@ -1267,7 +1493,7 @@ module_cpiD003_s02_rscience_server <- function(id, input_general, input_01_anova
                                #          )
                                # ),
                                # tabPanel("Plots - Residuals",  # 05,
-                               #          fluidRow(h1("t Test - 2 independent samplesy")),
+                               #          fluidRow(h1("Cluster - Cuantitative vars")),
                                #          fluidRow(
                                #            #column(1),
                                #            column(12,
@@ -1280,7 +1506,7 @@ module_cpiD003_s02_rscience_server <- function(id, input_general, input_01_anova
                                #          )
                                # ),
                                # tabPanel("Plots2",  # 05,
-                               #          fluidRow(h1("t Test - 2 independent samplesy")),
+                               #          fluidRow(h1("Cluster - Cuantitative vars")),
                                #          fluidRow(
                                #            #column(1),
                                #            column(12,
@@ -1293,7 +1519,7 @@ module_cpiD003_s02_rscience_server <- function(id, input_general, input_01_anova
                                tabPanel("Full Results",  # 05
                                         fluidRow(
                                           column(12,
-                                                 h1("t Test - 2 Independent Samples"),
+                                                 h1("Cluster - Cuantitative vars"),
                                                  verbatimTextOutput(ns("tab01_all_anova_results"))
                                           )
                                         )
@@ -1304,7 +1530,7 @@ module_cpiD003_s02_rscience_server <- function(id, input_general, input_01_anova
                                tabPanel("R code",  # 05
                                         fluidRow(
                                           column(10,
-                                                 h1("t Test - 2 independent samplesy"),
+                                                 h1("Cluster - Cuantitative vars"),
                                                  verbatimTextOutput(ns("tab05_code"))
                                           ),
                                           br(), br(),

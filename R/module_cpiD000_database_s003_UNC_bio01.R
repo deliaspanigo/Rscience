@@ -4,9 +4,11 @@ module_cpiD000_database_s03_UNC_bio01_ui <- function(id){
   ns <- shiny::NS(id)
 
   vector_opt <- c("Select one..." = "",
-                  "01 - Cluster Binomial" = "Rscience_df_bio02_Ex200",
+                  "01 - Cluster Binomial Ejemplo" = "Rscience_df_bio02_Ex200",
+                  "02 - Cluster Continuo Ejemplo" = "Rscience_df_bio02_Eje11_06_ClusterContinuo",
                   "03 - PCA Ejemplo" = "Rscience_df_bio02_PCA03",
-                  "02 - iris" = "iris")
+                  "04 -  CA Ejemplo" = "Rscience_df_bio02_Eje11_10_CA",
+                  "05 - iris" = "iris")
 
   div(shinyjs::useShinyjs(), id = ns("input-panel"),
 
@@ -18,7 +20,8 @@ module_cpiD000_database_s03_UNC_bio01_ui <- function(id){
                div(shinyjs::useShinyjs(), id = ns("input-example"),
                    selectInput(inputId = ns("file_UNC"),
                                label = "UNC - Bio01 - Excersice",
-                               choices = vector_opt)
+                               choices = vector_opt,
+                               width = "80%")
 
                ) # Div
         ),

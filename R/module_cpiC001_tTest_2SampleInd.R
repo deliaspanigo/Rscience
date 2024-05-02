@@ -1280,6 +1280,116 @@ module_cpiC001_s02_rscience_server <- function(id, input_general, input_01_anova
           fontSize = "26px"
         )
       })
+
+      ##################################################
+
+      output$tab33_position_levels <- renderDT({
+
+        req(control_user_02())
+
+        mi_lista <- RR_general()
+
+
+
+
+        # Vector con nombres de elementos a ver
+        selected_objs <- c("df_vr_position_levels")
+
+
+        # Usar lapply para mostrar los elementos deseados
+
+        mi_tabla <- mi_lista[[selected_objs]]
+        #https://rstudio.github.io/DT/functions.html
+        vector_pos <- 1:nrow(mi_tabla)
+        vector_color <- rep(NA, length(vector_pos))
+        vector_color[c(T, F)] <- "lightblue"#'red'#
+        vector_color[c(F, T)] <- "lightgreen"#'blue'#
+        vector_color <- vector_color[vector_pos]
+
+        datatable(
+          mi_tabla,
+          rownames = FALSE,
+          options = list(
+
+            headerCallback = DT::JS(
+              "function(thead) {",
+              "  $(thead).css('font-size', '2em');",
+              "}"
+            ),
+            columnDefs = list(list(className = 'dt-center', targets = "_all")),
+            #pageLength = 5,
+            dom = "t",
+            scrollX = TRUE,
+            searching = FALSE,
+            scrollCollapse = TRUE,  # Permitir colapsar el scroll
+            fixedColumns = list(leftColumns = 3),  # Fijar las primeras 3 columnas
+            #lengthMenu = list(c(-1), c("All")), # Todas las filas
+            style = list(
+              'font-size' = '20px'  # Tamaño de letra para el nombre de las columnas
+            )
+          )
+
+        ) %>%formatStyle(
+          colnames(mi_tabla),
+          backgroundColor = styleRow(vector_pos, vector_color),#,
+          target = 'row',
+          fontSize = "26px"
+        )
+      })
+
+      output$tab33_dispersion_levels <- renderDT({
+
+        req(control_user_02())
+
+        mi_lista <- RR_general()
+
+
+
+
+        # Vector con nombres de elementos a ver
+        selected_objs <- c("df_vr_dispersion_levels")
+
+
+        # Usar lapply para mostrar los elementos deseados
+
+        mi_tabla <- mi_lista[[selected_objs]]
+        #https://rstudio.github.io/DT/functions.html
+        vector_pos <- 1:nrow(mi_tabla)
+        vector_color <- rep(NA, length(vector_pos))
+        vector_color[c(T, F)] <- "lightblue"#'red'#
+        vector_color[c(F, T)] <- "lightgreen"#'blue'#
+        vector_color <- vector_color[vector_pos]
+
+        datatable(
+          mi_tabla,
+          rownames = FALSE,
+          options = list(
+
+            headerCallback = DT::JS(
+              "function(thead) {",
+              "  $(thead).css('font-size', '2em');",
+              "}"
+            ),
+            columnDefs = list(list(className = 'dt-center', targets = "_all")),
+            #pageLength = 5,
+            dom = "t",
+            scrollX = TRUE,
+            searching = FALSE,
+            scrollCollapse = TRUE,  # Permitir colapsar el scroll
+            fixedColumns = list(leftColumns = 3),  # Fijar las primeras 3 columnas
+            #lengthMenu = list(c(-1), c("All")), # Todas las filas
+            style = list(
+              'font-size' = '20px'  # Tamaño de letra para el nombre de las columnas
+            )
+          )
+
+        ) %>%formatStyle(
+          colnames(mi_tabla),
+          backgroundColor = styleRow(vector_pos, vector_color),#,
+          target = 'row',
+          fontSize = "26px"
+        )
+      })
       #############################################################
       output$el_plot1 <- renderPlotly({
 
@@ -1710,6 +1820,26 @@ module_cpiC001_s02_rscience_server <- function(id, input_general, input_01_anova
                                       h2("2) Requeriment Homogeneity"),
                                       verbatimTextOutput(ns("tab22_analysis_anova_obj04")),
                                       br(), br(), br()
+
+                             ),
+                             tabPanel("Resume Statistics",
+                              fluidRow(
+                                column(12,
+                             h2("1) Position"),
+                             h3("R Object: df_vr_position_levels"),
+                             DTOutput(ns("tab33_position_levels"))
+                                )
+                              ),
+                             br(), br(), br(),
+
+                             fluidRow(
+                               column(12,
+                                      h2("2) Dispersion"),
+                                      h3("R Object: df_vr_dispersion_levels"),
+                                      DTOutput(ns("tab33_dispersion_levels"))
+                               )
+                             ),
+                             br(), br(), br(),
 
                              ),
                              tabPanel("Plots - Raw Data",  # 05,
