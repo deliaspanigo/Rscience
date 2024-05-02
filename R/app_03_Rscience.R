@@ -260,8 +260,10 @@ app_03_Rscience <- function(){
                                   #actionButton("toggle_box", "Toggle Box"),
                                   br(), br(), br()),
                                 br(), br(),br(), br(),br(), br(),
-
-                                module_cpiC001_s02_rscience_ui(id = "anova01_B")
+                        fluidRow(
+                          column(12, br(), br(),module_cpiC001_s02_rscience_ui(id = "anova01_B")
+                          )),
+                        br(), br(), br()
         )
 
       )
