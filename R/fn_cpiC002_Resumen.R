@@ -2,7 +2,7 @@
 
 # # # # Special Functions
 # Take the original code from a function
-fn_cpiC001_tTest_2SampleInd_TakeCode <- function(selected_fn){
+fn_cpiC002_Resumen_TakeCode <- function(selected_fn){
 
 
   test_code <- capture.output(selected_fn)
@@ -35,7 +35,7 @@ fn_cpiC001_tTest_2SampleInd_TakeCode <- function(selected_fn){
 
 
 # List the cronologic order for objects in a function
-fn_cpiC001_tTest_2SampleInd_ObjNamesInOrder <- function(selected_fn){
+fn_cpiC002_Resumen_ObjNamesInOrder <- function(selected_fn){
 
   selected_code <- deparse(body(selected_fn))
   selected_code <- grep("<-", selected_code, value = TRUE)
@@ -53,7 +53,7 @@ fn_cpiC001_tTest_2SampleInd_ObjNamesInOrder <- function(selected_fn){
 
 # # # # Control funcitons
 # Control previous
-fn_cpiC001_tTest_2SampleInd_control_previous <- function(database, vr_var_name, factor_var_name, alpha_value){
+fn_cpiC002_Resumen_control_previous <- function(database, vr_var_name, factor_var_name, alpha_value){
 
   dt_ok <- FALSE
 
@@ -77,9 +77,9 @@ fn_cpiC001_tTest_2SampleInd_control_previous <- function(database, vr_var_name, 
   }
 
 
-  # 4) Database must has at least 4 rows
-  if(!(nrow(database) >= 4)){
-    text_output <- "Control pre test 004: Object 'database' must has al least 4 rows."
+  # 4) Database must has at least 1 rows
+  if(!(nrow(database) >= 2)){
+    text_output <- "Control pre test 004: Object 'database' must has al least 2 rows."
     return(Hmisc::llist(dt_ok, text_output))
   }
 
@@ -251,8 +251,8 @@ fn_cpiC001_tTest_2SampleInd_control_previous <- function(database, vr_var_name, 
 
 
   # 4) minibase must has at least 4 rows
-  if(!(nrow(minibase) >= 4)){
-    text_output <- "Control pre test 028: Object 'database' must has al least 4 rows."
+  if(!(nrow(minibase) >= 2)){
+    text_output <- "Control pre test 028: Object 'database' must has al least 2 rows."
     return(Hmisc::llist(dt_ok, text_output))
   }
 
@@ -282,8 +282,8 @@ fn_cpiC001_tTest_2SampleInd_control_previous <- function(database, vr_var_name, 
 
 
   # Al least 2 levels in minibase$FACTOR
-  if(!(nlevels(minibase$FACTOR) == 2)){
-    text_output <- "Control pre test 033: for t Test FACTOR must has exactly 2 levels."
+  if(!(nlevels(minibase$FACTOR) >= 2)){
+    text_output <- "Control pre test 033: for t Test FACTOR must has at leats 2 levels."
     return(Hmisc::llist(dt_ok, text_output))
   }
 
@@ -335,10 +335,10 @@ On each level variance must be greater than zero."
 
 
 # Control post
-fn_cpiC001_tTest_2SampleInd_control_post <- function(list_results_from_fn_cpiC001_tTest_2SampleInd){
+fn_cpiC002_Resumen_control_post <- function(list_results_from_fn_cpiC002_Resumen){
 
-  # if(is.null(list_results_from_fn_cpiC001_tTest_2SampleInd)){
-  #   text_output <- "Control post test 001: Object 'list_results_from_fn_cpiC001_tTest_2SampleInd' can not be NULL."
+  # if(is.null(list_results_from_fn_cpiC002_Resumen)){
+  #   text_output <- "Control post test 001: Object 'list_results_from_fn_cpiC002_Resumen' can not be NULL."
   #   check_ok <- FALSE
   #   return(Hmisc::llist(check_ok, text_output))
   # }
@@ -349,15 +349,15 @@ fn_cpiC001_tTest_2SampleInd_control_post <- function(list_results_from_fn_cpiC00
   # spected_col_names <- c("Df", "Sum Sq", "Mean Sq", "F value", "Pr(>F)")
   #
   #
-  # if(!(obj_name01 %in% names(list_results_from_fn_cpiC001_tTest_2SampleInd))){
-  #   text_output <- "Control post test 002: Object 'df_table_anova' doesn't exist in 'list_results_from_fn_cpiC001_tTest_2SampleInd'."
+  # if(!(obj_name01 %in% names(list_results_from_fn_cpiC002_Resumen))){
+  #   text_output <- "Control post test 002: Object 'df_table_anova' doesn't exist in 'list_results_from_fn_cpiC002_Resumen'."
   #   check_ok <- FALSE
   #   return(Hmisc::llist(check_ok, text_output))
   # }
   #
   #
   # # # # 1) About the table
-  # if(is.null(list_results_from_fn_cpiC001_tTest_2SampleInd[obj_name01])){
+  # if(is.null(list_results_from_fn_cpiC002_Resumen[obj_name01])){
   #   text_output <- "Control post test 003: Object '_obj_name01_' can not be NULL."
   #   text_output <- gsub("_obj_name01_", "obj_name01", text_output)
   #   check_ok <- FALSE
@@ -365,7 +365,7 @@ fn_cpiC001_tTest_2SampleInd_control_post <- function(list_results_from_fn_cpiC00
   # }
   #
   #
-  # selected_obj01 <- list_results_from_fn_cpiC001_tTest_2SampleInd[[obj_name01]]
+  # selected_obj01 <- list_results_from_fn_cpiC002_Resumen[[obj_name01]]
   #
   #
   # if(!identical(spected_col_names, colnames(selected_obj01))){
@@ -596,7 +596,7 @@ fn_cpiC001_tTest_2SampleInd_control_post <- function(list_results_from_fn_cpiC00
 # # For sections 01 to 03 there are no action in R. The actions its on Shiny.
 # # We need the input objects from shiny to.
 
-fn_cpiC001_tTest_2SampleInd_results <- function(database, vr_var_name, factor_var_name, alpha_value){
+fn_cpiC002_Resumen_results <- function(database, vr_var_name, factor_var_name, alpha_value){
 
   # # # # # Section 04 - Var rols and minibase -----------------------------------
   # # # Selected vars
@@ -668,93 +668,6 @@ fn_cpiC001_tTest_2SampleInd_results <- function(database, vr_var_name, factor_va
 
 
 
-  # # # Unbalanced reps for levels?
-  # Important information for Tukey.
-  # If reps its equal or not equal in all levels must be detailled
-  # on Tukey.
-  check_unbalanced_reps <- length(unique(df_factor_info$n)) > 1
-  check_unbalanced_reps
-
-
-
-  # Normality
-  list_normality_test <- tapply(minibase$VR, minibase$FACTOR, shapiro.test)
-  df_normality <- data.frame(
-    "orden" = 1:length(list_normality_test),
-    "level" = names(list_normality_test),
-    "test" = "Normality",
-    "p.value" = sapply(list_normality_test, function(x){x$p.value}),
-    "alpha.value" = alpha_value
-  )
-  df_normality$"h0_normality" <- df_normality$"p.value" < df_normality$"alpha.value"
-  df_normality$"h0_normality" <- ifelse(test = df_normality$"h0_normality",
-                                        yes = "Rejected H0",
-                                        no = "No rejected H0")
-
-  check_normality <- sum(df_normality$"h0_normality" == "No rejected H0") == 2
-
-  phrase01_A <- "Normality in both group verified."
-  phrase01_B <- "At least one group is has NOT normality."
-  phrase01_output <- ifelse(test = check_normality,
-                            yes = phrase01_A,
-                            no = phrase01_B)
-
-  phrase02_A <- "It is valid to perform the t test."
-  phrase02_B <- "It is NOT valid to perform the t test."
-  phrase02_output <- ifelse(test = check_normality,
-                            yes = phrase02_A,
-                             no = phrase02_B)
-
-  homogeneity_test <- bartlett.test(VR ~ FACTOR, data = minibase)
-
-  check_homogeneity <- homogeneity_test$p.value >= alpha_value
-
-  df_homogeneity <- data.frame(
-    "orden" = 1,
-    "test" = "Homogeneity",
-    "p.value" = homogeneity_test$"p.value",
-    "alpha.value" = alpha_value
-  )
-  df_homogeneity$"h0_homogeneity" <- df_homogeneity$"p.value" < df_homogeneity$"alpha.value"
-  df_homogeneity$"h0_homogeneity" <- ifelse(test = df_homogeneity$"h0_homogeneity",
-                                             yes = "Rejected H0",
-                                              no = "No rejected H0")
-
-
-  phrase03_A <- "Groups are homogenious. Classic t Test will be apply."
-  phrase03_B <- "Groups are NOT homogenious. t Test with Welch approximation."
-  phrase03_output <- ifelse(test = check_homogeneity,
-                             yes = phrase03_A,
-                              no = phrase03_B)
-
-  # phrase02_A <- "Performed: Classic t Test."
-  # phrase02_B <- "Performed: t Test with Welch approximation."
-  # phrase02_output <- ifelse(test = check_homogeneity,
-  #                           yes = phrase01_A,
-  #                           no = phrase01_B)
-
-  confidence_value <- 1 - alpha_value
-
-
-  results_t_test <- t.test(formula = VR ~ FACTOR, data = minibase,
-                           alternative = "two.sided",
-                           conf.level = confidence_value,
-                           var.equal = check_homogeneity)
-
-  results_t_test
-
-
-  df_t_test_2sample_ind <- data.frame(
-    "orden" = 1,
-    "test" = "t test",
-    #"details" = "2 independent sample",
-    "p.value" = results_t_test$"p.value",
-    "alpha.value" = alpha_value
-  )
-  df_t_test_2sample_ind$"h0_t_test" <- df_t_test_2sample_ind$"p.value" < df_t_test_2sample_ind$"alpha.value"
-  df_t_test_2sample_ind$"h0_t_test" <- ifelse(test = df_t_test_2sample_ind$"h0_t_test",
-                                            yes = "Rejected H0",
-                                            no = "No rejected H0")
 
   # # # Detect rows on database there are on minibase
   dt_rows_database_ok <- rowSums(!is.na(database[vector_name_selected_vars])) == ncol(minibase)
@@ -853,7 +766,7 @@ fn_cpiC001_tTest_2SampleInd_results <- function(database, vr_var_name, factor_va
 
   df_table_plot004 <-  df_vr_position_levels
   # --- # hide_: Proccesing objects order
-  hide_correct_order <- fn_cpiC001_tTest_2SampleInd_ObjNamesInOrder(selected_fn = fn_cpiC001_tTest_2SampleInd_results)
+  hide_correct_order <- fn_cpiC002_Resumen_ObjNamesInOrder(selected_fn = fn_cpiC002_Resumen_results)
   hide_output_list_objects <- mget(hide_correct_order)
 
   # --- # hide_: return!
@@ -866,7 +779,7 @@ fn_cpiC001_tTest_2SampleInd_results <- function(database, vr_var_name, factor_va
 
 # # # # Code
 # # To put all the code together, we need the items that Shiny provides.
-fn_cpiC001_tTest_2SampleInd_code_section01_Libreries <- function(){
+fn_cpiC002_Resumen_code_section01_Libreries <- function(){
 
   #--- Librerias
   section01_general_libreries <- '
@@ -882,7 +795,7 @@ fn_cpiC001_tTest_2SampleInd_code_section01_Libreries <- function(){
 }
 
 
-fn_cpiC001_tTest_2SampleInd_code_section02_FileSource <- function(intro_source_database){
+fn_cpiC002_Resumen_code_section02_FileSource <- function(intro_source_database){
 
 
   file_source <- intro_source_database$file_source
@@ -934,7 +847,7 @@ fn_cpiC001_tTest_2SampleInd_code_section02_FileSource <- function(intro_source_d
 }
 
 
-fn_cpiC001_tTest_2SampleInd_code_section03_VarSelection <- function(vr_var_name, factor_var_name, alpha_value){
+fn_cpiC002_Resumen_code_section03_VarSelection <- function(vr_var_name, factor_var_name, alpha_value){
 
 
   #--- Var selection
@@ -963,28 +876,28 @@ fn_cpiC001_tTest_2SampleInd_code_section03_VarSelection <- function(vr_var_name,
 }
 
 
-fn_cpiC001_tTest_2SampleInd_code_section04_UntilTheEnd <- function(){
+fn_cpiC002_Resumen_code_section04_UntilTheEnd <- function(){
 
 
-  the_code <- fn_cpiC001_tTest_2SampleInd_TakeCode(selected_fn = fn_cpiC001_tTest_2SampleInd_results)
+  the_code <- fn_cpiC002_Resumen_TakeCode(selected_fn = fn_cpiC002_Resumen_results)
 
   return(the_code)
 }
 
 
-fn_cpiC001_tTest_2SampleInd_code_sectionXX_g01_Plots <- function(){
+fn_cpiC002_Resumen_code_sectionXX_g01_Plots <- function(){
 
 
 
   list_code <- list()
 
-  list_code[[1]] <- fn_cpiC001_tTest_2SampleInd_TakeCode(selected_fn = fn_cpiC001_tTest_2SampleInd_factor_plot001)
-  list_code[[2]] <- fn_cpiC001_tTest_2SampleInd_TakeCode(selected_fn = fn_cpiC001_tTest_2SampleInd_factor_plot002)
-  list_code[[3]] <- fn_cpiC001_tTest_2SampleInd_TakeCode(selected_fn = fn_cpiC001_tTest_2SampleInd_factor_plot003)
-  list_code[[4]] <- fn_cpiC001_tTest_2SampleInd_TakeCode(selected_fn = fn_cpiC001_tTest_2SampleInd_factor_plot004)
-  list_code[[5]] <- fn_cpiC001_tTest_2SampleInd_TakeCode(selected_fn = fn_cpiC001_tTest_2SampleInd_factor_plot005)
-  list_code[[6]] <- fn_cpiC001_tTest_2SampleInd_TakeCode(selected_fn = fn_cpiC001_tTest_2SampleInd_factor_plot006)
-  list_code[[7]] <- fn_cpiC001_tTest_2SampleInd_TakeCode(selected_fn = fn_cpiC001_tTest_2SampleInd_factor_plot007)
+  list_code[[1]] <- fn_cpiC002_Resumen_TakeCode(selected_fn = fn_cpiC002_Resumen_factor_plot001)
+  list_code[[2]] <- fn_cpiC002_Resumen_TakeCode(selected_fn = fn_cpiC002_Resumen_factor_plot002)
+  list_code[[3]] <- fn_cpiC002_Resumen_TakeCode(selected_fn = fn_cpiC002_Resumen_factor_plot003)
+  list_code[[4]] <- fn_cpiC002_Resumen_TakeCode(selected_fn = fn_cpiC002_Resumen_factor_plot004)
+  list_code[[5]] <- fn_cpiC002_Resumen_TakeCode(selected_fn = fn_cpiC002_Resumen_factor_plot005)
+  list_code[[6]] <- fn_cpiC002_Resumen_TakeCode(selected_fn = fn_cpiC002_Resumen_factor_plot006)
+  list_code[[7]] <- fn_cpiC002_Resumen_TakeCode(selected_fn = fn_cpiC002_Resumen_factor_plot007)
 
   vector_code <- unlist(list_code)
   all_code <- paste0(vector_code, collapse = "\n\n\n\n")
@@ -995,21 +908,21 @@ fn_cpiC001_tTest_2SampleInd_code_sectionXX_g01_Plots <- function(){
 
 
 
-fn_cpiC001_tTest_2SampleInd_code_sectionXX_g02_Plots <- function(){
+fn_cpiC002_Resumen_code_sectionXX_g02_Plots <- function(){
 
 
   list_code <- list()
 
-  list_code[[1]]  <- fn_cpiC001_tTest_2SampleInd_TakeCode(selected_fn = fn_cpiC001_tTest_2SampleInd_residuals_plot001)
-  list_code[[2]]  <- fn_cpiC001_tTest_2SampleInd_TakeCode(selected_fn = fn_cpiC001_tTest_2SampleInd_residuals_plot002)
-  list_code[[3]]  <- fn_cpiC001_tTest_2SampleInd_TakeCode(selected_fn = fn_cpiC001_tTest_2SampleInd_residuals_plot003)
-  list_code[[4]]  <- fn_cpiC001_tTest_2SampleInd_TakeCode(selected_fn = fn_cpiC001_tTest_2SampleInd_residuals_plot004)
-  list_code[[5]]  <- fn_cpiC001_tTest_2SampleInd_TakeCode(selected_fn = fn_cpiC001_tTest_2SampleInd_residuals_plot005)
-  list_code[[6]]  <- fn_cpiC001_tTest_2SampleInd_TakeCode(selected_fn = fn_cpiC001_tTest_2SampleInd_residuals_plot006)
-  list_code[[7]]  <- fn_cpiC001_tTest_2SampleInd_TakeCode(selected_fn = fn_cpiC001_tTest_2SampleInd_residuals_plot007)
-  list_code[[8]]  <- fn_cpiC001_tTest_2SampleInd_TakeCode(selected_fn = fn_cpiC001_tTest_2SampleInd_residuals_plot008)
-  list_code[[9]]  <- fn_cpiC001_tTest_2SampleInd_TakeCode(selected_fn = fn_cpiC001_tTest_2SampleInd_residuals_plot009)
-  list_code[[10]] <- fn_cpiC001_tTest_2SampleInd_TakeCode(selected_fn = fn_cpiC001_tTest_2SampleInd_residuals_plot010)
+  list_code[[1]]  <- fn_cpiC002_Resumen_TakeCode(selected_fn = fn_cpiC002_Resumen_residuals_plot001)
+  list_code[[2]]  <- fn_cpiC002_Resumen_TakeCode(selected_fn = fn_cpiC002_Resumen_residuals_plot002)
+  list_code[[3]]  <- fn_cpiC002_Resumen_TakeCode(selected_fn = fn_cpiC002_Resumen_residuals_plot003)
+  list_code[[4]]  <- fn_cpiC002_Resumen_TakeCode(selected_fn = fn_cpiC002_Resumen_residuals_plot004)
+  list_code[[5]]  <- fn_cpiC002_Resumen_TakeCode(selected_fn = fn_cpiC002_Resumen_residuals_plot005)
+  list_code[[6]]  <- fn_cpiC002_Resumen_TakeCode(selected_fn = fn_cpiC002_Resumen_residuals_plot006)
+  list_code[[7]]  <- fn_cpiC002_Resumen_TakeCode(selected_fn = fn_cpiC002_Resumen_residuals_plot007)
+  list_code[[8]]  <- fn_cpiC002_Resumen_TakeCode(selected_fn = fn_cpiC002_Resumen_residuals_plot008)
+  list_code[[9]]  <- fn_cpiC002_Resumen_TakeCode(selected_fn = fn_cpiC002_Resumen_residuals_plot009)
+  list_code[[10]] <- fn_cpiC002_Resumen_TakeCode(selected_fn = fn_cpiC002_Resumen_residuals_plot010)
 
 
   vector_code <- unlist(list_code)
@@ -1018,12 +931,12 @@ fn_cpiC001_tTest_2SampleInd_code_sectionXX_g02_Plots <- function(){
   return(all_code)
 
 
-  # objetos <- ls("package:Rscience", pattern = "^fn_cpiC001_tTest_2SampleInd_residuals_plot+[0-9]+")
+  # objetos <- ls("package:Rscience", pattern = "^fn_cpiC002_Resumen_residuals_plot+[0-9]+")
   #
   #
   #
   # # Filtrar solo las funciones que coinciden con el patrón
-  # #list_plot <- objetos[grep("^fn_cpiC001_tTest_2SampleInd_plot[0-9]+", objetos)]
+  # #list_plot <- objetos[grep("^fn_cpiC002_Resumen_plot[0-9]+", objetos)]
   # list_plot <- objetos
   # list_plot <- sort(list_plot)
   #
@@ -1031,7 +944,7 @@ fn_cpiC001_tTest_2SampleInd_code_sectionXX_g02_Plots <- function(){
   #
   #
   #
-  #   selected_code <- paste0("fn_cpiC001_tTest_2SampleInd_TakeCode(", x, ")")
+  #   selected_code <- paste0("fn_cpiC002_Resumen_TakeCode(", x, ")")
   #   code_new_plot <- eval(parse(text = selected_code))
   #   code_new_plot
   #
@@ -1048,22 +961,22 @@ fn_cpiC001_tTest_2SampleInd_code_sectionXX_g02_Plots <- function(){
 
 
 
-fn_cpiC001_tTest_2SampleInd_code_sectionALL <- function(intro_source_database, vr_var_name, factor_var_name, alpha_value){
+fn_cpiC002_Resumen_code_sectionALL <- function(intro_source_database, vr_var_name, factor_var_name, alpha_value){
 
   # objetos <- ls()
   #
   # # Filtrar solo las funciones que coinciden con el patrón
-  # selected_fun <- objetos[grep("^fn_cpiC001_tTest_2SampleInd_code_section[0-9]+_[a-zA-Z]", objetos)]
+  # selected_fun <- objetos[grep("^fn_cpiC002_Resumen_code_section[0-9]+_[a-zA-Z]", objetos)]
   # selected_fun <- sort(selected_fun)
 
   vector_code <- list()
 
-  vector_code[1] <- fn_cpiC001_tTest_2SampleInd_code_section01_Libreries()
-  vector_code[2] <- fn_cpiC001_tTest_2SampleInd_code_section02_FileSource(intro_source_database)
-  vector_code[3] <- fn_cpiC001_tTest_2SampleInd_code_section03_VarSelection(vr_var_name, factor_var_name, alpha_value)
-  vector_code[4] <- fn_cpiC001_tTest_2SampleInd_code_section04_UntilTheEnd()
-  vector_code[5] <- fn_cpiC001_tTest_2SampleInd_code_sectionXX_g01_Plots()
-  vector_code[6] <- fn_cpiC001_tTest_2SampleInd_code_sectionXX_g02_Plots()
+  vector_code[1] <- fn_cpiC002_Resumen_code_section01_Libreries()
+  vector_code[2] <- fn_cpiC002_Resumen_code_section02_FileSource(intro_source_database)
+  vector_code[3] <- fn_cpiC002_Resumen_code_section03_VarSelection(vr_var_name, factor_var_name, alpha_value)
+  vector_code[4] <- fn_cpiC002_Resumen_code_section04_UntilTheEnd()
+  vector_code[5] <- fn_cpiC002_Resumen_code_sectionXX_g01_Plots()
+  vector_code[6] <- fn_cpiC002_Resumen_code_sectionXX_g02_Plots()
 
   vector_code <- paste0(vector_code, collapse = "\n\n\n\n\n")
   return(vector_code)
@@ -1072,10 +985,10 @@ fn_cpiC001_tTest_2SampleInd_code_sectionALL <- function(intro_source_database, v
 
 # # # Tables
 
-fn_cpiC001_tTest_2SampleInd_recruit_g01_Tables <- function(list_results_from_fn_cpiC001_tTest_2SampleInd){
+fn_cpiC002_Resumen_recruit_g01_Tables <- function(list_results_from_fn_cpiC002_Resumen){
 
 
-  all_tables <- with(list_results_from_fn_cpiC001_tTest_2SampleInd, {
+  all_tables <- with(list_results_from_fn_cpiC002_Resumen, {
 
     objetos <- ls()
     vector_obj_name <- objetos[grep("^df_table_factor_plot+[0-9]", objetos)]
@@ -1090,10 +1003,10 @@ fn_cpiC001_tTest_2SampleInd_recruit_g01_Tables <- function(list_results_from_fn_
 }
 
 
-fn_cpiC001_tTest_2SampleInd_recruit_g02_Tables <- function(list_results_from_fn_cpiC001_tTest_2SampleInd){
+fn_cpiC002_Resumen_recruit_g02_Tables <- function(list_results_from_fn_cpiC002_Resumen){
 
 
-  all_tables <- with(list_results_from_fn_cpiC001_tTest_2SampleInd, {
+  all_tables <- with(list_results_from_fn_cpiC002_Resumen, {
 
     objetos <- ls()
     vector_obj_name <- objetos[grep("^df_table_residuals_plot+[0-9]", objetos)]
@@ -1109,7 +1022,7 @@ fn_cpiC001_tTest_2SampleInd_recruit_g02_Tables <- function(list_results_from_fn_
 
 
 # # # Plots FACTOR
-fn_cpiC001_tTest_2SampleInd_factor_plot001 <- function(minibase_mod, df_factor_info){
+fn_cpiC002_Resumen_factor_plot001 <- function(minibase_mod, df_factor_info){
 
   # # # Create a new plot...
   plot001_factor <- plotly::plot_ly()
@@ -1146,7 +1059,7 @@ fn_cpiC001_tTest_2SampleInd_factor_plot001 <- function(minibase_mod, df_factor_i
 
 
 
-fn_cpiC001_tTest_2SampleInd_factor_plot002 <- function(df_table_factor_plot002){
+fn_cpiC002_Resumen_factor_plot002 <- function(df_table_factor_plot002){
 
 
   # # # Create a new plot...
@@ -1189,7 +1102,7 @@ fn_cpiC001_tTest_2SampleInd_factor_plot002 <- function(df_table_factor_plot002){
 
 
 
-fn_cpiC001_tTest_2SampleInd_factor_plot003 <- function(df_table_factor_plot003){
+fn_cpiC002_Resumen_factor_plot003 <- function(df_table_factor_plot003){
 
 
   # # # Create a new plot...
@@ -1236,7 +1149,7 @@ fn_cpiC001_tTest_2SampleInd_factor_plot003 <- function(df_table_factor_plot003){
 
 
 
-fn_cpiC001_tTest_2SampleInd_factor_plot004 <- function(df_table_factor_plot004){
+fn_cpiC002_Resumen_factor_plot004 <- function(df_table_factor_plot004){
 
 
   # # # New plotly...
@@ -1258,13 +1171,13 @@ fn_cpiC001_tTest_2SampleInd_factor_plot004 <- function(df_table_factor_plot004){
                                       line = list(color = "black", width = 3)
   )
 
+  # Title and labels for axis
   plot004_factor <- plotly::layout(p = plot004_factor,
-                                   title = "Plot 004 - Boxplot and means",
-                                   xaxis = list(title = "FACTOR"),
-                                   yaxis = list(title = "VR"),
-                                   font = list(size = 20),
-                                   margin = list(t = 100))
-
+                            title = "Plot 004 - Boxplot and means",
+                            xaxis = list(title = "FACTOR"),
+                            yaxis = list(title = "VR"),
+                            font = list(size = 20),
+                            margin = list(t = 100))
 
   # # # Without zerolines...
   plot004_factor <- plotly::layout(p = plot004_factor,
@@ -1277,7 +1190,7 @@ fn_cpiC001_tTest_2SampleInd_factor_plot004 <- function(df_table_factor_plot004){
 
 
 
-fn_cpiC001_tTest_2SampleInd_factor_plot005 <- function(minibase_mod, df_table_factor_plot005){
+fn_cpiC002_Resumen_factor_plot005 <- function(minibase_mod, df_table_factor_plot005){
 
 
 
@@ -1354,7 +1267,7 @@ fn_cpiC001_tTest_2SampleInd_factor_plot005 <- function(minibase_mod, df_table_fa
 }
 
 
-fn_cpiC001_tTest_2SampleInd_factor_plot006 <- function(minibase_mod, df_table_factor_plot006){
+fn_cpiC002_Resumen_factor_plot006 <- function(minibase_mod, df_table_factor_plot006){
 
 
 
@@ -1396,7 +1309,7 @@ fn_cpiC001_tTest_2SampleInd_factor_plot006 <- function(minibase_mod, df_table_fa
 
 
 
-fn_cpiC001_tTest_2SampleInd_factor_plot007 <- function(df_table_factor_plot007){
+fn_cpiC002_Resumen_factor_plot007 <- function(df_table_factor_plot007){
 
 
   # # # Create a new plot...
@@ -1449,21 +1362,21 @@ fn_cpiC001_tTest_2SampleInd_factor_plot007 <- function(df_table_factor_plot007){
 
 
 
-fn_cpiC001_tTest_2SampleInd_recruit_g01_FactorPlots <- function(list_results_from_fn_cpiC001_tTest_2SampleInd){
+fn_cpiC002_Resumen_recruit_g01_FactorPlots <- function(list_results_from_fn_cpiC002_Resumen){
 
 
 
-  all_plots <-  with(list_results_from_fn_cpiC001_tTest_2SampleInd, {
+  all_plots <-  with(list_results_from_fn_cpiC002_Resumen, {
 
     list_plots <- list()
 
-    list_plots[[1]] <- fn_cpiC001_tTest_2SampleInd_factor_plot001(minibase_mod, df_factor_info)
-    list_plots[[2]] <- fn_cpiC001_tTest_2SampleInd_factor_plot002(df_table_factor_plot002)
-    list_plots[[3]] <- fn_cpiC001_tTest_2SampleInd_factor_plot003(df_table_factor_plot003)
-    list_plots[[4]] <- fn_cpiC001_tTest_2SampleInd_factor_plot004(df_table_factor_plot004)
-    list_plots[[5]] <- fn_cpiC001_tTest_2SampleInd_factor_plot005(minibase_mod, df_table_factor_plot005)
-    list_plots[[6]] <- fn_cpiC001_tTest_2SampleInd_factor_plot006(minibase_mod, df_table_factor_plot006)
-    list_plots[[7]] <- fn_cpiC001_tTest_2SampleInd_factor_plot007(df_table_factor_plot007)
+    list_plots[[1]] <- fn_cpiC002_Resumen_factor_plot001(minibase_mod, df_factor_info)
+    list_plots[[2]] <- fn_cpiC002_Resumen_factor_plot002(df_table_factor_plot002)
+    list_plots[[3]] <- fn_cpiC002_Resumen_factor_plot003(df_table_factor_plot003)
+    list_plots[[4]] <- fn_cpiC002_Resumen_factor_plot004(df_table_factor_plot004)
+    list_plots[[5]] <- fn_cpiC002_Resumen_factor_plot005(minibase_mod, df_table_factor_plot005)
+    list_plots[[6]] <- fn_cpiC002_Resumen_factor_plot006(minibase_mod, df_table_factor_plot006)
+    list_plots[[7]] <- fn_cpiC002_Resumen_factor_plot007(df_table_factor_plot007)
 
     list_plots
   })
@@ -1485,7 +1398,7 @@ fn_cpiC001_tTest_2SampleInd_recruit_g01_FactorPlots <- function(list_results_fro
 
 
 
-fn_cpiC001_tTest_2SampleInd_residuals_plot001 <- function(minibase_mod, df_factor_info){
+fn_cpiC002_Resumen_residuals_plot001 <- function(minibase_mod, df_factor_info){
 
   # # # Create a new plot...
   plot001_residuals <- plotly::plot_ly()
@@ -1519,7 +1432,7 @@ fn_cpiC001_tTest_2SampleInd_residuals_plot001 <- function(minibase_mod, df_facto
 }
 
 
-fn_cpiC001_tTest_2SampleInd_residuals_plot002 <- function(minibase_mod, df_table_residuals_plot002){
+fn_cpiC002_Resumen_residuals_plot002 <- function(minibase_mod, df_table_residuals_plot002){
 
 
 
@@ -1562,7 +1475,7 @@ fn_cpiC001_tTest_2SampleInd_residuals_plot002 <- function(minibase_mod, df_table
 
 
 
-fn_cpiC001_tTest_2SampleInd_residuals_plot003 <- function(minibase_mod, df_table_residuals_plot003){
+fn_cpiC002_Resumen_residuals_plot003 <- function(minibase_mod, df_table_residuals_plot003){
 
 
 
@@ -1601,7 +1514,7 @@ fn_cpiC001_tTest_2SampleInd_residuals_plot003 <- function(minibase_mod, df_table
 
 
 
-fn_cpiC001_tTest_2SampleInd_residuals_plot004 <- function(minibase_mod){
+fn_cpiC002_Resumen_residuals_plot004 <- function(minibase_mod){
 
 
 
@@ -1643,7 +1556,7 @@ fn_cpiC001_tTest_2SampleInd_residuals_plot004 <- function(minibase_mod){
 
 
 
-fn_cpiC001_tTest_2SampleInd_residuals_plot005 <- function(minibase_mod){
+fn_cpiC002_Resumen_residuals_plot005 <- function(minibase_mod){
 
 
 
@@ -1701,7 +1614,7 @@ fn_cpiC001_tTest_2SampleInd_residuals_plot005 <- function(minibase_mod){
 
 
 
-fn_cpiC001_tTest_2SampleInd_residuals_plot006 <- function(minibase_mod, df_factor_info){
+fn_cpiC002_Resumen_residuals_plot006 <- function(minibase_mod, df_factor_info){
 
   # # # Create a new plot...
   plot003_residuals <- plotly::plot_ly()
@@ -1737,7 +1650,7 @@ fn_cpiC001_tTest_2SampleInd_residuals_plot006 <- function(minibase_mod, df_facto
 
 
 
-fn_cpiC001_tTest_2SampleInd_residuals_plot007 <- function(minibase_mod, df_factor_info){
+fn_cpiC002_Resumen_residuals_plot007 <- function(minibase_mod, df_factor_info){
 
   # # # Create a new plot...
   plot004_residuals <- plotly::plot_ly()
@@ -1774,7 +1687,7 @@ fn_cpiC001_tTest_2SampleInd_residuals_plot007 <- function(minibase_mod, df_facto
 
 
 
-fn_cpiC001_tTest_2SampleInd_residuals_plot008 <- function(minibase_mod){
+fn_cpiC002_Resumen_residuals_plot008 <- function(minibase_mod){
 
 
 
@@ -1817,7 +1730,7 @@ fn_cpiC001_tTest_2SampleInd_residuals_plot008 <- function(minibase_mod){
 
 
 
-fn_cpiC001_tTest_2SampleInd_residuals_plot009 <- function(minibase_mod){
+fn_cpiC002_Resumen_residuals_plot009 <- function(minibase_mod){
 
 
 
@@ -1884,7 +1797,7 @@ fn_cpiC001_tTest_2SampleInd_residuals_plot009 <- function(minibase_mod){
 
 
 
-fn_cpiC001_tTest_2SampleInd_residuals_plot010 <- function(minibase_mod){
+fn_cpiC002_Resumen_residuals_plot010 <- function(minibase_mod){
 
 
 
@@ -1943,23 +1856,23 @@ fn_cpiC001_tTest_2SampleInd_residuals_plot010 <- function(minibase_mod){
 
 
 
-fn_cpiC001_tTest_2SampleInd_recruit_g02_ResidualsPlots <- function(list_results_from_fn_cpiC001_tTest_2SampleInd){
+fn_cpiC002_Resumen_recruit_g02_ResidualsPlots <- function(list_results_from_fn_cpiC002_Resumen){
 
 
-  all_plots <-  with(list_results_from_fn_cpiC001_tTest_2SampleInd, {
+  all_plots <-  with(list_results_from_fn_cpiC002_Resumen, {
 
     list_plots <- list()
 
-    list_plots[[1]]  <- fn_cpiC001_tTest_2SampleInd_residuals_plot001(minibase_mod, df_factor_info)
-    list_plots[[2]]  <- fn_cpiC001_tTest_2SampleInd_residuals_plot002(minibase_mod, df_table_residuals_plot002)
-    list_plots[[3]]  <- fn_cpiC001_tTest_2SampleInd_residuals_plot003(minibase_mod, df_table_residuals_plot003)
-    list_plots[[4]]  <- fn_cpiC001_tTest_2SampleInd_residuals_plot004(minibase_mod)
-    list_plots[[5]]  <- fn_cpiC001_tTest_2SampleInd_residuals_plot005(minibase_mod)
-    list_plots[[6]]  <- fn_cpiC001_tTest_2SampleInd_residuals_plot006(minibase_mod, df_factor_info)
-    list_plots[[7]]  <- fn_cpiC001_tTest_2SampleInd_residuals_plot007(minibase_mod, df_factor_info)
-    list_plots[[8]]  <- fn_cpiC001_tTest_2SampleInd_residuals_plot008(minibase_mod)
-    list_plots[[9]]  <- fn_cpiC001_tTest_2SampleInd_residuals_plot009(minibase_mod)
-    list_plots[[10]] <- fn_cpiC001_tTest_2SampleInd_residuals_plot010(minibase_mod)
+    list_plots[[1]]  <- fn_cpiC002_Resumen_residuals_plot001(minibase_mod, df_factor_info)
+    list_plots[[2]]  <- fn_cpiC002_Resumen_residuals_plot002(minibase_mod, df_table_residuals_plot002)
+    list_plots[[3]]  <- fn_cpiC002_Resumen_residuals_plot003(minibase_mod, df_table_residuals_plot003)
+    list_plots[[4]]  <- fn_cpiC002_Resumen_residuals_plot004(minibase_mod)
+    list_plots[[5]]  <- fn_cpiC002_Resumen_residuals_plot005(minibase_mod)
+    list_plots[[6]]  <- fn_cpiC002_Resumen_residuals_plot006(minibase_mod, df_factor_info)
+    list_plots[[7]]  <- fn_cpiC002_Resumen_residuals_plot007(minibase_mod, df_factor_info)
+    list_plots[[8]]  <- fn_cpiC002_Resumen_residuals_plot008(minibase_mod)
+    list_plots[[9]]  <- fn_cpiC002_Resumen_residuals_plot009(minibase_mod)
+    list_plots[[10]] <- fn_cpiC002_Resumen_residuals_plot010(minibase_mod)
 
     list_plots
   })

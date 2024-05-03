@@ -36,6 +36,8 @@ app_03_Rscience <- function(){
       shinydashboard::sidebarMenu(
         " t Test - 0.0.1",br(),br(),
         shinydashboard::menuItem(text = "database", tabName = "tab01_database", icon = shiny::icon("th")),
+        shinydashboard::menuItem(text = "Resumen", tabName = "tab03_anova", icon = shiny::icon("th")),
+
         shinydashboard::menuItem(text = "t Test", tabName = "tab02_anova", icon = shiny::icon("th"))
 
       )
@@ -259,11 +261,48 @@ app_03_Rscience <- function(){
                                   module_cpiC001_s01_varselection_ui(id = "anova01_A"),
                                   #actionButton("toggle_box", "Toggle Box"),
                                   br(), br(), br()),
-                                br(), br(),br(), br(),br(), br(),
                         fluidRow(
-                          column(12, br(), br(),module_cpiC001_s02_rscience_ui(id = "anova01_B")
+                          column(12, module_cpiC001_s02_rscience_ui(id = "anova01_B")
                           )),
                         br(), br(), br()
+        ),
+
+        # 2) ANOVA
+        shinydashboard::tabItem(tabName = "tab03_anova",
+                                h1("Resumen"),
+                                fluidRow(
+                                  column(12,
+                                         box(
+                                           title = "Database info",
+                                           status = "primary",
+                                           id = "my_box03A",
+                                           solidHeader = TRUE,
+                                           collapsible = TRUE,
+                                           collapsed = TRUE,
+                                           #closable = TRUE,# Colapsado por defecto
+                                           width = 12,
+                                           tableOutput("intro_source_database3")
+                                         )
+                                  )
+                                ),
+                                # https://cran.r-project.org/web/packages/shinydashboardPlus/vignettes/improved-boxes.html
+                                box(
+                                  title = "Var selection",
+                                  status = "primary",
+                                  id = "my_box03B",
+                                  solidHeader = TRUE,
+                                  collapsible = TRUE,
+                                  closable = FALSE,# Colapsado por defecto
+                                  collapsed = FALSE,
+                                  width = 12,
+                                  module_cpiC002_s01_varselection_ui(id = "anova03_A"),
+                                  #actionButton("toggle_box", "Toggle Box"),
+                                  br(), br(), br()),
+
+                                fluidRow(
+                                  column(12, module_cpiC002_s02_rscience_ui(id = "anova03_B")
+                                  )),
+                                br(), br(), br()
         )
 
       )
@@ -322,6 +361,18 @@ app_03_Rscience <- function(){
 
 
     })
+
+    output$intro_source_database3 <- renderTable({
+
+
+      list_intro <- input_general()$intro_source_database
+      df_output <- as.data.frame(list_intro)
+      colnames(df_output) <- names(list_intro)
+      df_output
+
+
+
+    })
     ##################################################################################
     input_01_anova <- module_cpiC001_s01_varselection_server(id = "anova01_A",
                                                              input_general = input_general)
@@ -331,6 +382,16 @@ app_03_Rscience <- function(){
     module_cpiC001_s02_rscience_server(id = "anova01_B",
                                        input_general = input_general,
                                        input_01_anova = input_01_anova)
+
+    ##################################################################################
+    input_03_anova <- module_cpiC002_s01_varselection_server(id = "anova03_A",
+                                                             input_general = input_general)
+
+
+
+    module_cpiC002_s02_rscience_server(id = "anova03_B",
+                                       input_general = input_general,
+                                       input_01_anova = input_03_anova)
 
   }
 
