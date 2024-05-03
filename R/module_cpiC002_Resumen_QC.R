@@ -4,7 +4,7 @@
 
 
 
-module_cpiC001_s01_varselection_ui <- function(id){
+module_cpiC002_s01_varselection_ui <- function(id){
 
   ns <- shiny::NS(id)
 
@@ -16,7 +16,7 @@ module_cpiC001_s01_varselection_ui <- function(id){
 
 
 
-module_cpiC001_s01_varselection_server <- function(id, input_general){
+module_cpiC002_s01_varselection_server <- function(id, input_general){
   moduleServer(
     id,
     function(input, output, session) {
@@ -106,7 +106,7 @@ module_cpiC001_s01_varselection_server <- function(id, input_general){
 
 
 
-      # # # Var selection for t Test - 2 independent samplesy
+      # # # Var selection for Resumeny
       output$vars_selection <- renderUI({
 
         ns <- shiny::NS(id)
@@ -134,7 +134,7 @@ module_cpiC001_s01_varselection_server <- function(id, input_general){
               column(4,
                      fluidRow(
                        column(12,
-                              selectInput(inputId = ns("vr_var_name"), label = "Response Variable",
+                              selectInput(inputId = ns("vr_var_name"), label = "Variable Response",
                                           choices = set_options ,
                                           selected = set_options[1])
                        )),
@@ -374,15 +374,15 @@ module_cpiC001_s01_varselection_server <- function(id, input_general){
 
 
 
-module_cpiC001_s02_rscience_ui <- function(id){
+module_cpiC002_s02_rscience_ui <- function(id){
 
   ns <- shiny::NS(id)
 
   div(
-  uiOutput(ns("page_test")),
-  br(), br(), br(),br(), br(), br(),br(), br(), br(),br(),br(), br(), br(),
-  br(), br(), br(),br(), br(), br(),br(), br(), br(),br(),br(), br(), br(),
-  br(), br(), br(),br(), br(), br(),br(), br(), br(),br(),br(), br(), br()
+    uiOutput(ns("page_test")),
+    br(), br(), br(),br(), br(), br(),br(), br(), br(),br(),br(), br(), br(),
+    br(), br(), br(),br(), br(), br(),br(), br(), br(),br(),br(), br(), br(),
+    br(), br(), br(),br(), br(), br(),br(), br(), br(),br(),br(), br(), br()
   )
 
 }
@@ -390,7 +390,7 @@ module_cpiC001_s02_rscience_ui <- function(id){
 
 
 
-module_cpiC001_s02_rscience_server <- function(id, input_general, input_01_anova){
+module_cpiC002_s02_rscience_server <- function(id, input_general, input_01_anova){
   moduleServer(
     id,
     function(input, output, session) {
@@ -406,10 +406,10 @@ module_cpiC001_s02_rscience_server <- function(id, input_general, input_01_anova
           need(!is.null(input_01_anova()), "Error 02: Module anova s02 - input_01_anova can not be NULL.")
         )
 
-        check_previous <- fn_cpiC001_tTest_2SampleInd_control_previous(database = input_general()$database,
-                                                                      vr_var_name = input_01_anova()$vr_var_name,
-                                                                      factor_var_name = input_01_anova()$factor_var_name,
-                                                                      alpha_value = input_01_anova()$alpha_value)
+        check_previous <- fn_cpiC002_control_previous(database = input_general()$database,
+                                                                       vr_var_name = input_01_anova()$vr_var_name,
+                                                                       factor_var_name = input_01_anova()$factor_var_name,
+                                                                       alpha_value = input_01_anova()$alpha_value)
 
         validate(
           need(check_previous$dt_ok, check_previous$text_output)
@@ -426,10 +426,10 @@ module_cpiC001_s02_rscience_server <- function(id, input_general, input_01_anova
 
         req(control_user_01())
 
-        the_output <- fn_cpiC001_tTest_2SampleInd_results(database = input_general()$database,
-                                                         vr_var_name = input_01_anova()$vr_var_name,
-                                                         factor_var_name = input_01_anova()$factor_var_name,
-                                                         alpha_value = input_01_anova()$alpha_value)
+        the_output <- fn_cpiC002_results(database = input_general()$database,
+                                                          vr_var_name = input_01_anova()$vr_var_name,
+                                                          factor_var_name = input_01_anova()$factor_var_name,
+                                                          alpha_value = input_01_anova()$alpha_value)
 
 
         the_output
@@ -451,7 +451,7 @@ module_cpiC001_s02_rscience_server <- function(id, input_general, input_01_anova
         #
         #
         #         # Control post
-        # check_post <- fn_cpiC001_tTest_2SampleInd_control_post(list_results_from_cpiA001_anova1way = RR_general())
+        # check_post <- fn_cpiC002_control_post(list_results_from_cpiA001_anova1way = RR_general())
         # #
         # validate(
         #   need(check_post$check_ok, check_post$text_output)
@@ -463,50 +463,15 @@ module_cpiC001_s02_rscience_server <- function(id, input_general, input_01_anova
 
 
 
-      # # RR - Tables
-      # RR_g01_tables <- reactive({
-      #
-      #   req(control_user_02())
-      #   all_tables_g01 <- fn_cpiC001_tTest_2SampleInd_recruit_g01_Tables(list_results_from_cpiA001_anova1way = RR_general())
-      #   all_tables_g01
-      # })
-      #
-      #
-      # # RR - Plots
-      # RR_g01_plots <- reactive({
-      #
-      #   req(control_user_02())
-      #   all_plots_g01 <- fn_cpiC001_tTest_2SampleInd_recruit_g01_FactorPlots(list_results_from_cpiA001_anova1way = RR_general())
-      #   all_plots_g01
-      # })
-      #
-      #
-      #
-      #
-      # # RR - Tables
-      # RR_g02_tables <- reactive({
-      #
-      #   req(control_user_02())
-      #   all_tables_g02 <- fn_cpiC001_tTest_2SampleInd_recruit_g02_Tables(list_results_from_cpiA001_anova1way = RR_general())
-      #   all_tables_g02
-      # })
 
-
-      # RR - Plots
-      # RR_g02_plots <- reactive({
-      #
-      #   req(control_user_02())
-      #   all_plots_g02 <- fn_cpiC001_tTest_2SampleInd_recruit_g02_ResidualsPlots(list_results_from_cpiA001_anova1way = RR_general())
-      #   all_plots_g02
-      # })
 
       RR_code <- reactive({
 
         req(control_user_02())
-        the_code <- fn_cpiC001_tTest_2SampleInd_code_sectionALL(intro_source_database = input_01_anova()$intro_source_database,
-                                                               vr_var_name = input_01_anova()$vr_var_name,
-                                                               factor_var_name = input_01_anova()$factor_var_name,
-                                                               alpha_value = input_01_anova()$alpha_value)
+        the_code <- fn_cpiC002_code_sectionALL(intro_source_database = input_01_anova()$intro_source_database,
+                                                                vr_var_name = input_01_anova()$vr_var_name,
+                                                                factor_var_name = input_01_anova()$factor_var_name,
+                                                                alpha_value = input_01_anova()$alpha_value)
         the_code
       })
 
@@ -621,198 +586,10 @@ module_cpiC001_s02_rscience_server <- function(id, input_general, input_01_anova
 
       ##########################################################################
 
-      # # # Tab 05 - Analysis resume...
-      output$tab03_analysis_anova_obj01 <- renderPrint({
 
-        req(control_user_02())
-
-        mi_lista <- RR_general()
-
-
-
-
-        # Vector con nombres de elementos a ver
-        selected_objs <- c("df_selected_vars")
-
-
-        # Usar lapply para mostrar los elementos deseados
-        mi_lista[selected_objs]
-
-      })
-      output$tab03_analysis_anova_obj02 <- renderPrint({
-
-        req(control_user_02())
-
-        mi_lista <- RR_general()
-
-
-
-
-        # Vector con nombres de elementos a ver
-        selected_objs <- c("df_factor_info")
-
-
-        # Usar lapply para mostrar los elementos deseados
-        mi_lista[selected_objs]
-
-      })
-
-
-
-      output$tab03_analysis_anova_obj03 <- renderPrint({
-
-        req(control_user_02())
-
-        mi_lista <- RR_general()
-
-
-
-
-        # Vector con nombres de elementos a ver
-        selected_objs <- c("df_normality", "check_normality")
-
-
-        # Usar lapply para mostrar los elementos deseados
-        mi_lista[selected_objs]
-
-      })
-
-      output$tab03_analysis_anova_obj04 <- renderPrint({
-
-        req(control_user_02())
-
-        mi_lista <- RR_general()
-
-
-
-
-        # Vector con nombres de elementos a ver
-        selected_objs <- c("df_homogeneity", "check_homogeneity")
-
-
-        # Usar lapply para mostrar los elementos deseados
-        mi_lista[selected_objs]
-
-      })
-
-      output$tab03_analysis_anova_obj05 <- renderPrint({
-
-        req(control_user_02())
-
-        mi_lista <- RR_general()
-
-
-
-
-        # Vector con nombres de elementos a ver
-        selected_objs <- c("phrase01_output",
-                           "phrase02_output",
-                           "phrase03_output","df_t_test_2sample_ind")
-
-
-        # Usar lapply para mostrar los elementos deseados
-        mi_lista[selected_objs]
-
-      })
-
-      output$tab03_analysis_anova_obj06 <- renderPrint({
-
-        req(control_user_02())
-
-        mi_lista <- RR_general()
-
-
-
-
-        # Vector con nombres de elementos a ver
-        selected_objs <- c("results_t_test")
-
-
-        # Usar lapply para mostrar los elementos deseados
-        mi_lista[selected_objs]
-
-      })
-
-      output$tab03_analysis_anova_obj07 <- renderPrint({
-
-        req(control_user_02())
-
-        mi_lista <- RR_general()
-
-
-
-
-        # Vector con nombres de elementos a ver
-        selected_objs <- c("df_vr_position_levels")
-
-
-        # Usar lapply para mostrar los elementos deseados
-        mi_lista[selected_objs]
-
-      })
-      output$tab03_analysis_anova_obj08 <- renderPrint({
-
-        req(control_user_02())
-
-        mi_lista <- RR_general()
-
-
-
-
-        # Vector con nombres de elementos a ver
-        selected_objs <- c("df_vr_dispersion_levels")
-
-
-        # Usar lapply para mostrar los elementos deseados
-        mi_lista[selected_objs]
-
-      })
-      output$tab03_analysis_anova_FULL <- renderUI({
-
-        ns <- shiny::NS(id)
-
-        div(
-          h2("1) References"),
-          verbatimTextOutput(ns("tab03_analysis_anova_obj01")),
-          br(), br(), br(),
-
-          h2("2) Factor resumen"),
-          verbatimTextOutput(ns("tab03_analysis_anova_obj02")),
-          br(), br(), br(),
-
-          # h2("3) Requeriment - Normality from each group"),
-          # verbatimTextOutput(ns("tab03_analysis_anova_obj03")),
-          # br(), br(), br(),
-          h2("3) Normality"),
-          verbatimTextOutput(ns("tab03_analysis_anova_obj03")),
-          br(), br(), br(),
-
-          h2("4) Homogeneity"),
-          verbatimTextOutput(ns("tab03_analysis_anova_obj04")),
-          br(), br(), br(),
-
-          h2("5) t Test"),
-          verbatimTextOutput(ns("tab03_analysis_anova_obj05")),
-          br(), br(), br(),
-
-          h2("6) t Test Full"),
-          verbatimTextOutput(ns("tab03_analysis_anova_obj06")),
-          br(), br(), br(),
-
-          h2("7) Position"),
-          verbatimTextOutput(ns("tab03_analysis_anova_obj07")),
-          br(), br(), br(),
-
-          h2("8) Dispersion"),
-          verbatimTextOutput(ns("tab03_analysis_anova_obj08")),
-          br(), br(), br()
-        )
-
-      })
       #################################################################
       # # # Tab 05 - Analysis resume...
-
-      output$tab03_01_df_selected_vars <- renderDT({
+         output$tab03_analysis_anova_obj01_B <- renderDT({
 
         req(control_user_02())
 
@@ -865,265 +642,6 @@ module_cpiC001_s02_rscience_server <- function(id, input_general, input_01_anova
           fontSize = "26px"
         )
       })
-
-      output$tab03_02_df_factor_info <- renderDT({
-
-        req(control_user_02())
-
-        mi_lista <- RR_general()
-
-
-
-
-        # Vector con nombres de elementos a ver
-        selected_objs <- c("df_factor_info")
-
-
-        # Usar lapply para mostrar los elementos deseados
-
-        mi_tabla <- mi_lista[[selected_objs]]
-        #https://rstudio.github.io/DT/functions.html
-        vector_pos <- 1:nrow(mi_tabla)
-        vector_color <- rep(NA, length(vector_pos))
-        vector_color[c(T, F)] <- "lightblue"#'red'#
-        vector_color[c(F, T)] <- "lightgreen"#'blue'#
-        vector_color <- vector_color[vector_pos]
-
-        datatable(
-          mi_tabla,
-          rownames = FALSE,
-          options = list(
-
-            headerCallback = DT::JS(
-              "function(thead) {",
-              "  $(thead).css('font-size', '2em');",
-              "}"
-            ),
-            columnDefs = list(list(className = 'dt-center', targets = "_all")),
-            #pageLength = 5,
-            dom = "t",
-            scrollX = TRUE,
-            searching = FALSE,
-            scrollCollapse = TRUE,  # Permitir colapsar el scroll
-            fixedColumns = list(leftColumns = 3),  # Fijar las primeras 3 columnas
-            #lengthMenu = list(c(-1), c("All")), # Todas las filas
-            style = list(
-              'font-size' = '20px'  # Tamaño de letra para el nombre de las columnas
-            )
-          )
-
-        ) %>%formatStyle(
-          colnames(mi_tabla),
-          backgroundColor = styleRow(vector_pos, vector_color),#,
-          target = 'row',
-          fontSize = "26px"
-        ) %>% formatRound(columns= c("mean"), digits=4)
-      })
-
-
-
-      output$tab03_analysis_anova_obj01_B <- renderPrint({
-
-        req(control_user_02())
-
-        mi_lista <- RR_general()
-
-
-
-
-        # Vector con nombres de elementos a ver
-        selected_objs <- c("df_selected_vars")
-
-
-        # Usar lapply para mostrar los elementos deseados
-        mi_lista[selected_objs]
-
-      })
-      output$tab03_analysis_anova_obj02_B <- renderPrint({
-
-        req(control_user_02())
-
-        mi_lista <- RR_general()
-
-
-
-
-        # Vector con nombres de elementos a ver
-        selected_objs <- c("df_factor_info")
-
-
-        # Usar lapply para mostrar los elementos deseados
-        mi_lista[selected_objs]
-
-      })
-
-
-
-      output$tab03_analysis_anova_obj03_B <- renderPrint({
-
-        req(control_user_02())
-
-        mi_lista <- RR_general()
-
-
-
-
-        # Vector con nombres de elementos a ver
-        selected_objs <- c("df_normality", "check_normality")
-
-
-        # Usar lapply para mostrar los elementos deseados
-        mi_lista[selected_objs]
-
-      })
-
-      output$tab03_analysis_anova_obj04_B <- renderPrint({
-
-        req(control_user_02())
-
-        mi_lista <- RR_general()
-
-
-
-
-        # Vector con nombres de elementos a ver
-        selected_objs <- c("df_homogeneity", "check_homogeneity")
-
-
-        # Usar lapply para mostrar los elementos deseados
-        mi_lista[selected_objs]
-
-      })
-
-      output$tab03_analysis_anova_obj05_B <- renderPrint({
-
-        req(control_user_02())
-
-        mi_lista <- RR_general()
-
-
-
-
-        # Vector con nombres de elementos a ver
-        selected_objs <- c("phrase01_output",
-                           "phrase02_output",
-                           "phrase03_output")
-
-
-        # Usar lapply para mostrar los elementos deseados
-        mi_lista[selected_objs]
-
-      })
-
-      output$tab03_analysis_anova_obj06_B <- renderPrint({
-
-        req(control_user_02())
-
-        mi_lista <- RR_general()
-
-
-
-
-        # Vector con nombres de elementos a ver
-        selected_objs <- c("results_t_test")
-
-
-        # Usar lapply para mostrar los elementos deseados
-        mi_lista[selected_objs]
-
-      })
-
-      output$tab03_analysis_anova_obj07_B <- renderPrint({
-
-        req(control_user_02())
-
-        mi_lista <- RR_general()
-
-
-
-
-        # Vector con nombres de elementos a ver
-        selected_objs <- c("df_vr_position_levels")
-
-
-        # Usar lapply para mostrar los elementos deseados
-        mi_lista[selected_objs]
-
-      })
-      output$tab03_analysis_anova_obj08_B <- renderPrint({
-
-        req(control_user_02())
-
-        mi_lista <- RR_general()
-
-
-
-
-        # Vector con nombres de elementos a ver
-        selected_objs <- c("df_vr_dispersion_levels")
-
-
-        # Usar lapply para mostrar los elementos deseados
-        mi_lista[selected_objs]
-
-      })
-
-      output$tab03_analysis_anova_obj22_Bextra <- renderDT({
-
-        req(control_user_02())
-
-        mi_lista <- RR_general()
-
-
-
-
-        # Vector con nombres de elementos a ver
-        selected_objs <- c("df_t_test_2sample_ind")
-
-
-        # Usar lapply para mostrar los elementos deseados
-        #mi_lista[selected_objs]
-
-        mi_tabla <- mi_lista[[selected_objs]]
-        #https://rstudio.github.io/DT/functions.html
-        vector_pos <- 1:nrow(mi_tabla)
-        vector_color <- rep(NA, length(vector_pos))
-        vector_color[c(T, F)] <- "lightblue"#'red'#
-        vector_color[c(F, T)] <- "lightgreen"#'blue'#
-        vector_color <- vector_color[vector_pos]
-
-        datatable(
-          mi_tabla,
-          rownames = FALSE,
-          options = list(
-
-            headerCallback = DT::JS(
-              "function(thead) {",
-              "  $(thead).css('font-size', '2em');",
-              "}"
-            ),
-            columnDefs = list(list(className = 'dt-center', targets = "_all")),
-            #pageLength = 5,
-            dom = "t",
-            scrollX = TRUE,
-            searching = FALSE,
-            scrollCollapse = TRUE,  # Permitir colapsar el scroll
-            fixedColumns = list(leftColumns = 3),  # Fijar las primeras 3 columnas
-            #lengthMenu = list(c(-1), c("All")), # Todas las filas
-            style = list(
-              'font-size' = '20px'  # Tamaño de letra para el nombre de las columnas
-            )
-          )
-
-        ) %>%formatStyle(
-          colnames(mi_tabla),
-          backgroundColor = styleRow(vector_pos, vector_color),#,
-          target = 'row',
-          fontSize = "26px"
-        ) %>% formatRound(columns= c("p.value"), digits=4)
-
-      })
-
 
       output$tab03_analysis_anova_FULL_B <- renderUI({
 
@@ -1132,15 +650,12 @@ module_cpiC001_s02_rscience_server <- function(id, input_general, input_01_anova
         div(
           h2("1) References"),
           h3("R Object: df_selected_vars"),
-          DTOutput(ns("tab03_01_df_selected_vars")),
-          #verbatimTextOutput(ns("tab03_analysis_anova_obj01_B")),
-          br(), br(), br(),
+          DTOutput(ns("tab03_analysis_anova_obj01_B")),
+          br(), br(), br()#,#
 
-          h2("2) Factor resumen"),
-          h3("R Object: df_factor_info"),
-          DTOutput(ns("tab03_02_df_factor_info")),
-          #verbatimTextOutput(ns("tab03_analysis_anova_obj02_B")),
-          br(), br(), br(),
+          # h2("2) Factor resumen"),
+          # verbatimTextOutput(ns("tab03_analysis_anova_obj02_B")),
+          # br(), br(), br()
 
           # h2("3) Requeriment - Normality from each group"),
           # verbatimTextOutput(ns("tab03_analysis_anova_obj03")),
@@ -1153,248 +668,11 @@ module_cpiC001_s02_rscience_server <- function(id, input_general, input_01_anova
           # verbatimTextOutput(ns("tab03_analysis_anova_obj04_B")),
           # br(), br(), br(),
 
-          h2("3) Phrases"),
-          verbatimTextOutput(ns("tab03_analysis_anova_obj05_B")),
-          #br(), br(), br(),
-         # h2("1) Requeriment - Resumen - Normality"),
 
-          br(), br(), br(),
-          h2("4) t Test - Resumen Table"),
-          DTOutput(ns("tab03_analysis_anova_obj22_Bextra")),
-          br(), br(), br(),
-          h2("5) Original R results for t Test"),
-          verbatimTextOutput(ns("tab03_analysis_anova_obj06_B")),
-
-          br(), br(), br()#,
-
-          # h2("6) Position"),
-          # verbatimTextOutput(ns("tab03_analysis_anova_obj07_B")),
-          # br(), br(), br(),
-          #
-          # h2("7) Dispersion"),
-          # verbatimTextOutput(ns("tab03_analysis_anova_obj08_B")),
-          # br(), br(), br()
         )
 
       })
-###################################################################
-      output$tab22_analysis_anova_obj01 <- renderPrint({
 
-        req(control_user_02())
-
-        mi_lista <- RR_general()
-
-
-
-
-        # Vector con nombres de elementos a ver
-        selected_objs <- c("df_normality")
-
-
-        # Usar lapply para mostrar los elementos deseados
-        mi_lista[selected_objs]
-
-      })
-
-      output$tab22_analysis_anova_obj02 <- renderPrint({
-
-        req(control_user_02())
-
-        mi_lista <- RR_general()
-
-
-
-
-        # Vector con nombres de elementos a ver
-        selected_objs <- c("df_homogeneity")
-
-
-        # Usar lapply para mostrar los elementos deseados
-        mi_lista[selected_objs]
-
-      })
-
-      output$tab22_analysis_anova_obj03 <- renderPrint({
-
-        req(control_user_02())
-
-        mi_lista <- RR_general()
-
-
-
-
-        # Vector con nombres de elementos a ver
-        selected_objs <- c("list_normality_test")
-
-
-        # Usar lapply para mostrar los elementos deseados
-        mi_lista[selected_objs]
-
-      })
-
-      output$tab22_analysis_anova_obj04 <- renderPrint({
-
-        req(control_user_02())
-
-        mi_lista <- RR_general()
-
-
-
-
-        # Vector con nombres de elementos a ver
-        selected_objs <- c("homogeneity_test")
-
-
-        # Usar lapply para mostrar los elementos deseados
-        mi_lista[selected_objs]
-
-      })
-
-      output$tab22_analysis_anova_obj05 <- renderTable({
-
-        req(control_user_02())
-
-        mi_lista <- RR_general()
-
-
-
-
-        # Vector con nombres de elementos a ver
-        selected_objs <- c("df_normality")
-
-
-        # Usar lapply para mostrar los elementos deseados
-        mi_lista[[selected_objs]]
-
-
-      }, align = "c")
-
-      output$tab22_analysis_anova_obj06 <- renderTable({
-
-        req(control_user_02())
-
-        mi_lista <- RR_general()
-
-
-
-
-        # Vector con nombres de elementos a ver
-        selected_objs <- c("df_homogeneity")
-
-
-        # Usar lapply para mostrar los elementos deseados
-        mi_lista[[selected_objs]]
-
-      }, align = "c")
-
-
-      output$tab22_analysis_anova_obj07 <- renderDT({
-
-        req(control_user_02())
-
-        mi_lista <- RR_general()
-
-
-
-
-        # Vector con nombres de elementos a ver
-        selected_objs <- c("df_normality")
-
-
-        # Usar lapply para mostrar los elementos deseados
-
-      mi_tabla <- mi_lista[[selected_objs]]
-#https://rstudio.github.io/DT/functions.html
-      vector_pos <- 1:nrow(mi_tabla)
-      vector_color <- rep(NA, length(vector_pos))
-      vector_color[c(T, F)] <- "lightblue"#'red'#
-      vector_color[c(F, T)] <- "lightgreen"#'blue'#
-      vector_color <- vector_color[vector_pos]
-
-      datatable(
-        mi_tabla,
-        rownames = FALSE,
-        options = list(
-
-          headerCallback = DT::JS(
-            "function(thead) {",
-            "  $(thead).css('font-size', '2em');",
-            "}"
-          ),
-          columnDefs = list(list(className = 'dt-center', targets = "_all")),
-          #pageLength = 5,
-          dom = "t",
-          scrollX = TRUE,
-          searching = FALSE,
-          scrollCollapse = TRUE,  # Permitir colapsar el scroll
-          fixedColumns = list(leftColumns = 3),  # Fijar las primeras 3 columnas
-          #lengthMenu = list(c(-1), c("All")), # Todas las filas
-          style = list(
-            'font-size' = '20px'  # Tamaño de letra para el nombre de las columnas
-          )
-        )
-
-      ) %>%formatStyle(
-        colnames(mi_tabla),
-        backgroundColor = styleRow(vector_pos, vector_color),#,
-        target = 'row',
-        fontSize = "26px"
-      ) %>% formatRound(columns= c("p.value"), digits=4)
-      })
-
-      output$tab22_analysis_anova_obj08 <- renderDT({
-
-        req(control_user_02())
-
-        mi_lista <- RR_general()
-
-
-
-
-        # Vector con nombres de elementos a ver
-        selected_objs <- c("df_homogeneity")
-
-
-        mi_tabla <- mi_lista[[selected_objs]]
-        #mi_tabla
-        #https://rstudio.github.io/DT/functions.html
-        vector_pos <- 1:nrow(mi_tabla)
-        vector_color <- rep(NA, length(vector_pos))
-        vector_color[c(T, F)] <- "lightblue"#'red'#
-        vector_color[c(F, T)] <- "lightgreen"#'blue'#
-        vector_color <- vector_color[vector_pos]
-
-
-        datatable(
-          mi_tabla,
-          rownames = FALSE,
-          options = list(
-
-            headerCallback = DT::JS(
-              "function(thead) {",
-              "  $(thead).css('font-size', '2em');",
-              "}"
-            ),
-            columnDefs = list(list(className = 'dt-center', targets = "_all")),
-            #pageLength = 5,
-            dom = "t",
-            scrollX = TRUE,
-            searching = FALSE,
-            scrollCollapse = TRUE,  # Permitir colapsar el scroll
-            fixedColumns = list(leftColumns = 3),  # Fijar las primeras 3 columnas
-            #lengthMenu = list(c(-1), c("All")), # Todas las filas
-            style = list(
-              'font-size' = '20px'  # Tamaño de letra para el nombre de las columnas
-            )
-          )
-
-        ) %>%formatStyle(
-          colnames(mi_tabla),
-          backgroundColor = styleRow(vector_pos, vector_color),#,
-          target = 'row',
-          fontSize = "26px"
-        )%>% formatRound(columns= c("p.value"), digits=4)
-      })
 
       ##################################################
 
@@ -1444,12 +722,17 @@ module_cpiC001_s02_rscience_server <- function(id, input_general, input_01_anova
             )
           )
 
-        ) %>%formatStyle(
+        ) %>% formatRound(columns= c("min", "max", "mean", "Q1", "median.Q2", "Q3", "max"), digits=4) %>%
+        formatStyle(
           colnames(mi_tabla),
           backgroundColor = styleRow(vector_pos, vector_color),#,
           target = 'row',
           fontSize = "26px"
-        )%>% formatRound(columns= c("min", "mean", "Q1", "median", "Q3", "max"), digits=4)
+        )
+        # %>% formatStyle(
+        #   4,
+        #              decimal.mark = ".", # Cambiar el separador decimal
+        #              digits = 2)
       })
 
       output$tab33_dispersion_levels <- renderDT({
@@ -1498,12 +781,13 @@ module_cpiC001_s02_rscience_server <- function(id, input_general, input_01_anova
             )
           )
 
-        ) %>%formatStyle(
+        ) %>% formatRound(columns= c("range", "variance", "standard_deviation", "standard_error", "porc_variation_coef"), digits=4) %>%
+          formatStyle(
           colnames(mi_tabla),
           backgroundColor = styleRow(vector_pos, vector_color),#,
           target = 'row',
           fontSize = "26px"
-        ) %>% formatRound(columns= c("range", "variance", "standard_deviation", "standard_error"), digits=4)
+        )
       })
       #############################################################
       output$el_plot1 <- renderPlotly({
@@ -1531,7 +815,7 @@ module_cpiC001_s02_rscience_server <- function(id, input_general, input_01_anova
           # # # Title and settings...
           plot001_factor <-   plotly::layout(p = plot001_factor,
                                              xaxis = list(title = "FACTOR"),
-                                             yaxis = list(title = "VR"),
+                                             yaxis = list(title = "RV"),
                                              title = "Plot 001 - Scatterplot",
                                              font = list(size = 20),
                                              margin = list(t = 100))
@@ -1584,7 +868,7 @@ module_cpiC001_s02_rscience_server <- function(id, input_general, input_01_anova
 
           plot002_factor <- plotly::layout(p = plot002_factor,
                                            xaxis = list(title = "FACTOR"),
-                                           yaxis = list(title = "VR"),
+                                           yaxis = list(title = "RV"),
                                            title = "Plot 002 - Mean and Standard Deviation",
                                            font = list(size = 20),
                                            margin = list(t = 100))
@@ -1635,7 +919,7 @@ module_cpiC001_s02_rscience_server <- function(id, input_general, input_01_anova
 
           plot003_factor <- plotly::layout(p = plot003_factor,
                                            xaxis = list(title = "FACTOR"),
-                                           yaxis = list(title = "VR"),
+                                           yaxis = list(title = "RV"),
                                            title = "Plot 003 - Mean and Standard Error",
                                            font = list(size = 20),
                                            margin = list(t = 100))
@@ -1686,7 +970,7 @@ module_cpiC001_s02_rscience_server <- function(id, input_general, input_01_anova
           plot004_factor <- plotly::layout(p = plot004_factor,
                                            title = "Plot 004 - Boxplot and means",
                                            xaxis = list(title = "FACTOR"),
-                                           yaxis = list(title = "VR"),
+                                           yaxis = list(title = "RV"),
                                            font = list(size = 20),
                                            margin = list(t = 100))
 
@@ -1886,89 +1170,57 @@ module_cpiC001_s02_rscience_server <- function(id, input_general, input_01_anova
 
         div(
           rclipboardSetup(),
+          box(
+            title = "Resumen - 2 Var (Cuantitative and Qualitative)",
+            status = "primary",
+            id = ns("my_box03C"),
+            solidHeader = TRUE,
+            collapsible = TRUE,
+            closable = FALSE,# Colapsado por defecto
+            collapsed = FALSE,
+            width = 12,
           textOutput(ns("calling_help")),
 
           shiny::tabsetPanel(id = ns("super_tabset_panel"),
                              # tabPanel("Analysis",  # 05
                              #          fluidRow(
                              #            column(12,
-                             #                   h1("t Test - 2 independent samples"),
+                             #                   h1("Resumen"),
                              #                   uiOutput(ns("tab03_analysis_anova_FULL"))
                              #            )
                              #          )
                              # ),
-                             tabPanel("Analysis",  # 05
+                             tabPanel("Reference",  # 05
                                       fluidRow(
                                         column(12,
-                                               h1("t Test - 2 Independent Samples"),
+                                               h1("Resumen"),
                                                uiOutput(ns("tab03_analysis_anova_FULL_B"))
                                         )
                                       )
                              ),
-                             tabPanel("Requeriments",  # 05
-                                      fluidRow(
-                                        column(12,
-                                               h1("t Test - 2 Independent Samples")
-                                               )
-                                        ),
-                                      h2("1) Requeriment - Resumen - Normality"),
-                                      h3("R Object: df_normality"),
-                                      DTOutput(ns("tab22_analysis_anova_obj07")),
-                                      br(), br(), br(),
-                                      h2("2) Requeriment - Resumen - Homogeneity"),
-                                      h3("R Object: df_homogeneity"),
-                                      DTOutput(ns("tab22_analysis_anova_obj08")),
-                                      br(), br(), br(),
-                                      # h1("Resumen"),
-                                      # h2("1) Requeriment - Resumen - Normality"),
-                                      # tableOutput(ns("tab22_analysis_anova_obj05")),
-                                      # br(), br(), br(),
-                                      # h2("2) Requeriment - Resumen - Homogeneity"),
-                                      # tableOutput(ns("tab22_analysis_anova_obj06")),
-                                      # br(), br(), br(),
-                                      # h1("Resumen"),
-                                      # h2("1) Requeriment - Resumen - Normality"),
-                                      # verbatimTextOutput(ns("tab22_analysis_anova_obj01")),
-                                      # br(), br(), br(),
-                                      # h2("2) Requeriment - Resumen - Homogeneity"),
-                                      # verbatimTextOutput(ns("tab22_analysis_anova_obj02")),
-                                      # br(), br(), br(),
 
-                                      h1("Original R Results"),
-                                      h2("1) Requeriment Normality"),
-                                      verbatimTextOutput(ns("tab22_analysis_anova_obj03")),
-                                      br(), br(), br(),
-                                      h2("2) Requeriment Homogeneity"),
-                                      verbatimTextOutput(ns("tab22_analysis_anova_obj04")),
-                                      br(), br(), br()
-
-                             ),
                              tabPanel("Resume Statistics",
                                       fluidRow(
-                                        column(12, h1("t Test - 2 Independent Samples"))
-                                        ),
+                                        column(12,
+                                               h2("1) Position"),
+                                               h3("R Object: df_vr_position_levels"),
+                                               DTOutput(ns("tab33_position_levels"))
+                                        )
+                                      ),
+                                      br(), br(), br(),
 
-                              fluidRow(
-                                column(12,
-                             h2("1) Position"),
-                             h3("R Object: df_vr_position_levels"),
-                             DTOutput(ns("tab33_position_levels"))
-                                )
-                              ),
-                             br(), br(), br(),
-
-                             fluidRow(
-                               column(12,
-                                      h2("2) Dispersion"),
-                                      h3("R Object: df_vr_dispersion_levels"),
-                                      DTOutput(ns("tab33_dispersion_levels"))
-                               )
-                             ),
-                             br(), br(), br(),
+                                      fluidRow(
+                                        column(12,
+                                               h2("2) Dispersion"),
+                                               h3("R Object: df_vr_dispersion_levels"),
+                                               DTOutput(ns("tab33_dispersion_levels"))
+                                        )
+                                      ),
+                                      br(), br(), br(),
 
                              ),
                              tabPanel("Plots - Raw Data",  # 05,
-                                      fluidRow(column(12, h1("t Test - 2 Independent Samples"))),
+                                      fluidRow(column(12, h1("Resumen"))),
                                       fluidRow(
                                         #column(1),
                                         column(6, plotlyOutput(ns("el_plot1"), height = "40vh", width = "70vh")),
@@ -1995,10 +1247,10 @@ module_cpiC001_s02_rscience_server <- function(id, input_general, input_01_anova
                                         column(6, verbatimTextOutput(ns("tabla04"))),
                                       )
 
-                                               #shinycssloaders::withSpinner(uiOutput(ns("plot_outputs33"))),
-                                        ),
+                                      #shinycssloaders::withSpinner(uiOutput(ns("plot_outputs33"))),
+                             ),
                              # tabPanel("Plots - Residuals",  # 05,
-                             #          fluidRow(column(12, h1("t Test - 2 independent samplesy"))),
+                             #          fluidRow(column(12, h1("Resumeny"))),
                              #          fluidRow(
                              #            #column(1),
                              #            column(12,
@@ -2011,7 +1263,7 @@ module_cpiC001_s02_rscience_server <- function(id, input_general, input_01_anova
                              #          )
                              # ),
                              # tabPanel("Plots - Factor",  # 05,
-                             #          fluidRow(h1("t Test - 2 independent samplesy")),
+                             #          fluidRow(h1("Resumeny")),
                              #          fluidRow(
                              #            #column(1),
                              #            column(12,
@@ -2024,7 +1276,7 @@ module_cpiC001_s02_rscience_server <- function(id, input_general, input_01_anova
                              #          )
                              # ),
                              # tabPanel("Plots - Residuals",  # 05,
-                             #          fluidRow(h1("t Test - 2 independent samplesy")),
+                             #          fluidRow(h1("Resumeny")),
                              #          fluidRow(
                              #            #column(1),
                              #            column(12,
@@ -2037,7 +1289,7 @@ module_cpiC001_s02_rscience_server <- function(id, input_general, input_01_anova
                              #          )
                              # ),
                              # tabPanel("Plots2",  # 05,
-                             #          fluidRow(h1("t Test - 2 independent samplesy")),
+                             #          fluidRow(h1("Resumeny")),
                              #          fluidRow(
                              #            #column(1),
                              #            column(12,
@@ -2050,7 +1302,7 @@ module_cpiC001_s02_rscience_server <- function(id, input_general, input_01_anova
                              tabPanel("Full Results",  # 05
                                       fluidRow(
                                         column(12,
-                                               h1("t Test - 2 Independent Samples"),
+                                               h1("Resumen"),
                                                verbatimTextOutput(ns("tab01_all_anova_results"))
                                         )
                                       )
@@ -2061,7 +1313,7 @@ module_cpiC001_s02_rscience_server <- function(id, input_general, input_01_anova
                              tabPanel("R code",  # 05
                                       fluidRow(
                                         column(10,
-                                               h1("t Test - 2 Independent Samples"),
+                                               h1("Resumeny"),
                                                verbatimTextOutput(ns("tab05_code"))
                                         ),
                                         br(), br(),
@@ -2072,6 +1324,7 @@ module_cpiC001_s02_rscience_server <- function(id, input_general, input_01_anova
                                       )
                              )
 
+          ), br(), br(), br(), br(), br(), br()
           ), br(), br(), br(), br(), br(), br()
         )
       })

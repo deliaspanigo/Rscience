@@ -250,6 +250,8 @@ app_03_Rscience <- function(){
                                 ),
                         # https://cran.r-project.org/web/packages/shinydashboardPlus/vignettes/improved-boxes.html
                         box(
+
+
                                   title = "Var selection",
                                   status = "primary",
                                   id = "my_box02",
@@ -295,13 +297,33 @@ app_03_Rscience <- function(){
                                   closable = FALSE,# Colapsado por defecto
                                   collapsed = FALSE,
                                   width = 12,
-                                  module_cpiC002_s01_varselection_ui(id = "anova03_A"),
+
+                                  fluidRow(
+                                    column(6,
+
+                                  selectInput(inputId = "amount_vars", label = "Amount vars",
+                                               choices = c("Select one..." = "",
+                                                            "1 var  - Response Variable" = 1,
+                                                            "2 vars - Response Variable +  Factor" = 2)),
+                                  )),br(), br(),
+
+
+                                  conditionalPanel(condition = "input.amount_vars == 2",
+                                                   module_cpiC002_s01_varselection_ui(id = "anova03_A")),
+                                  conditionalPanel(condition = "input.amount_vars == 1",
+                                                   module_cpiC003_s01_varselection_ui(id = "anova04_A")),
                                   #actionButton("toggle_box", "Toggle Box"),
                                   br(), br(), br()),
 
                                 fluidRow(
-                                  column(12, module_cpiC002_s02_rscience_ui(id = "anova03_B")
-                                  )),
+
+                                  column(12, conditionalPanel(condition = "input.amount_vars == 2",
+                                                              module_cpiC002_s02_rscience_ui(id = "anova03_B")),
+                                            conditionalPanel(condition = "input.amount_vars == 1",
+                                                             module_cpiC003_s02_rscience_ui(id = "anova04_B"))
+
+                                  )
+                                  ),
                                 br(), br(), br()
         )
 
@@ -392,7 +414,15 @@ app_03_Rscience <- function(){
     module_cpiC002_s02_rscience_server(id = "anova03_B",
                                        input_general = input_general,
                                        input_01_anova = input_03_anova)
+    ##################################################################################
+    input_04_anova <- module_cpiC003_s01_varselection_server(id = "anova04_A",
+                                                             input_general = input_general)
 
+
+
+    module_cpiC003_s02_rscience_server(id = "anova04_B",
+                                       input_general = input_general,
+                                       input_01_anova = input_04_anova)
   }
 
 

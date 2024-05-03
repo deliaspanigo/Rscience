@@ -4,7 +4,7 @@
 
 
 
-module_cpiC002_s01_varselection_ui <- function(id){
+module_cpiC003_s01_varselection_ui <- function(id){
 
   ns <- shiny::NS(id)
 
@@ -16,7 +16,7 @@ module_cpiC002_s01_varselection_ui <- function(id){
 
 
 
-module_cpiC002_s01_varselection_server <- function(id, input_general){
+module_cpiC003_s01_varselection_server <- function(id, input_general){
   moduleServer(
     id,
     function(input, output, session) {
@@ -134,16 +134,17 @@ module_cpiC002_s01_varselection_server <- function(id, input_general){
               column(4,
                      fluidRow(
                        column(12,
-                              selectInput(inputId = ns("vr_var_name"), label = "Response Variable",
+                              selectInput(inputId = ns("vr_var_name"), label = "Variable Response",
                                           choices = set_options ,
                                           selected = set_options[1])
-                       )),
-                     fluidRow(
-                       column(12,
-                              selectInput(inputId = ns("factor_var_name"), label = "Factor",
-                                          choices = set_options,
-                                          selected = set_options[1])
-                       ))),
+                       ))#,
+                     # fluidRow(
+                     #   column(12,
+                     #          selectInput(inputId = ns("factor_var_name"), label = "Factor",
+                     #                      choices = set_options,
+                     #                      selected = set_options[1])
+                     #   ))
+                     ),
               column(4,
                      fluidRow(
                        column(12,
@@ -199,31 +200,31 @@ module_cpiC002_s01_varselection_server <- function(id, input_general){
 
         validate(
           need(!is.null(input$vr_var_name), "Error 09: Module t test s01 - input$vr_var_name can not be NULL."),
-          need(!is.null(input$factor_var_name), "Error 10: Module t test s01 - input$factor_var_name can not be NULL."),
+          #need(!is.null(input$factor_var_name), "Error 10: Module t test s01 - input$factor_var_name can not be NULL."),
           need(!is.null(input$alpha_value), "Error 11: Module t test s01 - input$alpha_value can not be NULL.")
         )
 
         validate(
           need(is.vector(input$vr_var_name), "Error 12: Module t test s01 - input$vr_var_name must be a vector."),
-          need(is.vector(input$factor_var_name), "Error 13: Module t test s01 - input$vr_var_name must be a vector."),
+          #need(is.vector(input$factor_var_name), "Error 13: Module t test s01 - input$vr_var_name must be a vector."),
           need(is.vector(input$alpha_value), "Error 14: Module t test s01 - input$alpha_value must be a vector.")
         )
 
         validate(
           need(length(input$vr_var_name) == 1, "Error 15: Module t test s01 - input$vr_var_name has length 1."),
-          need(length(input$factor_var_name) == 1, "Error 16: Module t test s01 - input$factor_var_name has length 1."),
+          #need(length(input$factor_var_name) == 1, "Error 16: Module t test s01 - input$factor_var_name has length 1."),
           need(length(input$alpha_value) == 1, "Error 17: Module t test s01 - input$alpha_value has length 1.")
         )
 
 
         validate(
           need(input$vr_var_name != "", "Select a response variable."),
-          need(input$factor_var_name != "", "Select a factor."),
+          #need(input$factor_var_name != "", "Select a factor."),
         )
 
-        validate(
-          need(input$vr_var_name != input$factor_var_name, "Selected variables can not be equal.")
-        )
+        # validate(
+        #   need(input$vr_var_name != input$factor_var_name, "Selected variables can not be equal.")
+        # )
 
 
 
@@ -268,16 +269,16 @@ module_cpiC002_s01_varselection_server <- function(id, input_general){
 
 
       # # Factor selection
-      observeEvent(input$factor_var_name, {
-
-        # Not show yet
-        color_button_load(hardcorded_initial_color)
-        color_button_show(hardcorded_initial_color)
-        action_button_load(FALSE)
-        action_button_show(FALSE)
-
-      })
-
+      # observeEvent(input$factor_var_name, {
+      #
+      #   # Not show yet
+      #   color_button_load(hardcorded_initial_color)
+      #   color_button_show(hardcorded_initial_color)
+      #   action_button_load(FALSE)
+      #   action_button_show(FALSE)
+      #
+      # })
+      #
       observeEvent(input$alpha_value, {
 
         # Not show yet
@@ -329,12 +330,12 @@ module_cpiC002_s01_varselection_server <- function(id, input_general){
       })
 
 
-      factor_var_name <- reactive({
-        req(action_button_show())
-
-        output_value <- input$factor_var_name
-        return(output_value)
-      })
+      # factor_var_name <- reactive({
+      #   req(action_button_show())
+      #
+      #   output_value <- input$factor_var_name
+      #   return(output_value)
+      # })
 
 
       alpha_value <- reactive({
@@ -358,9 +359,9 @@ module_cpiC002_s01_varselection_server <- function(id, input_general){
         req(action_button_show())
 
 
-        the_list <- list(vr_var_name(), factor_var_name(), alpha_value(), intro_source_database())
+        the_list <- list(vr_var_name(), alpha_value(), intro_source_database())
 
-        names(the_list) <- c("vr_var_name", "factor_var_name", "alpha_value", "intro_source_database")
+        names(the_list) <- c("vr_var_name", "alpha_value", "intro_source_database")
         the_list
       })
 
@@ -374,7 +375,7 @@ module_cpiC002_s01_varselection_server <- function(id, input_general){
 
 
 
-module_cpiC002_s02_rscience_ui <- function(id){
+module_cpiC003_s02_rscience_ui <- function(id){
 
   ns <- shiny::NS(id)
 
@@ -390,7 +391,7 @@ module_cpiC002_s02_rscience_ui <- function(id){
 
 
 
-module_cpiC002_s02_rscience_server <- function(id, input_general, input_01_anova){
+module_cpiC003_s02_rscience_server <- function(id, input_general, input_01_anova){
   moduleServer(
     id,
     function(input, output, session) {
@@ -406,10 +407,10 @@ module_cpiC002_s02_rscience_server <- function(id, input_general, input_01_anova
           need(!is.null(input_01_anova()), "Error 02: Module anova s02 - input_01_anova can not be NULL.")
         )
 
-        check_previous <- fn_cpiC002_Resumen_control_previous(database = input_general()$database,
-                                                                       vr_var_name = input_01_anova()$vr_var_name,
-                                                                       factor_var_name = input_01_anova()$factor_var_name,
-                                                                       alpha_value = input_01_anova()$alpha_value)
+        check_previous <- fn_cpiC003_control_previous(database = input_general()$database,
+                                                      vr_var_name = input_01_anova()$vr_var_name,
+                                                      #factor_var_name = input_01_anova()$factor_var_name,
+                                                      alpha_value = input_01_anova()$alpha_value)
 
         validate(
           need(check_previous$dt_ok, check_previous$text_output)
@@ -426,10 +427,10 @@ module_cpiC002_s02_rscience_server <- function(id, input_general, input_01_anova
 
         req(control_user_01())
 
-        the_output <- fn_cpiC002_Resumen_results(database = input_general()$database,
-                                                          vr_var_name = input_01_anova()$vr_var_name,
-                                                          factor_var_name = input_01_anova()$factor_var_name,
-                                                          alpha_value = input_01_anova()$alpha_value)
+        the_output <- fn_cpiC003_results(database = input_general()$database,
+                                         vr_var_name = input_01_anova()$vr_var_name,
+                                         #factor_var_name = input_01_anova()$factor_var_name,
+                                         alpha_value = input_01_anova()$alpha_value)
 
 
         the_output
@@ -451,7 +452,7 @@ module_cpiC002_s02_rscience_server <- function(id, input_general, input_01_anova
         #
         #
         #         # Control post
-        # check_post <- fn_cpiC002_Resumen_control_post(list_results_from_cpiA001_anova1way = RR_general())
+        # check_post <- fn_cpiC003_control_post(list_results_from_cpiA001_anova1way = RR_general())
         # #
         # validate(
         #   need(check_post$check_ok, check_post$text_output)
@@ -468,10 +469,10 @@ module_cpiC002_s02_rscience_server <- function(id, input_general, input_01_anova
       RR_code <- reactive({
 
         req(control_user_02())
-        the_code <- fn_cpiC002_Resumen_code_sectionALL(intro_source_database = input_01_anova()$intro_source_database,
-                                                                vr_var_name = input_01_anova()$vr_var_name,
-                                                                factor_var_name = input_01_anova()$factor_var_name,
-                                                                alpha_value = input_01_anova()$alpha_value)
+        the_code <- fn_cpiC003_code_sectionALL(intro_source_database = input_01_anova()$intro_source_database,
+                                               vr_var_name = input_01_anova()$vr_var_name,
+                                               #factor_var_name = input_01_anova()$factor_var_name,
+                                               alpha_value = input_01_anova()$alpha_value)
         the_code
       })
 
@@ -589,7 +590,7 @@ module_cpiC002_s02_rscience_server <- function(id, input_general, input_01_anova
 
       #################################################################
       # # # Tab 05 - Analysis resume...
-         output$tab03_analysis_anova_obj01_B <- renderDT({
+      output$tab03_analysis_anova_obj01_B <- renderDT({
 
         req(control_user_02())
 
@@ -686,7 +687,7 @@ module_cpiC002_s02_rscience_server <- function(id, input_general, input_01_anova
 
 
         # Vector con nombres de elementos a ver
-        selected_objs <- c("df_vr_position_levels")
+        selected_objs <- c("df_vr_position_general")
 
 
         # Usar lapply para mostrar los elementos deseados
@@ -722,13 +723,13 @@ module_cpiC002_s02_rscience_server <- function(id, input_general, input_01_anova
             )
           )
 
-        ) %>% formatRound(columns= c("min", "mean", "Q1", "median", "Q3", "max"), digits=4) %>%
-        formatStyle(
-          colnames(mi_tabla),
-          backgroundColor = styleRow(vector_pos, vector_color),#,
-          target = 'row',
-          fontSize = "26px"
-        )
+        ) %>% formatRound(columns= c("min", "max", "mean", "Q1", "median.Q2", "Q3", "max"), digits=4) %>%
+          formatStyle(
+            colnames(mi_tabla),
+            backgroundColor = styleRow(vector_pos, vector_color),#,
+            target = 'row',
+            fontSize = "26px"
+          )
         # %>% formatStyle(
         #   4,
         #              decimal.mark = ".", # Cambiar el separador decimal
@@ -745,7 +746,7 @@ module_cpiC002_s02_rscience_server <- function(id, input_general, input_01_anova
 
 
         # Vector con nombres de elementos a ver
-        selected_objs <- c("df_vr_dispersion_levels")
+        selected_objs <- c("df_vr_dispersion_general")
 
 
         # Usar lapply para mostrar los elementos deseados
@@ -781,13 +782,13 @@ module_cpiC002_s02_rscience_server <- function(id, input_general, input_01_anova
             )
           )
 
-        ) %>% formatRound(columns= c("range", "variance", "standard_deviation", "standard_error"), digits=4) %>%
+        ) %>% formatRound(columns= c("range", "variance", "standard_deviation", "standard_error", "porcentual_variation_coef"), digits=4) %>%
           formatStyle(
-          colnames(mi_tabla),
-          backgroundColor = styleRow(vector_pos, vector_color),#,
-          target = 'row',
-          fontSize = "26px"
-        )
+            colnames(mi_tabla),
+            backgroundColor = styleRow(vector_pos, vector_color),#,
+            target = 'row',
+            fontSize = "26px"
+          )
       })
       #############################################################
       output$el_plot1 <- renderPlotly({
@@ -806,16 +807,16 @@ module_cpiC002_s02_rscience_server <- function(id, input_general, input_01_anova
           plot001_factor <- plotly::add_trace(p = plot001_factor,
                                               type = "scatter",
                                               mode = "markers",
-                                              x = minibase_mod$FACTOR,
+                                              x = 1,
                                               y = minibase_mod$VR,
-                                              color = minibase_mod$FACTOR,
-                                              colors = df_factor_info$color,
+                                              color = minibase_mod$color,
+                                              colors = minibase_mod$color,
                                               marker = list(size = 15, opacity = 0.7))
 
           # # # Title and settings...
           plot001_factor <-   plotly::layout(p = plot001_factor,
-                                             xaxis = list(title = "FACTOR"),
-                                             yaxis = list(title = "VR"),
+                                             xaxis = list(visible = FALSE),
+                                             yaxis = list(title = "RV", visible = TRUE),
                                              title = "Plot 001 - Scatterplot",
                                              font = list(size = 20),
                                              margin = list(t = 100))
@@ -852,9 +853,9 @@ module_cpiC002_s02_rscience_server <- function(id, input_general, input_01_anova
           plot002_factor <-   add_trace(p = plot002_factor,
                                         type = "scatter",
                                         mode = "markers",
-                                        x = df_table_plot002$level,
+                                        x = 1, #df_table_plot002$level,
                                         y = df_table_plot002$mean,
-                                        color = df_table_plot002$level,
+                                        color = df_table_plot002$color,
                                         colors = df_table_plot002$color,
                                         marker = list(symbol = "line-ew-open",
                                                       size = 50,
@@ -867,8 +868,9 @@ module_cpiC002_s02_rscience_server <- function(id, input_general, input_01_anova
           #plot002_factor
 
           plot002_factor <- plotly::layout(p = plot002_factor,
-                                           xaxis = list(title = "FACTOR"),
-                                           yaxis = list(title = "VR"),
+                                           xaxis = list(visible = FALSE),
+
+                                           yaxis = list(title = "RV", visible = TRUE),
                                            title = "Plot 002 - Mean and Standard Deviation",
                                            font = list(size = 20),
                                            margin = list(t = 100))
@@ -903,9 +905,9 @@ module_cpiC002_s02_rscience_server <- function(id, input_general, input_01_anova
           plot003_factor <-   add_trace(p = plot003_factor,
                                         type = "scatter",
                                         mode = "markers",
-                                        x = df_table_plot003$level,
+                                        x = 1,
                                         y = df_table_plot003$mean,
-                                        color = df_table_plot003$level,
+                                        color =  df_table_plot003$color,
                                         colors = df_table_plot003$color,
                                         marker = list(symbol = "line-ew-open",
                                                       size = 50,
@@ -918,8 +920,9 @@ module_cpiC002_s02_rscience_server <- function(id, input_general, input_01_anova
           #plot002_factor
 
           plot003_factor <- plotly::layout(p = plot003_factor,
-                                           xaxis = list(title = "FACTOR"),
-                                           yaxis = list(title = "VR"),
+                                           xaxis = list(visible = FALSE),
+                                           #xaxis = list(title = "FACTOR"),
+                                           yaxis = list(title = "RV", visible = TRUE),
                                            title = "Plot 003 - Mean and Standard Error",
                                            font = list(size = 20),
                                            margin = list(t = 100))
@@ -953,8 +956,8 @@ module_cpiC002_s02_rscience_server <- function(id, input_general, input_01_anova
           # # # Boxplot and info...
           plot004_factor <- plotly::add_trace(p = plot004_factor,
                                               type = "box",
-                                              x = df_table_plot004$level ,
-                                              color = df_table_plot004$level,
+                                              #y = 1,#df_table_plot004$level ,
+                                              color = df_table_plot004$color,
                                               colors = df_table_plot004$color,
                                               lowerfence = df_table_plot004$min,
                                               q1 = df_table_plot004$Q1,
@@ -969,8 +972,9 @@ module_cpiC002_s02_rscience_server <- function(id, input_general, input_01_anova
           # Title and labels for axis
           plot004_factor <- plotly::layout(p = plot004_factor,
                                            title = "Plot 004 - Boxplot and means",
-                                           xaxis = list(title = "FACTOR"),
-                                           yaxis = list(title = "VR"),
+                                           #xaxis = list(title = "FACTOR"),
+                                           xaxis = list(visible = FALSE),
+                                           yaxis = list(title = "RV", visible = TRUE),
                                            font = list(size = 20),
                                            margin = list(t = 100))
 
@@ -1171,7 +1175,7 @@ module_cpiC002_s02_rscience_server <- function(id, input_general, input_01_anova
         div(
           rclipboardSetup(),
           box(
-            title = "Resumen",
+            title = "Resumen - 1 Var (Cuantitative)",
             status = "primary",
             id = ns("my_box03C"),
             solidHeader = TRUE,
@@ -1179,152 +1183,152 @@ module_cpiC002_s02_rscience_server <- function(id, input_general, input_01_anova
             closable = FALSE,# Colapsado por defecto
             collapsed = FALSE,
             width = 12,
-          textOutput(ns("calling_help")),
+            textOutput(ns("calling_help")),
 
-          shiny::tabsetPanel(id = ns("super_tabset_panel"),
-                             # tabPanel("Analysis",  # 05
-                             #          fluidRow(
-                             #            column(12,
-                             #                   h1("Resumen"),
-                             #                   uiOutput(ns("tab03_analysis_anova_FULL"))
-                             #            )
-                             #          )
-                             # ),
-                             tabPanel("Reference",  # 05
-                                      fluidRow(
-                                        column(12,
-                                               h1("Resumen"),
-                                               uiOutput(ns("tab03_analysis_anova_FULL_B"))
+            shiny::tabsetPanel(id = ns("super_tabset_panel"),
+                               # tabPanel("Analysis",  # 05
+                               #          fluidRow(
+                               #            column(12,
+                               #                   h1("Resumen"),
+                               #                   uiOutput(ns("tab03_analysis_anova_FULL"))
+                               #            )
+                               #          )
+                               # ),
+                               tabPanel("Reference",  # 05
+                                        fluidRow(
+                                          column(12,
+                                                 h1("Resumen"),
+                                                 uiOutput(ns("tab03_analysis_anova_FULL_B"))
+                                          )
                                         )
-                                      )
-                             ),
+                               ),
 
-                             tabPanel("Resume Statistics",
-                                      fluidRow(
-                                        column(12,
-                                               h2("1) Position"),
-                                               h3("R Object: df_vr_position_levels"),
-                                               DTOutput(ns("tab33_position_levels"))
-                                        )
-                                      ),
-                                      br(), br(), br(),
-
-                                      fluidRow(
-                                        column(12,
-                                               h2("2) Dispersion"),
-                                               h3("R Object: df_vr_dispersion_levels"),
-                                               DTOutput(ns("tab33_dispersion_levels"))
-                                        )
-                                      ),
-                                      br(), br(), br(),
-
-                             ),
-                             tabPanel("Plots - Raw Data",  # 05,
-                                      fluidRow(column(12, h1("Resumen"))),
-                                      fluidRow(
-                                        #column(1),
-                                        column(6, plotlyOutput(ns("el_plot1"), height = "40vh", width = "70vh")),
-                                        column(6, verbatimTextOutput(ns("tabla01"))),
-                                      ),
-                                      br(),br(),br(),
-
-                                      fluidRow(
-                                        #column(1),
-                                        column(6, plotlyOutput(ns("el_plot2"), height = "40vh", width = "70vh")),
-                                        column(6, verbatimTextOutput(ns("tabla02"))),
-                                      ),
-                                      br(),br(),br(),
-
-                                      fluidRow(
-                                        #column(1),
-                                        column(6, plotlyOutput(ns("el_plot3"), height = "40vh", width = "70vh")),
-                                        column(6, verbatimTextOutput(ns("tabla03"))),
-                                      ),
-                                      br(),br(),br(),
-                                      fluidRow(
-                                        #column(1),
-                                        column(6, plotlyOutput(ns("el_plot4"), height = "40vh", width = "70vh")),
-                                        column(6, verbatimTextOutput(ns("tabla04"))),
-                                      )
-
-                                      #shinycssloaders::withSpinner(uiOutput(ns("plot_outputs33"))),
-                             ),
-                             # tabPanel("Plots - Residuals",  # 05,
-                             #          fluidRow(column(12, h1("Resumeny"))),
-                             #          fluidRow(
-                             #            #column(1),
-                             #            column(12,
-                             #                   #plotOutput(ns("tab04_plots")),
-                             #                   br(),
-                             #                   #br()
-                             #
-                             #                   shinycssloaders::withSpinner(uiOutput(ns("plot_outputs66"))),
-                             #            )
-                             #          )
-                             # ),
-                             # tabPanel("Plots - Factor",  # 05,
-                             #          fluidRow(h1("Resumeny")),
-                             #          fluidRow(
-                             #            #column(1),
-                             #            column(12,
-                             #                   #plotOutput(ns("tab04_plots")),
-                             #                   br(),
-                             #                   #br()
-                             #
-                             #                   shinycssloaders::withSpinner(uiOutput(ns("tab_04_all_plotly_v01"))),
-                             #            )
-                             #          )
-                             # ),
-                             # tabPanel("Plots - Residuals",  # 05,
-                             #          fluidRow(h1("Resumeny")),
-                             #          fluidRow(
-                             #            #column(1),
-                             #            column(12,
-                             #                   #plotOutput(ns("tab04_plots")),
-                             #                   br(),
-                             #                   #br()
-                             #
-                             #                   shinycssloaders::withSpinner(uiOutput(ns("tab_05_all_plotly_residuals_v01"))),
-                             #            )
-                             #          )
-                             # ),
-                             # tabPanel("Plots2",  # 05,
-                             #          fluidRow(h1("Resumeny")),
-                             #          fluidRow(
-                             #            #column(1),
-                             #            column(12,
-                             #                   #plotOutput(ns("tab04_plots")),
-                             #                   br(),
-                             #                   shinycssloaders::withSpinner(uiOutput(ns("tab_04_all_plotly_v02"))),
-                             #            )
-                             #          )
-                             # ),
-                             tabPanel("Full Results",  # 05
-                                      fluidRow(
-                                        column(12,
-                                               h1("Resumen"),
-                                               verbatimTextOutput(ns("tab01_all_anova_results"))
-                                        )
-                                      )
-                             ),
-
-
-
-                             tabPanel("R code",  # 05
-                                      fluidRow(
-                                        column(10,
-                                               h1("Resumeny"),
-                                               verbatimTextOutput(ns("tab05_code"))
+                               tabPanel("Resume Statistics",
+                                        fluidRow(
+                                          column(12,
+                                                 h2("1) Position"),
+                                                 h3("R Object: df_vr_position_general"),
+                                                 DTOutput(ns("tab33_position_levels"))
+                                          )
                                         ),
-                                        br(), br(),
-                                        column(2, uiOutput(ns("clip")),
-                                               br(),
-                                               downloadButton(ns("downloadBtn"), "Download Code")
-                                        )
-                                      )
-                             )
+                                        br(), br(), br(),
 
-          ), br(), br(), br(), br(), br(), br()
+                                        fluidRow(
+                                          column(12,
+                                                 h2("2) Dispersion"),
+                                                 h3("R Object: df_vr_dispersion_general"),
+                                                 DTOutput(ns("tab33_dispersion_levels"))
+                                          )
+                                        ),
+                                        br(), br(), br(),
+
+                               ),
+                               tabPanel("Plots - Raw Data",  # 05,
+                                        fluidRow(column(12, h1("Resumen"))),
+                                        fluidRow(
+                                          #column(1),
+                                          column(6, plotlyOutput(ns("el_plot1"), height = "40vh", width = "70vh")),
+                                          column(6, verbatimTextOutput(ns("tabla01"))),
+                                        ),
+                                        br(),br(),br(),
+
+                                        fluidRow(
+                                          #column(1),
+                                          column(6, plotlyOutput(ns("el_plot2"), height = "40vh", width = "70vh")),
+                                          column(6, verbatimTextOutput(ns("tabla02"))),
+                                        ),
+                                        br(),br(),br(),
+
+                                        fluidRow(
+                                          #column(1),
+                                          column(6, plotlyOutput(ns("el_plot3"), height = "40vh", width = "70vh")),
+                                          column(6, verbatimTextOutput(ns("tabla03"))),
+                                        ),
+                                        br(),br(),br(),
+                                        fluidRow(
+                                          #column(1),
+                                          column(6, plotlyOutput(ns("el_plot4"), height = "40vh", width = "70vh")),
+                                          column(6, verbatimTextOutput(ns("tabla04"))),
+                                        )
+
+                                        #shinycssloaders::withSpinner(uiOutput(ns("plot_outputs33"))),
+                               ),
+                               # tabPanel("Plots - Residuals",  # 05,
+                               #          fluidRow(column(12, h1("Resumeny"))),
+                               #          fluidRow(
+                               #            #column(1),
+                               #            column(12,
+                               #                   #plotOutput(ns("tab04_plots")),
+                               #                   br(),
+                               #                   #br()
+                               #
+                               #                   shinycssloaders::withSpinner(uiOutput(ns("plot_outputs66"))),
+                               #            )
+                               #          )
+                               # ),
+                               # tabPanel("Plots - Factor",  # 05,
+                               #          fluidRow(h1("Resumeny")),
+                               #          fluidRow(
+                               #            #column(1),
+                               #            column(12,
+                               #                   #plotOutput(ns("tab04_plots")),
+                               #                   br(),
+                               #                   #br()
+                               #
+                               #                   shinycssloaders::withSpinner(uiOutput(ns("tab_04_all_plotly_v01"))),
+                               #            )
+                               #          )
+                               # ),
+                               # tabPanel("Plots - Residuals",  # 05,
+                               #          fluidRow(h1("Resumeny")),
+                               #          fluidRow(
+                               #            #column(1),
+                               #            column(12,
+                               #                   #plotOutput(ns("tab04_plots")),
+                               #                   br(),
+                               #                   #br()
+                               #
+                               #                   shinycssloaders::withSpinner(uiOutput(ns("tab_05_all_plotly_residuals_v01"))),
+                               #            )
+                               #          )
+                               # ),
+                               # tabPanel("Plots2",  # 05,
+                               #          fluidRow(h1("Resumeny")),
+                               #          fluidRow(
+                               #            #column(1),
+                               #            column(12,
+                               #                   #plotOutput(ns("tab04_plots")),
+                               #                   br(),
+                               #                   shinycssloaders::withSpinner(uiOutput(ns("tab_04_all_plotly_v02"))),
+                               #            )
+                               #          )
+                               # ),
+                               tabPanel("Full Results",  # 05
+                                        fluidRow(
+                                          column(12,
+                                                 h1("Resumen"),
+                                                 verbatimTextOutput(ns("tab01_all_anova_results"))
+                                          )
+                                        )
+                               ),
+
+
+
+                               tabPanel("R code",  # 05
+                                        fluidRow(
+                                          column(10,
+                                                 h1("Resumeny"),
+                                                 verbatimTextOutput(ns("tab05_code"))
+                                          ),
+                                          br(), br(),
+                                          column(2, uiOutput(ns("clip")),
+                                                 br(),
+                                                 downloadButton(ns("downloadBtn"), "Download Code")
+                                          )
+                                        )
+                               )
+
+            ), br(), br(), br(), br(), br(), br()
           ), br(), br(), br(), br(), br(), br()
         )
       })
