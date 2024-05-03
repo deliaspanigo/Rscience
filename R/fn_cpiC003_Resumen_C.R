@@ -698,7 +698,7 @@ fn_cpiC003_results <- function(database, vr_var_name, alpha_value){
     "variance" = var(minibase[,1]),
     "standard_deviation" = sd(minibase[,1]),
     "standard_error" = sd(minibase[,1])/(sqrt(length(minibase[,1]))),
-    "porcentual_variation_coef" = df_vr_position_general$"mean"/(sd(minibase[,1])/(sqrt(length(minibase[,1])))),
+    "percentage_coefficient_variation" = df_vr_position_general$"mean"/(sd(minibase[,1])/(sqrt(length(minibase[,1])))),
     "n" = length(minibase[,1]),
     "color" = vector_color
   )

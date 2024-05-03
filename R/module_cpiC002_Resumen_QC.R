@@ -781,7 +781,7 @@ module_cpiC002_s02_rscience_server <- function(id, input_general, input_01_anova
             )
           )
 
-        ) %>% formatRound(columns= c("range", "variance", "standard_deviation", "standard_error", "porc_variation_coef"), digits=4) %>%
+        ) %>% formatRound(columns= c("range", "variance", "standard_deviation", "standard_error", "percentage_coefficient_variation"), digits=4) %>%
           formatStyle(
           colnames(mi_tabla),
           backgroundColor = styleRow(vector_pos, vector_color),#,
@@ -1171,7 +1171,7 @@ module_cpiC002_s02_rscience_server <- function(id, input_general, input_01_anova
         div(
           rclipboardSetup(),
           box(
-            title = "Resumen - 2 Var (Cuantitative and Qualitative)",
+            title = "Summary - 2 Var (Cuantitative and Qualitative)",
             status = "primary",
             id = ns("my_box03C"),
             solidHeader = TRUE,
@@ -1193,13 +1193,18 @@ module_cpiC002_s02_rscience_server <- function(id, input_general, input_01_anova
                              tabPanel("Reference",  # 05
                                       fluidRow(
                                         column(12,
-                                               h1("Resumen"),
+                                               h1("Summary - 2 Var (Cuantitative and Qualitative)"),
                                                uiOutput(ns("tab03_analysis_anova_FULL_B"))
                                         )
                                       )
                              ),
 
-                             tabPanel("Resume Statistics",
+                             tabPanel("Summary",
+                                      fluidRow(
+                                        column(12,
+                                               h1("Summary - 2 Var (Cuantitative and Qualitative)")
+                                               )
+                                        ),
                                       fluidRow(
                                         column(12,
                                                h2("1) Position"),
@@ -1220,7 +1225,7 @@ module_cpiC002_s02_rscience_server <- function(id, input_general, input_01_anova
 
                              ),
                              tabPanel("Plots - Raw Data",  # 05,
-                                      fluidRow(column(12, h1("Resumen"))),
+                                      fluidRow(column(12, h1("Summary - 2 Var (Cuantitative and Qualitative)"))),
                                       fluidRow(
                                         #column(1),
                                         column(6, plotlyOutput(ns("el_plot1"), height = "40vh", width = "70vh")),
@@ -1302,7 +1307,7 @@ module_cpiC002_s02_rscience_server <- function(id, input_general, input_01_anova
                              tabPanel("Full Results",  # 05
                                       fluidRow(
                                         column(12,
-                                               h1("Resumen"),
+                                               h1("Summary - 2 Var (Cuantitative and Qualitative)"),
                                                verbatimTextOutput(ns("tab01_all_anova_results"))
                                         )
                                       )
@@ -1313,7 +1318,7 @@ module_cpiC002_s02_rscience_server <- function(id, input_general, input_01_anova
                              tabPanel("R code",  # 05
                                       fluidRow(
                                         column(10,
-                                               h1("Resumeny"),
+                                               h1("Summary - 2 Var (Cuantitative and Qualitative)"),
                                                verbatimTextOutput(ns("tab05_code"))
                                         ),
                                         br(), br(),

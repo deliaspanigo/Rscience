@@ -792,6 +792,7 @@ fn_cpiC001_tTest_2SampleInd_results <- function(database, vr_var_name, factor_va
     "variance" = tapply(minibase[,1], minibase[,2], var),
     "standard_deviation" = tapply(minibase[,1], minibase[,2], sd),
     "standard_error" = tapply(minibase[,1], minibase[,2], function(x){sd(x)/sqrt(length(x))}),
+    "percentage_coefficient_variation" = df_vr_position_levels$"mean"/tapply(minibase[,1], minibase[,2], sd),
     "n" = tapply(minibase[,1], minibase[,2], length),
     "color" = df_factor_info$"color"
   )

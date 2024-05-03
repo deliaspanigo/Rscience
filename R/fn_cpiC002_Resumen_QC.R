@@ -705,7 +705,7 @@ fn_cpiC002_results <- function(database, vr_var_name, factor_var_name, alpha_val
     "variance" = tapply(minibase[,1], minibase[,2], var),
     "standard_deviation" = tapply(minibase[,1], minibase[,2], sd),
     "standard_error" = tapply(minibase[,1], minibase[,2], function(x){sd(x)/sqrt(length(x))}),
-    "porc_variation_coef" = df_vr_position_levels$"mean"/tapply(minibase[,1], minibase[,2], sd),
+    "percentage_coefficient_variation" = df_vr_position_levels$"mean"/tapply(minibase[,1], minibase[,2], sd),
     "n" = tapply(minibase[,1], minibase[,2], length),
     "color" = df_factor_info$"color"
   )

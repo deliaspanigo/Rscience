@@ -106,7 +106,7 @@ module_cpiC003_s01_varselection_server <- function(id, input_general){
 
 
 
-      # # # Var selection for Resumeny
+      # # # Var selection for Summaryy
       output$vars_selection <- renderUI({
 
         ns <- shiny::NS(id)
@@ -589,7 +589,7 @@ module_cpiC003_s02_rscience_server <- function(id, input_general, input_01_anova
 
 
       #################################################################
-      # # # Tab 05 - Analysis resume...
+      # # # Tab 05 - Analysis Summary...
       output$tab03_analysis_anova_obj01_B <- renderDT({
 
         req(control_user_02())
@@ -654,7 +654,7 @@ module_cpiC003_s02_rscience_server <- function(id, input_general, input_01_anova
           DTOutput(ns("tab03_analysis_anova_obj01_B")),
           br(), br(), br()#,#
 
-          # h2("2) Factor resumen"),
+          # h2("2) Factor Summary"),
           # verbatimTextOutput(ns("tab03_analysis_anova_obj02_B")),
           # br(), br(), br()
 
@@ -782,7 +782,7 @@ module_cpiC003_s02_rscience_server <- function(id, input_general, input_01_anova
             )
           )
 
-        ) %>% formatRound(columns= c("range", "variance", "standard_deviation", "standard_error", "porcentual_variation_coef"), digits=4) %>%
+        ) %>% formatRound(columns= c("range", "variance", "standard_deviation", "standard_error", "percentage_coefficient_variation"), digits=4) %>%
           formatStyle(
             colnames(mi_tabla),
             backgroundColor = styleRow(vector_pos, vector_color),#,
@@ -1175,7 +1175,7 @@ module_cpiC003_s02_rscience_server <- function(id, input_general, input_01_anova
         div(
           rclipboardSetup(),
           box(
-            title = "Resumen - 1 Var (Cuantitative)",
+            title = "Summary - 1 Var (Cuantitative)",
             status = "primary",
             id = ns("my_box03C"),
             solidHeader = TRUE,
@@ -1189,7 +1189,7 @@ module_cpiC003_s02_rscience_server <- function(id, input_general, input_01_anova
                                # tabPanel("Analysis",  # 05
                                #          fluidRow(
                                #            column(12,
-                               #                   h1("Resumen"),
+                               #                   h1("Summary"),
                                #                   uiOutput(ns("tab03_analysis_anova_FULL"))
                                #            )
                                #          )
@@ -1197,15 +1197,20 @@ module_cpiC003_s02_rscience_server <- function(id, input_general, input_01_anova
                                tabPanel("Reference",  # 05
                                         fluidRow(
                                           column(12,
-                                                 h1("Resumen"),
+                                                 h1("Summary - 1 Var (Cuantitative)"),
                                                  uiOutput(ns("tab03_analysis_anova_FULL_B"))
                                           )
                                         )
                                ),
 
-                               tabPanel("Resume Statistics",
+                               tabPanel("Summary",
                                         fluidRow(
                                           column(12,
+                                                 fluidRow(
+                                                   column(12,
+                                                          h1("Summary - 1 Var (Cuantitative)")
+                                                   )
+                                                 ),
                                                  h2("1) Position"),
                                                  h3("R Object: df_vr_position_general"),
                                                  DTOutput(ns("tab33_position_levels"))
@@ -1224,7 +1229,11 @@ module_cpiC003_s02_rscience_server <- function(id, input_general, input_01_anova
 
                                ),
                                tabPanel("Plots - Raw Data",  # 05,
-                                        fluidRow(column(12, h1("Resumen"))),
+                                        fluidRow(
+                                          column(12,
+                                                 h1("Summary - 1 Var (Cuantitative)")
+                                          )
+                                        ),
                                         fluidRow(
                                           #column(1),
                                           column(6, plotlyOutput(ns("el_plot1"), height = "40vh", width = "70vh")),
@@ -1254,7 +1263,7 @@ module_cpiC003_s02_rscience_server <- function(id, input_general, input_01_anova
                                         #shinycssloaders::withSpinner(uiOutput(ns("plot_outputs33"))),
                                ),
                                # tabPanel("Plots - Residuals",  # 05,
-                               #          fluidRow(column(12, h1("Resumeny"))),
+                               #          fluidRow(column(12, h1("Summaryy"))),
                                #          fluidRow(
                                #            #column(1),
                                #            column(12,
@@ -1267,7 +1276,7 @@ module_cpiC003_s02_rscience_server <- function(id, input_general, input_01_anova
                                #          )
                                # ),
                                # tabPanel("Plots - Factor",  # 05,
-                               #          fluidRow(h1("Resumeny")),
+                               #          fluidRow(h1("Summaryy")),
                                #          fluidRow(
                                #            #column(1),
                                #            column(12,
@@ -1280,7 +1289,7 @@ module_cpiC003_s02_rscience_server <- function(id, input_general, input_01_anova
                                #          )
                                # ),
                                # tabPanel("Plots - Residuals",  # 05,
-                               #          fluidRow(h1("Resumeny")),
+                               #          fluidRow(h1("Summaryy")),
                                #          fluidRow(
                                #            #column(1),
                                #            column(12,
@@ -1293,7 +1302,7 @@ module_cpiC003_s02_rscience_server <- function(id, input_general, input_01_anova
                                #          )
                                # ),
                                # tabPanel("Plots2",  # 05,
-                               #          fluidRow(h1("Resumeny")),
+                               #          fluidRow(h1("Summaryy")),
                                #          fluidRow(
                                #            #column(1),
                                #            column(12,
@@ -1306,7 +1315,7 @@ module_cpiC003_s02_rscience_server <- function(id, input_general, input_01_anova
                                tabPanel("Full Results",  # 05
                                         fluidRow(
                                           column(12,
-                                                 h1("Resumen"),
+                                                 h1("Summary - 1 Var (Cuantitative)"),
                                                  verbatimTextOutput(ns("tab01_all_anova_results"))
                                           )
                                         )
@@ -1317,7 +1326,7 @@ module_cpiC003_s02_rscience_server <- function(id, input_general, input_01_anova
                                tabPanel("R code",  # 05
                                         fluidRow(
                                           column(10,
-                                                 h1("Resumeny"),
+                                                 h1("Summary - 1 Var (Cuantitative)"),
                                                  verbatimTextOutput(ns("tab05_code"))
                                           ),
                                           br(), br(),

@@ -776,7 +776,7 @@ module_cpiC001_s02_rscience_server <- function(id, input_general, input_01_anova
           verbatimTextOutput(ns("tab03_analysis_anova_obj01")),
           br(), br(), br(),
 
-          h2("2) Factor resumen"),
+          h2("2) Factor Summary"),
           verbatimTextOutput(ns("tab03_analysis_anova_obj02")),
           br(), br(), br(),
 
@@ -1136,7 +1136,7 @@ module_cpiC001_s02_rscience_server <- function(id, input_general, input_01_anova
           #verbatimTextOutput(ns("tab03_analysis_anova_obj01_B")),
           br(), br(), br(),
 
-          h2("2) Factor resumen"),
+          h2("2) Factor Summary"),
           h3("R Object: df_factor_info"),
           DTOutput(ns("tab03_02_df_factor_info")),
           #verbatimTextOutput(ns("tab03_analysis_anova_obj02_B")),
@@ -1156,10 +1156,10 @@ module_cpiC001_s02_rscience_server <- function(id, input_general, input_01_anova
           h2("3) Phrases"),
           verbatimTextOutput(ns("tab03_analysis_anova_obj05_B")),
           #br(), br(), br(),
-         # h2("1) Requeriment - Resumen - Normality"),
+         # h2("1) Requeriment - Summary - Normality"),
 
           br(), br(), br(),
-          h2("4) t Test - Resumen Table"),
+          h2("4) t Test - Summary Table"),
           DTOutput(ns("tab03_analysis_anova_obj22_Bextra")),
           br(), br(), br(),
           h2("5) Original R results for t Test"),
@@ -1503,7 +1503,7 @@ module_cpiC001_s02_rscience_server <- function(id, input_general, input_01_anova
           backgroundColor = styleRow(vector_pos, vector_color),#,
           target = 'row',
           fontSize = "26px"
-        ) %>% formatRound(columns= c("range", "variance", "standard_deviation", "standard_error"), digits=4)
+        ) %>% formatRound(columns= c("range", "variance", "standard_deviation", "standard_error","percentage_coefficient_variation"), digits=4)
       })
       #############################################################
       output$el_plot1 <- renderPlotly({
@@ -1911,26 +1911,26 @@ module_cpiC001_s02_rscience_server <- function(id, input_general, input_01_anova
                                                h1("t Test - 2 Independent Samples")
                                                )
                                         ),
-                                      h2("1) Requeriment - Resumen - Normality"),
+                                      h2("1) Requeriment - Summary - Normality"),
                                       h3("R Object: df_normality"),
                                       DTOutput(ns("tab22_analysis_anova_obj07")),
                                       br(), br(), br(),
-                                      h2("2) Requeriment - Resumen - Homogeneity"),
+                                      h2("2) Requeriment - Summary - Homogeneity"),
                                       h3("R Object: df_homogeneity"),
                                       DTOutput(ns("tab22_analysis_anova_obj08")),
                                       br(), br(), br(),
-                                      # h1("Resumen"),
-                                      # h2("1) Requeriment - Resumen - Normality"),
+                                      # h1("Summary"),
+                                      # h2("1) Requeriment - Summary - Normality"),
                                       # tableOutput(ns("tab22_analysis_anova_obj05")),
                                       # br(), br(), br(),
-                                      # h2("2) Requeriment - Resumen - Homogeneity"),
+                                      # h2("2) Requeriment - Summary - Homogeneity"),
                                       # tableOutput(ns("tab22_analysis_anova_obj06")),
                                       # br(), br(), br(),
-                                      # h1("Resumen"),
-                                      # h2("1) Requeriment - Resumen - Normality"),
+                                      # h1("Summary"),
+                                      # h2("1) Requeriment - Summary - Normality"),
                                       # verbatimTextOutput(ns("tab22_analysis_anova_obj01")),
                                       # br(), br(), br(),
-                                      # h2("2) Requeriment - Resumen - Homogeneity"),
+                                      # h2("2) Requeriment - Summary - Homogeneity"),
                                       # verbatimTextOutput(ns("tab22_analysis_anova_obj02")),
                                       # br(), br(), br(),
 
@@ -1943,7 +1943,7 @@ module_cpiC001_s02_rscience_server <- function(id, input_general, input_01_anova
                                       br(), br(), br()
 
                              ),
-                             tabPanel("Resume Statistics",
+                             tabPanel("Summary",
                                       fluidRow(
                                         column(12, h1("t Test - 2 Independent Samples"))
                                         ),
