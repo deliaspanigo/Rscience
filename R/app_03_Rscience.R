@@ -301,7 +301,7 @@ app_03_Rscience <- function(){
                                   fluidRow(
                                     column(6,
 
-                                  selectInput(inputId = "amount_vars", label = "Amount vars",
+                                  selectInput(inputId = "amount_vars", label = "Amount of vars",
                                                choices = c("Select one..." = "",
                                                             "1 var  - Response Variable" = 1,
                                                             "2 vars - Response Variable +  Factor" = 2)),
