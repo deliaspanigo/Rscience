@@ -36,7 +36,7 @@ app_03_Rscience <- function(){
       shinydashboard::sidebarMenu(
         " t Test - 0.0.1",br(),br(),
         shinydashboard::menuItem(text = "database", tabName = "tab01_database", icon = shiny::icon("th")),
-        shinydashboard::menuItem(text = "Resumen", tabName = "tab03_anova", icon = shiny::icon("th")),
+        shinydashboard::menuItem(text = "Summary", tabName = "tab03_anova", icon = shiny::icon("th")),
 
         shinydashboard::menuItem(text = "t Test", tabName = "tab02_anova", icon = shiny::icon("th"))
 

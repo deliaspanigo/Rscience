@@ -2,7 +2,7 @@
 
 # # # # Special Functions
 # Take the original code from a function
-fn_cpiC001_tTest_2SampleInd_TakeCode <- function(selected_fn){
+fn_cpiC001_TakeCode <- function(selected_fn){
 
 
   test_code <- capture.output(selected_fn)
@@ -35,7 +35,7 @@ fn_cpiC001_tTest_2SampleInd_TakeCode <- function(selected_fn){
 
 
 # List the cronologic order for objects in a function
-fn_cpiC001_tTest_2SampleInd_ObjNamesInOrder <- function(selected_fn){
+fn_cpiC001_ObjNamesInOrder <- function(selected_fn){
 
   selected_code <- deparse(body(selected_fn))
   selected_code <- grep("<-", selected_code, value = TRUE)
@@ -53,7 +53,7 @@ fn_cpiC001_tTest_2SampleInd_ObjNamesInOrder <- function(selected_fn){
 
 # # # # Control funcitons
 # Control previous
-fn_cpiC001_tTest_2SampleInd_control_previous <- function(database, vr_var_name, factor_var_name, alpha_value){
+fn_cpiC001_control_previous <- function(database, vr_var_name, factor_var_name, alpha_value){
 
   dt_ok <- FALSE
 
@@ -226,7 +226,7 @@ fn_cpiC001_tTest_2SampleInd_control_previous <- function(database, vr_var_name, 
   # # # # # # # # # # # minibase
   minibase <- na.omit(database[vector_var_names])
   minibase[,2] <- as.factor(minibase[,2])
-  colnames(minibase) <- c("VR", "FACTOR")
+  colnames(minibase) <- c("RV", "FACTOR")
 
 
 
@@ -256,27 +256,27 @@ fn_cpiC001_tTest_2SampleInd_control_previous <- function(database, vr_var_name, 
     return(Hmisc::llist(dt_ok, text_output))
   }
 
-  # 4) minibase$VR can not be constant
-  if(!is.numeric(minibase$VR)){
-    text_output <- "Control pre test 029: Object 'minibase$VR' must be numeric."
+  # 4) minibase$RV can not be constant
+  if(!is.numeric(minibase$RV)){
+    text_output <- "Control pre test 029: Object 'minibase$RV' must be numeric."
     return(Hmisc::llist(dt_ok, text_output))
   }
-  # 4) minibase$VR can not be constant
-  if(var(minibase$VR) == 0){
-    text_output <- "Control pre test 030: Object 'minibase$VR' can not be constant."
-    return(Hmisc::llist(dt_ok, text_output))
-  }
-
-  # 4) minibase$VR can not be constant
-  if(length(unique(as.character(minibase$VR))) == 1){
-    text_output <- "Control pre test 031: Object 'minibase$VR' can not be constant."
+  # 4) minibase$RV can not be constant
+  if(var(minibase$RV) == 0){
+    text_output <- "Control pre test 030: Object 'minibase$RV' can not be constant."
     return(Hmisc::llist(dt_ok, text_output))
   }
 
+  # 4) minibase$RV can not be constant
+  if(length(unique(as.character(minibase$RV))) == 1){
+    text_output <- "Control pre test 031: Object 'minibase$RV' can not be constant."
+    return(Hmisc::llist(dt_ok, text_output))
+  }
 
-  # 4) minibase$VR can not be constant
-  if(length(unique(as.character(minibase$VR))) == 1){
-    text_output <- "Control pre test 032: Object 'minibase$VR' can not be constant."
+
+  # 4) minibase$RV can not be constant
+  if(length(unique(as.character(minibase$RV))) == 1){
+    text_output <- "Control pre test 032: Object 'minibase$RV' can not be constant."
     return(Hmisc::llist(dt_ok, text_output))
   }
 
@@ -290,7 +290,7 @@ fn_cpiC001_tTest_2SampleInd_control_previous <- function(database, vr_var_name, 
 
 
   # Al least 2 reps in each level
-  reps_level <- tapply(minibase$VR, minibase$FACTOR, length)
+  reps_level <- tapply(minibase$RV, minibase$FACTOR, length)
   dt_reps_level <- reps_level >= 2
   check_01 <- sum(dt_reps_level) == length(dt_reps_level)
   if(!check_01){
@@ -300,7 +300,7 @@ fn_cpiC001_tTest_2SampleInd_control_previous <- function(database, vr_var_name, 
 
 
   # var greater than zero from each level
-  vars_level <- tapply(minibase$VR, minibase$FACTOR, var)
+  vars_level <- tapply(minibase$RV, minibase$FACTOR, var)
   dt_vars_level <- reps_level > 0
   check_02 <- sum(dt_vars_level) ==  length(dt_vars_level)
   if(!check_02){
@@ -311,7 +311,7 @@ On each level variance must be greater than zero."
 
 
   # At least 2 differents values from each level
-  ndata_level <- tapply(minibase$VR, minibase$FACTOR, function(x){
+  ndata_level <- tapply(minibase$RV, minibase$FACTOR, function(x){
     length(unique(as.character(x)))
   })
   dt_ndata_level <- ndata_level >= 2
@@ -335,10 +335,10 @@ On each level variance must be greater than zero."
 
 
 # Control post
-fn_cpiC001_tTest_2SampleInd_control_post <- function(list_results_from_fn_cpiC001_tTest_2SampleInd){
+fn_cpiC001_control_post <- function(list_results_from_fn_cpiC001){
 
-  # if(is.null(list_results_from_fn_cpiC001_tTest_2SampleInd)){
-  #   text_output <- "Control post test 001: Object 'list_results_from_fn_cpiC001_tTest_2SampleInd' can not be NULL."
+  # if(is.null(list_results_from_fn_cpiC001)){
+  #   text_output <- "Control post test 001: Object 'list_results_from_fn_cpiC001' can not be NULL."
   #   check_ok <- FALSE
   #   return(Hmisc::llist(check_ok, text_output))
   # }
@@ -349,15 +349,15 @@ fn_cpiC001_tTest_2SampleInd_control_post <- function(list_results_from_fn_cpiC00
   # spected_col_names <- c("Df", "Sum Sq", "Mean Sq", "F value", "Pr(>F)")
   #
   #
-  # if(!(obj_name01 %in% names(list_results_from_fn_cpiC001_tTest_2SampleInd))){
-  #   text_output <- "Control post test 002: Object 'df_table_anova' doesn't exist in 'list_results_from_fn_cpiC001_tTest_2SampleInd'."
+  # if(!(obj_name01 %in% names(list_results_from_fn_cpiC001))){
+  #   text_output <- "Control post test 002: Object 'df_table_anova' doesn't exist in 'list_results_from_fn_cpiC001'."
   #   check_ok <- FALSE
   #   return(Hmisc::llist(check_ok, text_output))
   # }
   #
   #
   # # # # 1) About the table
-  # if(is.null(list_results_from_fn_cpiC001_tTest_2SampleInd[obj_name01])){
+  # if(is.null(list_results_from_fn_cpiC001[obj_name01])){
   #   text_output <- "Control post test 003: Object '_obj_name01_' can not be NULL."
   #   text_output <- gsub("_obj_name01_", "obj_name01", text_output)
   #   check_ok <- FALSE
@@ -365,7 +365,7 @@ fn_cpiC001_tTest_2SampleInd_control_post <- function(list_results_from_fn_cpiC00
   # }
   #
   #
-  # selected_obj01 <- list_results_from_fn_cpiC001_tTest_2SampleInd[[obj_name01]]
+  # selected_obj01 <- list_results_from_fn_cpiC001[[obj_name01]]
   #
   #
   # if(!identical(spected_col_names, colnames(selected_obj01))){
@@ -596,7 +596,7 @@ fn_cpiC001_tTest_2SampleInd_control_post <- function(list_results_from_fn_cpiC00
 # # For sections 01 to 03 there are no action in R. The actions its on Shiny.
 # # We need the input objects from shiny to.
 
-fn_cpiC001_tTest_2SampleInd_results <- function(database, vr_var_name, factor_var_name, alpha_value){
+fn_cpiC001_results <- function(database, vr_var_name, factor_var_name, alpha_value){
 
   # # # # # Section 04 - Var rols and minibase -----------------------------------
   # # # Selected vars
@@ -604,7 +604,7 @@ fn_cpiC001_tTest_2SampleInd_results <- function(database, vr_var_name, factor_va
 
   vector_all_var_names <- colnames(database)
   vector_name_selected_vars <- c(vr_var_name, factor_var_name)
-  vector_rol_vars <- c("VR", "FACTOR")
+  vector_rol_vars <- c("RV", "FACTOR")
 
 
 
@@ -678,7 +678,7 @@ fn_cpiC001_tTest_2SampleInd_results <- function(database, vr_var_name, factor_va
 
 
   # Normality
-  list_normality_test <- tapply(minibase$VR, minibase$FACTOR, shapiro.test)
+  list_normality_test <- tapply(minibase$RV, minibase$FACTOR, shapiro.test)
   df_normality <- data.frame(
     "orden" = 1:length(list_normality_test),
     "level" = names(list_normality_test),
@@ -705,7 +705,7 @@ fn_cpiC001_tTest_2SampleInd_results <- function(database, vr_var_name, factor_va
                             yes = phrase02_A,
                              no = phrase02_B)
 
-  homogeneity_test <- bartlett.test(VR ~ FACTOR, data = minibase)
+  homogeneity_test <- bartlett.test(RV ~ FACTOR, data = minibase)
 
   check_homogeneity <- homogeneity_test$p.value >= alpha_value
 
@@ -736,7 +736,7 @@ fn_cpiC001_tTest_2SampleInd_results <- function(database, vr_var_name, factor_va
   confidence_value <- 1 - alpha_value
 
 
-  results_t_test <- t.test(formula = VR ~ FACTOR, data = minibase,
+  results_t_test <- t.test(formula = RV ~ FACTOR, data = minibase,
                            alternative = "two.sided",
                            conf.level = confidence_value,
                            var.equal = check_homogeneity)
@@ -854,7 +854,7 @@ fn_cpiC001_tTest_2SampleInd_results <- function(database, vr_var_name, factor_va
 
   df_table_plot004 <-  df_vr_position_levels
   # --- # hide_: Proccesing objects order
-  hide_correct_order <- fn_cpiC001_tTest_2SampleInd_ObjNamesInOrder(selected_fn = fn_cpiC001_tTest_2SampleInd_results)
+  hide_correct_order <- fn_cpiC001_ObjNamesInOrder(selected_fn = fn_cpiC001_results)
   hide_output_list_objects <- mget(hide_correct_order)
 
   # --- # hide_: return!
@@ -867,7 +867,7 @@ fn_cpiC001_tTest_2SampleInd_results <- function(database, vr_var_name, factor_va
 
 # # # # Code
 # # To put all the code together, we need the items that Shiny provides.
-fn_cpiC001_tTest_2SampleInd_code_section01_Libreries <- function(){
+fn_cpiC001_code_section01_Libreries <- function(){
 
   #--- Librerias
   section01_general_libreries <- '
@@ -883,7 +883,7 @@ fn_cpiC001_tTest_2SampleInd_code_section01_Libreries <- function(){
 }
 
 
-fn_cpiC001_tTest_2SampleInd_code_section02_FileSource <- function(intro_source_database){
+fn_cpiC001_code_section02_FileSource <- function(intro_source_database){
 
 
   file_source <- intro_source_database$file_source
@@ -935,7 +935,7 @@ fn_cpiC001_tTest_2SampleInd_code_section02_FileSource <- function(intro_source_d
 }
 
 
-fn_cpiC001_tTest_2SampleInd_code_section03_VarSelection <- function(vr_var_name, factor_var_name, alpha_value){
+fn_cpiC001_code_section03_VarSelection <- function(vr_var_name, factor_var_name, alpha_value){
 
 
   #--- Var selection
@@ -964,28 +964,28 @@ fn_cpiC001_tTest_2SampleInd_code_section03_VarSelection <- function(vr_var_name,
 }
 
 
-fn_cpiC001_tTest_2SampleInd_code_section04_UntilTheEnd <- function(){
+fn_cpiC001_code_section04_UntilTheEnd <- function(){
 
 
-  the_code <- fn_cpiC001_tTest_2SampleInd_TakeCode(selected_fn = fn_cpiC001_tTest_2SampleInd_results)
+  the_code <- fn_cpiC001_TakeCode(selected_fn = fn_cpiC001_results)
 
   return(the_code)
 }
 
 
-fn_cpiC001_tTest_2SampleInd_code_sectionXX_g01_Plots <- function(){
+fn_cpiC001_code_sectionXX_g01_Plots <- function(){
 
 
 
   list_code <- list()
 
-  list_code[[1]] <- fn_cpiC001_tTest_2SampleInd_TakeCode(selected_fn = fn_cpiC001_tTest_2SampleInd_factor_plot001)
-  list_code[[2]] <- fn_cpiC001_tTest_2SampleInd_TakeCode(selected_fn = fn_cpiC001_tTest_2SampleInd_factor_plot002)
-  list_code[[3]] <- fn_cpiC001_tTest_2SampleInd_TakeCode(selected_fn = fn_cpiC001_tTest_2SampleInd_factor_plot003)
-  list_code[[4]] <- fn_cpiC001_tTest_2SampleInd_TakeCode(selected_fn = fn_cpiC001_tTest_2SampleInd_factor_plot004)
-  list_code[[5]] <- fn_cpiC001_tTest_2SampleInd_TakeCode(selected_fn = fn_cpiC001_tTest_2SampleInd_factor_plot005)
-  list_code[[6]] <- fn_cpiC001_tTest_2SampleInd_TakeCode(selected_fn = fn_cpiC001_tTest_2SampleInd_factor_plot006)
-  list_code[[7]] <- fn_cpiC001_tTest_2SampleInd_TakeCode(selected_fn = fn_cpiC001_tTest_2SampleInd_factor_plot007)
+  list_code[[1]] <- fn_cpiC001_TakeCode(selected_fn = fn_cpiC001_factor_plot001)
+  list_code[[2]] <- fn_cpiC001_TakeCode(selected_fn = fn_cpiC001_factor_plot002)
+  list_code[[3]] <- fn_cpiC001_TakeCode(selected_fn = fn_cpiC001_factor_plot003)
+  list_code[[4]] <- fn_cpiC001_TakeCode(selected_fn = fn_cpiC001_factor_plot004)
+  list_code[[5]] <- fn_cpiC001_TakeCode(selected_fn = fn_cpiC001_factor_plot005)
+  list_code[[6]] <- fn_cpiC001_TakeCode(selected_fn = fn_cpiC001_factor_plot006)
+  list_code[[7]] <- fn_cpiC001_TakeCode(selected_fn = fn_cpiC001_factor_plot007)
 
   vector_code <- unlist(list_code)
   all_code <- paste0(vector_code, collapse = "\n\n\n\n")
@@ -996,21 +996,21 @@ fn_cpiC001_tTest_2SampleInd_code_sectionXX_g01_Plots <- function(){
 
 
 
-fn_cpiC001_tTest_2SampleInd_code_sectionXX_g02_Plots <- function(){
+fn_cpiC001_code_sectionXX_g02_Plots <- function(){
 
 
   list_code <- list()
 
-  list_code[[1]]  <- fn_cpiC001_tTest_2SampleInd_TakeCode(selected_fn = fn_cpiC001_tTest_2SampleInd_residuals_plot001)
-  list_code[[2]]  <- fn_cpiC001_tTest_2SampleInd_TakeCode(selected_fn = fn_cpiC001_tTest_2SampleInd_residuals_plot002)
-  list_code[[3]]  <- fn_cpiC001_tTest_2SampleInd_TakeCode(selected_fn = fn_cpiC001_tTest_2SampleInd_residuals_plot003)
-  list_code[[4]]  <- fn_cpiC001_tTest_2SampleInd_TakeCode(selected_fn = fn_cpiC001_tTest_2SampleInd_residuals_plot004)
-  list_code[[5]]  <- fn_cpiC001_tTest_2SampleInd_TakeCode(selected_fn = fn_cpiC001_tTest_2SampleInd_residuals_plot005)
-  list_code[[6]]  <- fn_cpiC001_tTest_2SampleInd_TakeCode(selected_fn = fn_cpiC001_tTest_2SampleInd_residuals_plot006)
-  list_code[[7]]  <- fn_cpiC001_tTest_2SampleInd_TakeCode(selected_fn = fn_cpiC001_tTest_2SampleInd_residuals_plot007)
-  list_code[[8]]  <- fn_cpiC001_tTest_2SampleInd_TakeCode(selected_fn = fn_cpiC001_tTest_2SampleInd_residuals_plot008)
-  list_code[[9]]  <- fn_cpiC001_tTest_2SampleInd_TakeCode(selected_fn = fn_cpiC001_tTest_2SampleInd_residuals_plot009)
-  list_code[[10]] <- fn_cpiC001_tTest_2SampleInd_TakeCode(selected_fn = fn_cpiC001_tTest_2SampleInd_residuals_plot010)
+  list_code[[1]]  <- fn_cpiC001_TakeCode(selected_fn = fn_cpiC001_residuals_plot001)
+  list_code[[2]]  <- fn_cpiC001_TakeCode(selected_fn = fn_cpiC001_residuals_plot002)
+  list_code[[3]]  <- fn_cpiC001_TakeCode(selected_fn = fn_cpiC001_residuals_plot003)
+  list_code[[4]]  <- fn_cpiC001_TakeCode(selected_fn = fn_cpiC001_residuals_plot004)
+  list_code[[5]]  <- fn_cpiC001_TakeCode(selected_fn = fn_cpiC001_residuals_plot005)
+  list_code[[6]]  <- fn_cpiC001_TakeCode(selected_fn = fn_cpiC001_residuals_plot006)
+  list_code[[7]]  <- fn_cpiC001_TakeCode(selected_fn = fn_cpiC001_residuals_plot007)
+  list_code[[8]]  <- fn_cpiC001_TakeCode(selected_fn = fn_cpiC001_residuals_plot008)
+  list_code[[9]]  <- fn_cpiC001_TakeCode(selected_fn = fn_cpiC001_residuals_plot009)
+  list_code[[10]] <- fn_cpiC001_TakeCode(selected_fn = fn_cpiC001_residuals_plot010)
 
 
   vector_code <- unlist(list_code)
@@ -1019,12 +1019,12 @@ fn_cpiC001_tTest_2SampleInd_code_sectionXX_g02_Plots <- function(){
   return(all_code)
 
 
-  # objetos <- ls("package:Rscience", pattern = "^fn_cpiC001_tTest_2SampleInd_residuals_plot+[0-9]+")
+  # objetos <- ls("package:Rscience", pattern = "^fn_cpiC001_residuals_plot+[0-9]+")
   #
   #
   #
   # # Filtrar solo las funciones que coinciden con el patrón
-  # #list_plot <- objetos[grep("^fn_cpiC001_tTest_2SampleInd_plot[0-9]+", objetos)]
+  # #list_plot <- objetos[grep("^fn_cpiC001_plot[0-9]+", objetos)]
   # list_plot <- objetos
   # list_plot <- sort(list_plot)
   #
@@ -1032,7 +1032,7 @@ fn_cpiC001_tTest_2SampleInd_code_sectionXX_g02_Plots <- function(){
   #
   #
   #
-  #   selected_code <- paste0("fn_cpiC001_tTest_2SampleInd_TakeCode(", x, ")")
+  #   selected_code <- paste0("fn_cpiC001_TakeCode(", x, ")")
   #   code_new_plot <- eval(parse(text = selected_code))
   #   code_new_plot
   #
@@ -1049,22 +1049,22 @@ fn_cpiC001_tTest_2SampleInd_code_sectionXX_g02_Plots <- function(){
 
 
 
-fn_cpiC001_tTest_2SampleInd_code_sectionALL <- function(intro_source_database, vr_var_name, factor_var_name, alpha_value){
+fn_cpiC001_code_sectionALL <- function(intro_source_database, vr_var_name, factor_var_name, alpha_value){
 
   # objetos <- ls()
   #
   # # Filtrar solo las funciones que coinciden con el patrón
-  # selected_fun <- objetos[grep("^fn_cpiC001_tTest_2SampleInd_code_section[0-9]+_[a-zA-Z]", objetos)]
+  # selected_fun <- objetos[grep("^fn_cpiC001_code_section[0-9]+_[a-zA-Z]", objetos)]
   # selected_fun <- sort(selected_fun)
 
   vector_code <- list()
 
-  vector_code[1] <- fn_cpiC001_tTest_2SampleInd_code_section01_Libreries()
-  vector_code[2] <- fn_cpiC001_tTest_2SampleInd_code_section02_FileSource(intro_source_database)
-  vector_code[3] <- fn_cpiC001_tTest_2SampleInd_code_section03_VarSelection(vr_var_name, factor_var_name, alpha_value)
-  vector_code[4] <- fn_cpiC001_tTest_2SampleInd_code_section04_UntilTheEnd()
-  vector_code[5] <- fn_cpiC001_tTest_2SampleInd_code_sectionXX_g01_Plots()
-  vector_code[6] <- fn_cpiC001_tTest_2SampleInd_code_sectionXX_g02_Plots()
+  vector_code[1] <- fn_cpiC001_code_section01_Libreries()
+  vector_code[2] <- fn_cpiC001_code_section02_FileSource(intro_source_database)
+  vector_code[3] <- fn_cpiC001_code_section03_VarSelection(vr_var_name, factor_var_name, alpha_value)
+  vector_code[4] <- fn_cpiC001_code_section04_UntilTheEnd()
+  vector_code[5] <- fn_cpiC001_code_sectionXX_g01_Plots()
+  vector_code[6] <- fn_cpiC001_code_sectionXX_g02_Plots()
 
   vector_code <- paste0(vector_code, collapse = "\n\n\n\n\n")
   return(vector_code)
@@ -1073,10 +1073,10 @@ fn_cpiC001_tTest_2SampleInd_code_sectionALL <- function(intro_source_database, v
 
 # # # Tables
 
-fn_cpiC001_tTest_2SampleInd_recruit_g01_Tables <- function(list_results_from_fn_cpiC001_tTest_2SampleInd){
+fn_cpiC001_recruit_g01_Tables <- function(list_results_from_fn_cpiC001){
 
 
-  all_tables <- with(list_results_from_fn_cpiC001_tTest_2SampleInd, {
+  all_tables <- with(list_results_from_fn_cpiC001, {
 
     objetos <- ls()
     vector_obj_name <- objetos[grep("^df_table_factor_plot+[0-9]", objetos)]
@@ -1091,10 +1091,10 @@ fn_cpiC001_tTest_2SampleInd_recruit_g01_Tables <- function(list_results_from_fn_
 }
 
 
-fn_cpiC001_tTest_2SampleInd_recruit_g02_Tables <- function(list_results_from_fn_cpiC001_tTest_2SampleInd){
+fn_cpiC001_recruit_g02_Tables <- function(list_results_from_fn_cpiC001){
 
 
-  all_tables <- with(list_results_from_fn_cpiC001_tTest_2SampleInd, {
+  all_tables <- with(list_results_from_fn_cpiC001, {
 
     objetos <- ls()
     vector_obj_name <- objetos[grep("^df_table_residuals_plot+[0-9]", objetos)]
@@ -1110,7 +1110,7 @@ fn_cpiC001_tTest_2SampleInd_recruit_g02_Tables <- function(list_results_from_fn_
 
 
 # # # Plots FACTOR
-fn_cpiC001_tTest_2SampleInd_factor_plot001 <- function(minibase_mod, df_factor_info){
+fn_cpiC001_factor_plot001 <- function(minibase_mod, df_factor_info){
 
   # # # Create a new plot...
   plot001_factor <- plotly::plot_ly()
@@ -1120,7 +1120,7 @@ fn_cpiC001_tTest_2SampleInd_factor_plot001 <- function(minibase_mod, df_factor_i
                                       type = "scatter",
                                       mode = "markers",
                                       x = minibase_mod$FACTOR,
-                                      y = minibase_mod$VR,
+                                      y = minibase_mod$RV,
                                       color = minibase_mod$FACTOR,
                                       colors = df_factor_info$color,
                                       marker = list(size = 15, opacity = 0.7))
@@ -1147,7 +1147,7 @@ fn_cpiC001_tTest_2SampleInd_factor_plot001 <- function(minibase_mod, df_factor_i
 
 
 
-fn_cpiC001_tTest_2SampleInd_factor_plot002 <- function(df_table_factor_plot002){
+fn_cpiC001_factor_plot002 <- function(df_table_factor_plot002){
 
 
   # # # Create a new plot...
@@ -1190,7 +1190,7 @@ fn_cpiC001_tTest_2SampleInd_factor_plot002 <- function(df_table_factor_plot002){
 
 
 
-fn_cpiC001_tTest_2SampleInd_factor_plot003 <- function(df_table_factor_plot003){
+fn_cpiC001_factor_plot003 <- function(df_table_factor_plot003){
 
 
   # # # Create a new plot...
@@ -1237,7 +1237,7 @@ fn_cpiC001_tTest_2SampleInd_factor_plot003 <- function(df_table_factor_plot003){
 
 
 
-fn_cpiC001_tTest_2SampleInd_factor_plot004 <- function(df_table_factor_plot004){
+fn_cpiC001_factor_plot004 <- function(df_table_factor_plot004){
 
 
   # # # New plotly...
@@ -1262,7 +1262,7 @@ fn_cpiC001_tTest_2SampleInd_factor_plot004 <- function(df_table_factor_plot004){
   plot004_factor <- plotly::layout(p = plot004_factor,
                                    title = "Plot 004 - Boxplot and means",
                                    xaxis = list(title = "FACTOR"),
-                                   yaxis = list(title = "VR"),
+                                   yaxis = list(title = "RV"),
                                    font = list(size = 20),
                                    margin = list(t = 100))
 
@@ -1278,7 +1278,7 @@ fn_cpiC001_tTest_2SampleInd_factor_plot004 <- function(df_table_factor_plot004){
 
 
 
-fn_cpiC001_tTest_2SampleInd_factor_plot005 <- function(minibase_mod, df_table_factor_plot005){
+fn_cpiC001_factor_plot005 <- function(minibase_mod, df_table_factor_plot005){
 
 
 
@@ -1355,7 +1355,7 @@ fn_cpiC001_tTest_2SampleInd_factor_plot005 <- function(minibase_mod, df_table_fa
 }
 
 
-fn_cpiC001_tTest_2SampleInd_factor_plot006 <- function(minibase_mod, df_table_factor_plot006){
+fn_cpiC001_factor_plot006 <- function(minibase_mod, df_table_factor_plot006){
 
 
 
@@ -1366,7 +1366,7 @@ fn_cpiC001_tTest_2SampleInd_factor_plot006 <- function(minibase_mod, df_table_fa
   # Add traces
   plot006_factor <- plotly::add_trace(p = plot006_factor,
                                       type = "violin",
-                                      y = minibase_mod$VR,
+                                      y = minibase_mod$RV,
                                       x = minibase_mod$FACTOR,
                                       showlegend = TRUE,
                                       side = "positive",
@@ -1397,7 +1397,7 @@ fn_cpiC001_tTest_2SampleInd_factor_plot006 <- function(minibase_mod, df_table_fa
 
 
 
-fn_cpiC001_tTest_2SampleInd_factor_plot007 <- function(df_table_factor_plot007){
+fn_cpiC001_factor_plot007 <- function(df_table_factor_plot007){
 
 
   # # # Create a new plot...
@@ -1450,21 +1450,21 @@ fn_cpiC001_tTest_2SampleInd_factor_plot007 <- function(df_table_factor_plot007){
 
 
 
-fn_cpiC001_tTest_2SampleInd_recruit_g01_FactorPlots <- function(list_results_from_fn_cpiC001_tTest_2SampleInd){
+fn_cpiC001_recruit_g01_FactorPlots <- function(list_results_from_fn_cpiC001){
 
 
 
-  all_plots <-  with(list_results_from_fn_cpiC001_tTest_2SampleInd, {
+  all_plots <-  with(list_results_from_fn_cpiC001, {
 
     list_plots <- list()
 
-    list_plots[[1]] <- fn_cpiC001_tTest_2SampleInd_factor_plot001(minibase_mod, df_factor_info)
-    list_plots[[2]] <- fn_cpiC001_tTest_2SampleInd_factor_plot002(df_table_factor_plot002)
-    list_plots[[3]] <- fn_cpiC001_tTest_2SampleInd_factor_plot003(df_table_factor_plot003)
-    list_plots[[4]] <- fn_cpiC001_tTest_2SampleInd_factor_plot004(df_table_factor_plot004)
-    list_plots[[5]] <- fn_cpiC001_tTest_2SampleInd_factor_plot005(minibase_mod, df_table_factor_plot005)
-    list_plots[[6]] <- fn_cpiC001_tTest_2SampleInd_factor_plot006(minibase_mod, df_table_factor_plot006)
-    list_plots[[7]] <- fn_cpiC001_tTest_2SampleInd_factor_plot007(df_table_factor_plot007)
+    list_plots[[1]] <- fn_cpiC001_factor_plot001(minibase_mod, df_factor_info)
+    list_plots[[2]] <- fn_cpiC001_factor_plot002(df_table_factor_plot002)
+    list_plots[[3]] <- fn_cpiC001_factor_plot003(df_table_factor_plot003)
+    list_plots[[4]] <- fn_cpiC001_factor_plot004(df_table_factor_plot004)
+    list_plots[[5]] <- fn_cpiC001_factor_plot005(minibase_mod, df_table_factor_plot005)
+    list_plots[[6]] <- fn_cpiC001_factor_plot006(minibase_mod, df_table_factor_plot006)
+    list_plots[[7]] <- fn_cpiC001_factor_plot007(df_table_factor_plot007)
 
     list_plots
   })
@@ -1486,7 +1486,7 @@ fn_cpiC001_tTest_2SampleInd_recruit_g01_FactorPlots <- function(list_results_fro
 
 
 
-fn_cpiC001_tTest_2SampleInd_residuals_plot001 <- function(minibase_mod, df_factor_info){
+fn_cpiC001_residuals_plot001 <- function(minibase_mod, df_factor_info){
 
   # # # Create a new plot...
   plot001_residuals <- plotly::plot_ly()
@@ -1520,7 +1520,7 @@ fn_cpiC001_tTest_2SampleInd_residuals_plot001 <- function(minibase_mod, df_facto
 }
 
 
-fn_cpiC001_tTest_2SampleInd_residuals_plot002 <- function(minibase_mod, df_table_residuals_plot002){
+fn_cpiC001_residuals_plot002 <- function(minibase_mod, df_table_residuals_plot002){
 
 
 
@@ -1563,7 +1563,7 @@ fn_cpiC001_tTest_2SampleInd_residuals_plot002 <- function(minibase_mod, df_table
 
 
 
-fn_cpiC001_tTest_2SampleInd_residuals_plot003 <- function(minibase_mod, df_table_residuals_plot003){
+fn_cpiC001_residuals_plot003 <- function(minibase_mod, df_table_residuals_plot003){
 
 
 
@@ -1602,7 +1602,7 @@ fn_cpiC001_tTest_2SampleInd_residuals_plot003 <- function(minibase_mod, df_table
 
 
 
-fn_cpiC001_tTest_2SampleInd_residuals_plot004 <- function(minibase_mod){
+fn_cpiC001_residuals_plot004 <- function(minibase_mod){
 
 
 
@@ -1644,7 +1644,7 @@ fn_cpiC001_tTest_2SampleInd_residuals_plot004 <- function(minibase_mod){
 
 
 
-fn_cpiC001_tTest_2SampleInd_residuals_plot005 <- function(minibase_mod){
+fn_cpiC001_residuals_plot005 <- function(minibase_mod){
 
 
 
@@ -1702,7 +1702,7 @@ fn_cpiC001_tTest_2SampleInd_residuals_plot005 <- function(minibase_mod){
 
 
 
-fn_cpiC001_tTest_2SampleInd_residuals_plot006 <- function(minibase_mod, df_factor_info){
+fn_cpiC001_residuals_plot006 <- function(minibase_mod, df_factor_info){
 
   # # # Create a new plot...
   plot003_residuals <- plotly::plot_ly()
@@ -1738,7 +1738,7 @@ fn_cpiC001_tTest_2SampleInd_residuals_plot006 <- function(minibase_mod, df_facto
 
 
 
-fn_cpiC001_tTest_2SampleInd_residuals_plot007 <- function(minibase_mod, df_factor_info){
+fn_cpiC001_residuals_plot007 <- function(minibase_mod, df_factor_info){
 
   # # # Create a new plot...
   plot004_residuals <- plotly::plot_ly()
@@ -1775,7 +1775,7 @@ fn_cpiC001_tTest_2SampleInd_residuals_plot007 <- function(minibase_mod, df_facto
 
 
 
-fn_cpiC001_tTest_2SampleInd_residuals_plot008 <- function(minibase_mod){
+fn_cpiC001_residuals_plot008 <- function(minibase_mod){
 
 
 
@@ -1818,7 +1818,7 @@ fn_cpiC001_tTest_2SampleInd_residuals_plot008 <- function(minibase_mod){
 
 
 
-fn_cpiC001_tTest_2SampleInd_residuals_plot009 <- function(minibase_mod){
+fn_cpiC001_residuals_plot009 <- function(minibase_mod){
 
 
 
@@ -1885,7 +1885,7 @@ fn_cpiC001_tTest_2SampleInd_residuals_plot009 <- function(minibase_mod){
 
 
 
-fn_cpiC001_tTest_2SampleInd_residuals_plot010 <- function(minibase_mod){
+fn_cpiC001_residuals_plot010 <- function(minibase_mod){
 
 
 
@@ -1944,23 +1944,23 @@ fn_cpiC001_tTest_2SampleInd_residuals_plot010 <- function(minibase_mod){
 
 
 
-fn_cpiC001_tTest_2SampleInd_recruit_g02_ResidualsPlots <- function(list_results_from_fn_cpiC001_tTest_2SampleInd){
+fn_cpiC001_recruit_g02_ResidualsPlots <- function(list_results_from_fn_cpiC001){
 
 
-  all_plots <-  with(list_results_from_fn_cpiC001_tTest_2SampleInd, {
+  all_plots <-  with(list_results_from_fn_cpiC001, {
 
     list_plots <- list()
 
-    list_plots[[1]]  <- fn_cpiC001_tTest_2SampleInd_residuals_plot001(minibase_mod, df_factor_info)
-    list_plots[[2]]  <- fn_cpiC001_tTest_2SampleInd_residuals_plot002(minibase_mod, df_table_residuals_plot002)
-    list_plots[[3]]  <- fn_cpiC001_tTest_2SampleInd_residuals_plot003(minibase_mod, df_table_residuals_plot003)
-    list_plots[[4]]  <- fn_cpiC001_tTest_2SampleInd_residuals_plot004(minibase_mod)
-    list_plots[[5]]  <- fn_cpiC001_tTest_2SampleInd_residuals_plot005(minibase_mod)
-    list_plots[[6]]  <- fn_cpiC001_tTest_2SampleInd_residuals_plot006(minibase_mod, df_factor_info)
-    list_plots[[7]]  <- fn_cpiC001_tTest_2SampleInd_residuals_plot007(minibase_mod, df_factor_info)
-    list_plots[[8]]  <- fn_cpiC001_tTest_2SampleInd_residuals_plot008(minibase_mod)
-    list_plots[[9]]  <- fn_cpiC001_tTest_2SampleInd_residuals_plot009(minibase_mod)
-    list_plots[[10]] <- fn_cpiC001_tTest_2SampleInd_residuals_plot010(minibase_mod)
+    list_plots[[1]]  <- fn_cpiC001_residuals_plot001(minibase_mod, df_factor_info)
+    list_plots[[2]]  <- fn_cpiC001_residuals_plot002(minibase_mod, df_table_residuals_plot002)
+    list_plots[[3]]  <- fn_cpiC001_residuals_plot003(minibase_mod, df_table_residuals_plot003)
+    list_plots[[4]]  <- fn_cpiC001_residuals_plot004(minibase_mod)
+    list_plots[[5]]  <- fn_cpiC001_residuals_plot005(minibase_mod)
+    list_plots[[6]]  <- fn_cpiC001_residuals_plot006(minibase_mod, df_factor_info)
+    list_plots[[7]]  <- fn_cpiC001_residuals_plot007(minibase_mod, df_factor_info)
+    list_plots[[8]]  <- fn_cpiC001_residuals_plot008(minibase_mod)
+    list_plots[[9]]  <- fn_cpiC001_residuals_plot009(minibase_mod)
+    list_plots[[10]] <- fn_cpiC001_residuals_plot010(minibase_mod)
 
     list_plots
   })

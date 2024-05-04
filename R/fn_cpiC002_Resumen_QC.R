@@ -226,7 +226,7 @@ fn_cpiC002_control_previous <- function(database, vr_var_name, factor_var_name, 
   # # # # # # # # # # # minibase
   minibase <- na.omit(database[vector_var_names])
   minibase[,2] <- as.factor(minibase[,2])
-  colnames(minibase) <- c("VR", "FACTOR")
+  colnames(minibase) <- c("RV", "FACTOR")
 
 
 
@@ -256,27 +256,27 @@ fn_cpiC002_control_previous <- function(database, vr_var_name, factor_var_name, 
     return(Hmisc::llist(dt_ok, text_output))
   }
 
-  # 4) minibase$VR can not be constant
-  if(!is.numeric(minibase$VR)){
-    text_output <- "Control pre test 029: Object 'minibase$VR' must be numeric."
+  # 4) minibase$RV can not be constant
+  if(!is.numeric(minibase$RV)){
+    text_output <- "Control pre test 029: Object 'minibase$RV' must be numeric."
     return(Hmisc::llist(dt_ok, text_output))
   }
-  # 4) minibase$VR can not be constant
-  if(var(minibase$VR) == 0){
-    text_output <- "Control pre test 030: Object 'minibase$VR' can not be constant."
-    return(Hmisc::llist(dt_ok, text_output))
-  }
-
-  # 4) minibase$VR can not be constant
-  if(length(unique(as.character(minibase$VR))) == 1){
-    text_output <- "Control pre test 031: Object 'minibase$VR' can not be constant."
+  # 4) minibase$RV can not be constant
+  if(var(minibase$RV) == 0){
+    text_output <- "Control pre test 030: Object 'minibase$RV' can not be constant."
     return(Hmisc::llist(dt_ok, text_output))
   }
 
+  # 4) minibase$RV can not be constant
+  if(length(unique(as.character(minibase$RV))) == 1){
+    text_output <- "Control pre test 031: Object 'minibase$RV' can not be constant."
+    return(Hmisc::llist(dt_ok, text_output))
+  }
 
-  # 4) minibase$VR can not be constant
-  if(length(unique(as.character(minibase$VR))) == 1){
-    text_output <- "Control pre test 032: Object 'minibase$VR' can not be constant."
+
+  # 4) minibase$RV can not be constant
+  if(length(unique(as.character(minibase$RV))) == 1){
+    text_output <- "Control pre test 032: Object 'minibase$RV' can not be constant."
     return(Hmisc::llist(dt_ok, text_output))
   }
 
@@ -290,7 +290,7 @@ fn_cpiC002_control_previous <- function(database, vr_var_name, factor_var_name, 
 
 
   # Al least 2 reps in each level
-  reps_level <- tapply(minibase$VR, minibase$FACTOR, length)
+  reps_level <- tapply(minibase$RV, minibase$FACTOR, length)
   dt_reps_level <- reps_level >= 2
   check_01 <- sum(dt_reps_level) == length(dt_reps_level)
   if(!check_01){
@@ -300,7 +300,7 @@ fn_cpiC002_control_previous <- function(database, vr_var_name, factor_var_name, 
 
 
   # var greater than zero from each level
-  vars_level <- tapply(minibase$VR, minibase$FACTOR, var)
+  vars_level <- tapply(minibase$RV, minibase$FACTOR, var)
   dt_vars_level <- reps_level > 0
   check_02 <- sum(dt_vars_level) ==  length(dt_vars_level)
   if(!check_02){
@@ -311,7 +311,7 @@ On each level variance must be greater than zero."
 
 
   # At least 2 differents values from each level
-  ndata_level <- tapply(minibase$VR, minibase$FACTOR, function(x){
+  ndata_level <- tapply(minibase$RV, minibase$FACTOR, function(x){
     length(unique(as.character(x)))
   })
   dt_ndata_level <- ndata_level >= 2
@@ -604,7 +604,7 @@ fn_cpiC002_results <- function(database, vr_var_name, factor_var_name, alpha_val
 
   vector_all_var_names <- colnames(database)
   vector_name_selected_vars <- c(vr_var_name, factor_var_name)
-  vector_rol_vars <- c("VR", "FACTOR")
+  vector_rol_vars <- c("RV", "FACTOR")
 
 
 
@@ -1033,7 +1033,7 @@ fn_cpiC002_factor_plot001 <- function(minibase_mod, df_factor_info){
                                       type = "scatter",
                                       mode = "markers",
                                       x = minibase_mod$FACTOR,
-                                      y = minibase_mod$VR,
+                                      y = minibase_mod$RV,
                                       color = minibase_mod$FACTOR,
                                       colors = df_factor_info$color,
                                       marker = list(size = 15, opacity = 0.7))
@@ -1176,7 +1176,7 @@ fn_cpiC002_factor_plot004 <- function(df_table_factor_plot004){
   plot004_factor <- plotly::layout(p = plot004_factor,
                             title = "Plot 004 - Boxplot and means",
                             xaxis = list(title = "FACTOR"),
-                            yaxis = list(title = "VR"),
+                            yaxis = list(title = "RV"),
                             font = list(size = 20),
                             margin = list(t = 100))
 
@@ -1279,7 +1279,7 @@ fn_cpiC002_factor_plot006 <- function(minibase_mod, df_table_factor_plot006){
   # Add traces
   plot006_factor <- plotly::add_trace(p = plot006_factor,
                                       type = "violin",
-                                      y = minibase_mod$VR,
+                                      y = minibase_mod$RV,
                                       x = minibase_mod$FACTOR,
                                       showlegend = TRUE,
                                       side = "positive",

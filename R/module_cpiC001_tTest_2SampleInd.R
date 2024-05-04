@@ -134,7 +134,7 @@ module_cpiC001_s01_varselection_server <- function(id, input_general){
               column(4,
                      fluidRow(
                        column(12,
-                              selectInput(inputId = ns("vr_var_name"), label = "Response Variable",
+                              selectInput(inputId = ns("vr_var_name"), label = "Response Variable (RV)",
                                           choices = set_options ,
                                           selected = set_options[1])
                        )),
@@ -406,7 +406,7 @@ module_cpiC001_s02_rscience_server <- function(id, input_general, input_01_anova
           need(!is.null(input_01_anova()), "Error 02: Module anova s02 - input_01_anova can not be NULL.")
         )
 
-        check_previous <- fn_cpiC001_tTest_2SampleInd_control_previous(database = input_general()$database,
+        check_previous <- fn_cpiC001_control_previous(database = input_general()$database,
                                                                       vr_var_name = input_01_anova()$vr_var_name,
                                                                       factor_var_name = input_01_anova()$factor_var_name,
                                                                       alpha_value = input_01_anova()$alpha_value)
@@ -426,7 +426,7 @@ module_cpiC001_s02_rscience_server <- function(id, input_general, input_01_anova
 
         req(control_user_01())
 
-        the_output <- fn_cpiC001_tTest_2SampleInd_results(database = input_general()$database,
+        the_output <- fn_cpiC001_results(database = input_general()$database,
                                                          vr_var_name = input_01_anova()$vr_var_name,
                                                          factor_var_name = input_01_anova()$factor_var_name,
                                                          alpha_value = input_01_anova()$alpha_value)
@@ -451,7 +451,7 @@ module_cpiC001_s02_rscience_server <- function(id, input_general, input_01_anova
         #
         #
         #         # Control post
-        # check_post <- fn_cpiC001_tTest_2SampleInd_control_post(list_results_from_cpiA001_anova1way = RR_general())
+        # check_post <- fn_cpiC001_control_post(list_results_from_cpiA001_anova1way = RR_general())
         # #
         # validate(
         #   need(check_post$check_ok, check_post$text_output)
@@ -467,7 +467,7 @@ module_cpiC001_s02_rscience_server <- function(id, input_general, input_01_anova
       # RR_g01_tables <- reactive({
       #
       #   req(control_user_02())
-      #   all_tables_g01 <- fn_cpiC001_tTest_2SampleInd_recruit_g01_Tables(list_results_from_cpiA001_anova1way = RR_general())
+      #   all_tables_g01 <- fn_cpiC001_recruit_g01_Tables(list_results_from_cpiA001_anova1way = RR_general())
       #   all_tables_g01
       # })
       #
@@ -476,7 +476,7 @@ module_cpiC001_s02_rscience_server <- function(id, input_general, input_01_anova
       # RR_g01_plots <- reactive({
       #
       #   req(control_user_02())
-      #   all_plots_g01 <- fn_cpiC001_tTest_2SampleInd_recruit_g01_FactorPlots(list_results_from_cpiA001_anova1way = RR_general())
+      #   all_plots_g01 <- fn_cpiC001_recruit_g01_FactorPlots(list_results_from_cpiA001_anova1way = RR_general())
       #   all_plots_g01
       # })
       #
@@ -487,7 +487,7 @@ module_cpiC001_s02_rscience_server <- function(id, input_general, input_01_anova
       # RR_g02_tables <- reactive({
       #
       #   req(control_user_02())
-      #   all_tables_g02 <- fn_cpiC001_tTest_2SampleInd_recruit_g02_Tables(list_results_from_cpiA001_anova1way = RR_general())
+      #   all_tables_g02 <- fn_cpiC001_recruit_g02_Tables(list_results_from_cpiA001_anova1way = RR_general())
       #   all_tables_g02
       # })
 
@@ -496,14 +496,14 @@ module_cpiC001_s02_rscience_server <- function(id, input_general, input_01_anova
       # RR_g02_plots <- reactive({
       #
       #   req(control_user_02())
-      #   all_plots_g02 <- fn_cpiC001_tTest_2SampleInd_recruit_g02_ResidualsPlots(list_results_from_cpiA001_anova1way = RR_general())
+      #   all_plots_g02 <- fn_cpiC001_recruit_g02_ResidualsPlots(list_results_from_cpiA001_anova1way = RR_general())
       #   all_plots_g02
       # })
 
       RR_code <- reactive({
 
         req(control_user_02())
-        the_code <- fn_cpiC001_tTest_2SampleInd_code_sectionALL(intro_source_database = input_01_anova()$intro_source_database,
+        the_code <- fn_cpiC001_code_sectionALL(intro_source_database = input_01_anova()$intro_source_database,
                                                                vr_var_name = input_01_anova()$vr_var_name,
                                                                factor_var_name = input_01_anova()$factor_var_name,
                                                                alpha_value = input_01_anova()$alpha_value)
@@ -1523,7 +1523,7 @@ module_cpiC001_s02_rscience_server <- function(id, input_general, input_01_anova
                                               type = "scatter",
                                               mode = "markers",
                                               x = minibase_mod$FACTOR,
-                                              y = minibase_mod$VR,
+                                              y = minibase_mod$RV,
                                               color = minibase_mod$FACTOR,
                                               colors = df_factor_info$color,
                                               marker = list(size = 15, opacity = 0.7))
@@ -1531,7 +1531,7 @@ module_cpiC001_s02_rscience_server <- function(id, input_general, input_01_anova
           # # # Title and settings...
           plot001_factor <-   plotly::layout(p = plot001_factor,
                                              xaxis = list(title = "FACTOR"),
-                                             yaxis = list(title = "VR"),
+                                             yaxis = list(title = "RV"),
                                              title = "Plot 001 - Scatterplot",
                                              font = list(size = 20),
                                              margin = list(t = 100))
@@ -1584,7 +1584,7 @@ module_cpiC001_s02_rscience_server <- function(id, input_general, input_01_anova
 
           plot002_factor <- plotly::layout(p = plot002_factor,
                                            xaxis = list(title = "FACTOR"),
-                                           yaxis = list(title = "VR"),
+                                           yaxis = list(title = "RV"),
                                            title = "Plot 002 - Mean and Standard Deviation",
                                            font = list(size = 20),
                                            margin = list(t = 100))
@@ -1635,7 +1635,7 @@ module_cpiC001_s02_rscience_server <- function(id, input_general, input_01_anova
 
           plot003_factor <- plotly::layout(p = plot003_factor,
                                            xaxis = list(title = "FACTOR"),
-                                           yaxis = list(title = "VR"),
+                                           yaxis = list(title = "RV"),
                                            title = "Plot 003 - Mean and Standard Error",
                                            font = list(size = 20),
                                            margin = list(t = 100))
@@ -1686,7 +1686,7 @@ module_cpiC001_s02_rscience_server <- function(id, input_general, input_01_anova
           plot004_factor <- plotly::layout(p = plot004_factor,
                                            title = "Plot 004 - Boxplot and means",
                                            xaxis = list(title = "FACTOR"),
-                                           yaxis = list(title = "VR"),
+                                           yaxis = list(title = "RV"),
                                            font = list(size = 20),
                                            margin = list(t = 100))
 

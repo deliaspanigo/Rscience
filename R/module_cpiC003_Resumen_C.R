@@ -134,7 +134,7 @@ module_cpiC003_s01_varselection_server <- function(id, input_general){
               column(4,
                      fluidRow(
                        column(12,
-                              selectInput(inputId = ns("vr_var_name"), label = "Variable Response",
+                              selectInput(inputId = ns("vr_var_name"), label = "Response Variable (RV)",
                                           choices = set_options ,
                                           selected = set_options[1])
                        ))#,
@@ -808,7 +808,7 @@ module_cpiC003_s02_rscience_server <- function(id, input_general, input_01_anova
                                               type = "scatter",
                                               mode = "markers",
                                               x = 1,
-                                              y = minibase_mod$VR,
+                                              y = minibase_mod$RV,
                                               color = minibase_mod$color,
                                               colors = minibase_mod$color,
                                               marker = list(size = 15, opacity = 0.7))
