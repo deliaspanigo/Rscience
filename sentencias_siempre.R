@@ -15,10 +15,15 @@ devtools::install()
 
 ###############################################
 
+# Desinstalar Rscience
 remove.packages("Rscience")
-# Libreria
-library(remotes)
 
-# Instalar la librería desde GitHub
+# Instalar el paquete para instalar
+install.packages("remotes")
+
+# Activar la libreria para instalar
+library("remotes")
+
+# Instalar Rscience desde la librería desde GitHub
 remotes::install_github("deliaspanigo/Rscience", force = T)
 

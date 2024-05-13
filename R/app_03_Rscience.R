@@ -6,7 +6,7 @@
 
 app_03_Rscience <- function(){
 
-  library("Rscience")
+
   library("bslib")
   library("dplyr")
   library("DT")
@@ -24,6 +24,7 @@ app_03_Rscience <- function(){
   library("stringr")
   library("tools")
   library("emmeans")
+  library("Rscience")
 
   ui <- shinydashboard::dashboardPage(
 
@@ -202,7 +203,9 @@ app_03_Rscience <- function(){
                                                                "01 - R examples" = "R_example",
                                                                "02 - xlsx" = "xlsx",
                                                                "03 - UNC - Bio01" = "UNC_bio01"))
-                                ),
+                                ),#),
+                                #br(),
+                                #fluidRow(
                                   column(9,
                                 shiny::conditionalPanel(condition = 'input.file_source == "xlsx"',
                                                         module_cpiC000_database_s01_excel_ui(id = "data_excel")
