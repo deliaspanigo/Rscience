@@ -766,6 +766,10 @@ fn_cpiC002_results <- function(database, vr_var_name, factor_var_name, alpha_val
 
 
   df_table_plot004 <-  df_vr_position_levels
+
+  df_table_plot005 <-  df_vr_position_levels
+
+  df_table_plot006 <-  df_vr_position_levels
   # --- # hide_: Proccesing objects order
   hide_correct_order <- fn_cpiC002_ObjNamesInOrder(selected_fn = fn_cpiC002_results)
   hide_output_list_objects <- mget(hide_correct_order)

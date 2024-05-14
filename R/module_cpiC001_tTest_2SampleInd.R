@@ -1703,7 +1703,8 @@ module_cpiC001_s02_rscience_server <- function(id, input_general, input_01_anova
 
         new_plot
       })
-      ###############################################
+
+     ###############################################
 
       output$tabla01 <- renderPrint({
 
@@ -1776,7 +1777,8 @@ module_cpiC001_s02_rscience_server <- function(id, input_general, input_01_anova
         mi_lista[selected_objs]
 
       })
-      ##########################################################################
+
+       ##########################################################################
 
 
 

@@ -6,12 +6,11 @@ module_cpiC000_database_s03_UNC_bio01_ui <- function(id){
   vector_opt <- c("Select one..." = "",
                   "01 - Base01_peso"  = "Rscience_bio01_base01_peso_infantes",
                   "02 - Base02_meses" = "Rscience_bio01_base02_meses",
-                  "03 - Base03_donaciones" = "Rscience_bio01_base03_donaciones",
-                  "04 - Base04_hormonas" = "Rscience_bio01_base04_hormonas",
-                  "05 - Base05_insectisida" = "Rscience_bio01_base05_insectisida",
-                  "06 - Base06_trigliceridos" = "Rscience_bio01_base06_trigliceridos",
-                  "07 - Base07_pinzones" = "Rscience_bio01_base07_pinzones",
-                  "08 - Base08_espermograma" = "Rscience_bio01_base08_espermograma")
+                  "04 - Base03_hormonas" = "Rscience_bio01_base03_hormonas",
+                  "05 - Base04_insectisida" = "Rscience_bio01_base04_insectisida",
+                  "06 - Base05_trigliceridos" = "Rscience_bio01_base05_trigliceridos",
+                  "07 - Base06_pinzones" = "Rscience_bio01_base06_pinzones",
+                  "08 - Base07_espermograma" = "Rscience_bio01_base07_espermograma")
 
   div(shinyjs::useShinyjs(), id = ns("input-panel"),
 

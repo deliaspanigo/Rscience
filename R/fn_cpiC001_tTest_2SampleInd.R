@@ -675,7 +675,8 @@ fn_cpiC001_results <- function(database, vr_var_name, factor_var_name, alpha_val
   check_unbalanced_reps <- length(unique(df_factor_info$n)) > 1
   check_unbalanced_reps
 
-
+  minibase_mod <- minibase
+  minibase_mod$"color" <- df_factor_info$"color"[as.numeric(minibase$"FACTOR")]
 
   # Normality
   list_normality_test <- tapply(minibase$RV, minibase$FACTOR, shapiro.test)

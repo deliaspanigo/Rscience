@@ -991,6 +991,125 @@ module_cpiC003_s02_rscience_server <- function(id, input_general, input_01_anova
 
         new_plot
       })
+
+      # # #
+      output$el_plot5 <- renderPlotly({
+
+
+        mi_lista <- RR_general()
+
+
+        new_plot <-  with(mi_lista,{
+          # # # Create a new plot...
+          # # # Create a new plot...
+          # # # New plotly...
+          #library(plotly)
+          plot005_factor <- plotly::plot_ly()
+
+          # Add traces
+          plot005_factor <- plotly::add_trace(p = plot005_factor,
+                                                 type = "violin",
+                                                 x = minibase_mod$RV,
+                                                 y = minibase_mod$FACTOR,
+                                                 showlegend = TRUE,
+                                                 side = "positive",
+                                                 points = FALSE,#"all",
+                                                 name = " ",
+                                                 color = minibase_mod$FACTOR,
+                                                 colors = df_table_plot005$color)
+
+
+
+          # # # Title and settings...
+          plot005_factor <- plotly::layout(p = plot005_factor,
+                                              title = "Plot 005 - Smoothed",
+                                              xaxis = list(title = "RV", visible = TRUE),
+                                              yaxis = list(title = "", visible = TRUE),
+                                              font = list(size = 20),
+                                              margin = list(t = 100))
+
+
+          # # # Without zerolines...
+          plot005_factor <- plotly::layout(p = plot005_factor,
+                                              xaxis = list(zeroline = FALSE),
+                                              yaxis = list(zeroline = FALSE))
+
+          # # # Output plot003_anova...
+          plot005_factor
+
+        })
+
+        new_plot
+      })
+
+      output$el_plot6 <- renderPlotly({
+
+
+        mi_lista <- RR_general()
+
+
+        new_plot <-  with(mi_lista,{
+          # # # Create a new plot...
+          # # # Create a new plot...
+          # # # New plotly...
+          hist_data_studres <- hist(minibase_mod$RV, plot = FALSE)
+          hist_data_studres$"rel_frec" <- hist_data_studres$counts/sum(hist_data_studres$counts)
+
+
+          #library(plotly)
+          plot005_factor <- plotly::plot_ly()
+
+
+          # plot005_residuals <- add_trace(p = plot005_residuals,
+          #                                x = densidad_studres$x,
+          #                                y = densidad_studres$y,
+          #                                type = 'scatter',
+          #                                mode = 'lines',
+          #                                name = 'densidad_studres')
+
+          # plot005_factor <- add_trace(p = plot005_factor,
+          #                                x = x,
+          #                                y = y,
+          #                                type = 'scatter',
+          #                                mode = 'lines',
+          #                                name = 'Normal Standard')
+
+
+
+
+
+          # # Add traces
+          # plot005_residuals <- plotly::add_trace(p = plot005_residuals,
+          #                                        type = "violin",
+          #                                        x = minibase_mod$residuals,
+          #                                        #x = minibase_mod$FACTOR,
+          #                                        showlegend = TRUE,
+          #                                        side = "positive",
+          #                                        points = FALSE,
+          #                                        name = "violinplot")#
+
+          plot005_factor <- plotly::add_trace(p = plot005_factor,
+                                                 type = "bar",
+                                                 x = hist_data_studres$"mids",
+                                                 y = hist_data_studres$"rel_frec",#"density",
+                                                 name = "hist - Rel. Frec.")
+
+          plot005_factor <- plotly::layout(p = plot005_factor,
+                                              bargap = 0)
+
+          plot005_factor <- plotly::layout(p = plot005_factor,
+                                              title = "Plot 006 - Histogram",
+                                              xaxis = list(title = "RV", visible = TRUE),
+                                              yaxis = list(title = "Relative Frecuency", visible = TRUE),
+                                              font = list(size = 20),
+                                              margin = list(t = 100))
+
+          plot005_factor
+
+        })
+
+        new_plot
+      })
       ###############################################
 
       output$tabla01 <- renderPrint({
@@ -1058,6 +1177,42 @@ module_cpiC003_s02_rscience_server <- function(id, input_general, input_01_anova
 
         # Vector con nombres de elementos a ver
         selected_objs <- c("df_table_plot004")
+
+
+        # Usar lapply para mostrar los elementos deseados
+        mi_lista[selected_objs]
+
+      })
+
+      output$tabla05 <- renderPrint({
+
+        req(control_user_02())
+
+        mi_lista <- RR_general()
+
+
+
+
+        # Vector con nombres de elementos a ver
+        selected_objs <- c("df_table_plot005")
+
+
+        # Usar lapply para mostrar los elementos deseados
+        mi_lista[selected_objs]
+
+      })
+
+      output$tabla06 <- renderPrint({
+
+        req(control_user_02())
+
+        mi_lista <- RR_general()
+
+
+
+
+        # Vector con nombres de elementos a ver
+        selected_objs <- c("df_table_plot005")
 
 
         # Usar lapply para mostrar los elementos deseados
@@ -1258,6 +1413,18 @@ module_cpiC003_s02_rscience_server <- function(id, input_general, input_01_anova
                                           #column(1),
                                           column(6, plotlyOutput(ns("el_plot4"), height = "40vh", width = "70vh")),
                                           column(6, verbatimTextOutput(ns("tabla04"))),
+                                        ),
+                                        br(),br(),br(),
+                                        fluidRow(
+                                          #column(1),
+                                          column(6, plotlyOutput(ns("el_plot5"), height = "40vh", width = "70vh")),
+                                          column(6, verbatimTextOutput(ns("tabla05"))),
+                                        ),
+                                        br(),br(),br(),
+                                        fluidRow(
+                                          #column(1),
+                                          column(6, plotlyOutput(ns("el_plot6"), height = "40vh", width = "70vh")),
+                                          column(6, verbatimTextOutput(ns("tabla06"))),
                                         )
 
                                         #shinycssloaders::withSpinner(uiOutput(ns("plot_outputs33"))),

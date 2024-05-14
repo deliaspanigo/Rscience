@@ -736,6 +736,9 @@ fn_cpiC003_results <- function(database, vr_var_name, alpha_value){
 
   df_table_plot004 <-  df_vr_position_general
 
+  df_table_plot005 <-  df_vr_position_general
+
+  df_table_plot006 <-  df_vr_position_general
 
   # --- # hide_: Proccesing objects order
   hide_correct_order <- fn_cpiC003_ObjNamesInOrder(selected_fn = fn_cpiC003_results)
