@@ -13,6 +13,7 @@ devtools::check()
 
 devtools::install()
 
+devtools::release()
 ###############################################
 
 # Desinstalar Rscience

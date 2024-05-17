@@ -24,6 +24,7 @@ Imports:
   pacman,
   plot3D,
   plotly,
+  purrr,
   rclipboard,
   rmarkdown,
   reshape2,

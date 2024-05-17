@@ -1486,23 +1486,23 @@ module_cpiC003_s02_rscience_server <- function(id, input_general, input_01_anova
                                                  verbatimTextOutput(ns("tab01_all_anova_results"))
                                           )
                                         )
-                               ),
+                               )#,
 
 
 
-                               tabPanel("R code",  # 05
-                                        fluidRow(
-                                          column(10,
-                                                 h1("Summary - 1 Var (Cuantitative)"),
-                                                 verbatimTextOutput(ns("tab05_code"))
-                                          ),
-                                          br(), br(),
-                                          column(2, uiOutput(ns("clip")),
-                                                 br(),
-                                                 downloadButton(ns("downloadBtn"), "Download Code")
-                                          )
-                                        )
-                               )
+                               # tabPanel("R code",  # 05
+                               #          fluidRow(
+                               #            column(10,
+                               #                   h1("Summary - 1 Var (Cuantitative)"),
+                               #                   verbatimTextOutput(ns("tab05_code"))
+                               #            ),
+                               #            br(), br(),
+                               #            column(2, uiOutput(ns("clip")),
+                               #                   br(),
+                               #                   downloadButton(ns("downloadBtn"), "Download Code")
+                               #            )
+                               #          )
+                               # )
 
             ), br(), br(), br(), br(), br(), br()
           ), br(), br(), br(), br(), br(), br()

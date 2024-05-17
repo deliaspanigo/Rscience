@@ -29,13 +29,13 @@ app_03_Rscience <- function(){
   ui <- shinydashboard::dashboardPage(
 
     # # # Dashboard title
-    shinydashboard::dashboardHeader(title = "R-Science 0.0.1"),
+    shinydashboard::dashboardHeader(title = "R-Science"),
 
     # # # Sidebar content
     shinydashboard::dashboardSidebar(
       width = "340px",
       shinydashboard::sidebarMenu(
-        " t Test - 0.0.1",br(),br(),
+        " t Test - 0.0.2",br(),br(),
         shinydashboard::menuItem(text = "database", tabName = "tab01_database", icon = shiny::icon("th")),
         shinydashboard::menuItem(text = "Summary", tabName = "tab03_anova", icon = shiny::icon("th")),
 
@@ -200,9 +200,10 @@ app_03_Rscience <- function(){
                                 shiny::selectInput(inputId = "file_source",
                                                    label = "File source...",
                                                    choices = c("Select one..." = "",
-                                                               "01 - R examples" = "R_example",
-                                                               "02 - xlsx" = "xlsx",
-                                                               "03 - UNC - Bio01" = "UNC_bio01"))
+                                                               "01 - UNC - Bio01" = "UNC_bio01",
+                                                               "02 - R examples" = "R_example",
+                                                               "03 - xlsx" = "xlsx"
+                                                               ))
                                 ),#),
                                 #br(),
                                 #fluidRow(

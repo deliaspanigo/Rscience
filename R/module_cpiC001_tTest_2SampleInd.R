@@ -2056,23 +2056,23 @@ module_cpiC001_s02_rscience_server <- function(id, input_general, input_01_anova
                                                verbatimTextOutput(ns("tab01_all_anova_results"))
                                         )
                                       )
-                             ),
+                             )#,
 
 
 
-                             tabPanel("R code",  # 05
-                                      fluidRow(
-                                        column(10,
-                                               h1("t Test - 2 Independent Samples"),
-                                               verbatimTextOutput(ns("tab05_code"))
-                                        ),
-                                        br(), br(),
-                                        column(2, uiOutput(ns("clip")),
-                                               br(),
-                                               downloadButton(ns("downloadBtn"), "Download Code")
-                                        )
-                                      )
-                             )
+                             # tabPanel("R code",  # 05
+                             #          fluidRow(
+                             #            column(10,
+                             #                   h1("t Test - 2 Independent Samples"),
+                             #                   verbatimTextOutput(ns("tab05_code"))
+                             #            ),
+                             #            br(), br(),
+                             #            column(2, uiOutput(ns("clip")),
+                             #                   br(),
+                             #                   downloadButton(ns("downloadBtn"), "Download Code")
+                             #            )
+                             #          )
+                             # )
 
           ), br(), br(), br(), br(), br(), br()
         )
