@@ -4,8 +4,7 @@ module_cpiE000_database_s03_UNC_bio01_ui <- function(id){
   ns <- shiny::NS(id)
 
   vector_opt <- c("Select one..." = "",
-                  "01 - Base01_peso"  = "Rscience_bio01_base01_peso_infantes",
-                  "02 - Base02_meses" = "Rscience_bio01_base02_meses",
+                  "01 - Base Friedman" = "Rscience_bio02_Friedman",
                   "03 - Base03_hormonas" = "Rscience_bio01_base03_hormonas",
                   "04 - Base04_insecticida" = "Rscience_bio01_base04_insecticida",
                   "05 - Base05_trigliceridos" = "Rscience_bio01_base05_trigliceridos",

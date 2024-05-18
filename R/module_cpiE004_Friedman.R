@@ -4,7 +4,7 @@
 
 
 
-module_cpiE001_s01_varselection_ui <- function(id){
+module_cpiE004_s01_varselection_ui <- function(id){
 
   ns <- shiny::NS(id)
 
@@ -16,7 +16,7 @@ module_cpiE001_s01_varselection_ui <- function(id){
 
 
 
-module_cpiE001_s01_varselection_server <- function(id, input_general){
+module_cpiE004_s01_varselection_server <- function(id, input_general){
   moduleServer(
     id,
     function(input, output, session) {
@@ -106,7 +106,7 @@ module_cpiE001_s01_varselection_server <- function(id, input_general){
 
 
 
-      # # # Var selection for Kruskal-Wallis Testy
+      # # # Var selection for Friedman Testy
       output$vars_selection <- renderUI({
 
         ns <- shiny::NS(id)
@@ -143,7 +143,14 @@ module_cpiE001_s01_varselection_server <- function(id, input_general){
                               selectInput(inputId = ns("factor_var_name"), label = "Factor",
                                           choices = set_options,
                                           selected = set_options[1])
-                       ))),
+                       )),
+                     fluidRow(
+                       column(12,
+                              selectInput(inputId = ns("block_var_name"), label = "Block",
+                                          choices = set_options,
+                                          selected = set_options[1])
+                       ))
+                     ),
               column(4,
                      fluidRow(
                        column(12,
@@ -219,10 +226,13 @@ module_cpiE001_s01_varselection_server <- function(id, input_general){
         validate(
           need(input$vr_var_name != "", "Select a response variable."),
           need(input$factor_var_name != "", "Select a factor."),
+          need(input$block_var_name != "", "Select a block."),
         )
 
         validate(
-          need(input$vr_var_name != input$factor_var_name, "Selected variables can not be equal.")
+          need(input$vr_var_name != input$factor_var_name, "Selected variables can not be equal."),
+          need(input$vr_var_name != input$block_var_name, "Selected variables can not be equal."),
+          need(input$factor_var_name != input$block_var_name, "Selected variables can not be equal.")
         )
 
 
@@ -269,6 +279,16 @@ module_cpiE001_s01_varselection_server <- function(id, input_general){
 
       # # Factor selection
       observeEvent(input$factor_var_name, {
+
+        # Not show yet
+        color_button_load(hardcorded_initial_color)
+        color_button_show(hardcorded_initial_color)
+        action_button_load(FALSE)
+        action_button_show(FALSE)
+
+      })
+
+      observeEvent(input$block_var_name, {
 
         # Not show yet
         color_button_load(hardcorded_initial_color)
@@ -336,6 +356,13 @@ module_cpiE001_s01_varselection_server <- function(id, input_general){
         return(output_value)
       })
 
+      block_var_name <- reactive({
+        req(action_button_show())
+
+        output_value <- input$block_var_name
+        return(output_value)
+      })
+
 
       alpha_value <- reactive({
         req(action_button_show())
@@ -358,9 +385,9 @@ module_cpiE001_s01_varselection_server <- function(id, input_general){
         req(action_button_show())
 
 
-        the_list <- list(vr_var_name(), factor_var_name(), alpha_value(), intro_source_database())
+        the_list <- list(vr_var_name(), factor_var_name(), block_var_name(), alpha_value(), intro_source_database())
 
-        names(the_list) <- c("vr_var_name", "factor_var_name", "alpha_value", "intro_source_database")
+        names(the_list) <- c("vr_var_name", "factor_var_name", "block_var_name", "alpha_value", "intro_source_database")
         the_list
       })
 
@@ -374,7 +401,7 @@ module_cpiE001_s01_varselection_server <- function(id, input_general){
 
 
 
-module_cpiE001_s02_rscience_ui <- function(id){
+module_cpiE004_s02_rscience_ui <- function(id){
 
   ns <- shiny::NS(id)
 
@@ -390,7 +417,7 @@ module_cpiE001_s02_rscience_ui <- function(id){
 
 
 
-module_cpiE001_s02_rscience_server <- function(id, input_general, input_01_anova){
+module_cpiE004_s02_rscience_server <- function(id, input_general, input_01_anova){
   moduleServer(
     id,
     function(input, output, session) {
@@ -406,9 +433,10 @@ module_cpiE001_s02_rscience_server <- function(id, input_general, input_01_anova
           need(!is.null(input_01_anova()), "Error 02: Module anova s02 - input_01_anova can not be NULL.")
         )
 
-        check_previous <- fn_cpiE001_control_previous(database = input_general()$database,
+        check_previous <- fn_cpiE004_control_previous(database = input_general()$database,
                                                       vr_var_name = input_01_anova()$vr_var_name,
                                                       factor_var_name = input_01_anova()$factor_var_name,
+                                                      block_var_name = input_01_anova()$block_var_name,
                                                       alpha_value = input_01_anova()$alpha_value)
 
         validate(
@@ -426,9 +454,10 @@ module_cpiE001_s02_rscience_server <- function(id, input_general, input_01_anova
 
         req(control_user_01())
 
-        the_output <- fn_cpiE001_results(database = input_general()$database,
+        the_output <- fn_cpiE004_results(database = input_general()$database,
                                          vr_var_name = input_01_anova()$vr_var_name,
                                          factor_var_name = input_01_anova()$factor_var_name,
+                                         block_var_name = input_01_anova()$block_var_name,
                                          alpha_value = input_01_anova()$alpha_value)
 
 
@@ -451,7 +480,7 @@ module_cpiE001_s02_rscience_server <- function(id, input_general, input_01_anova
         #
         #
         #         # Control post
-        # check_post <- fn_cpiE001_control_post(list_results_from_cpiA001_anova1way = RR_general())
+        # check_post <- fn_cpiE004_control_post(list_results_from_cpiA001_anova1way = RR_general())
         # #
         # validate(
         #   need(check_post$check_ok, check_post$text_output)
@@ -467,7 +496,7 @@ module_cpiE001_s02_rscience_server <- function(id, input_general, input_01_anova
       # RR_g01_tables <- reactive({
       #
       #   req(control_user_02())
-      #   all_tables_g01 <- fn_cpiE001_recruit_g01_Tables(list_results_from_cpiA001_anova1way = RR_general())
+      #   all_tables_g01 <- fn_cpiE004_recruit_g01_Tables(list_results_from_cpiA001_anova1way = RR_general())
       #   all_tables_g01
       # })
       #
@@ -476,7 +505,7 @@ module_cpiE001_s02_rscience_server <- function(id, input_general, input_01_anova
       # RR_g01_plots <- reactive({
       #
       #   req(control_user_02())
-      #   all_plots_g01 <- fn_cpiE001_recruit_g01_FactorPlots(list_results_from_cpiA001_anova1way = RR_general())
+      #   all_plots_g01 <- fn_cpiE004_recruit_g01_FactorPlots(list_results_from_cpiA001_anova1way = RR_general())
       #   all_plots_g01
       # })
       #
@@ -487,7 +516,7 @@ module_cpiE001_s02_rscience_server <- function(id, input_general, input_01_anova
       # RR_g02_tables <- reactive({
       #
       #   req(control_user_02())
-      #   all_tables_g02 <- fn_cpiE001_recruit_g02_Tables(list_results_from_cpiA001_anova1way = RR_general())
+      #   all_tables_g02 <- fn_cpiE004_recruit_g02_Tables(list_results_from_cpiA001_anova1way = RR_general())
       #   all_tables_g02
       # })
 
@@ -496,14 +525,14 @@ module_cpiE001_s02_rscience_server <- function(id, input_general, input_01_anova
       # RR_g02_plots <- reactive({
       #
       #   req(control_user_02())
-      #   all_plots_g02 <- fn_cpiE001_recruit_g02_ResidualsPlots(list_results_from_cpiA001_anova1way = RR_general())
+      #   all_plots_g02 <- fn_cpiE004_recruit_g02_ResidualsPlots(list_results_from_cpiA001_anova1way = RR_general())
       #   all_plots_g02
       # })
 
       RR_code <- reactive({
 
         req(control_user_02())
-        the_code <- fn_cpiE001_code_sectionALL(intro_source_database = input_01_anova()$intro_source_database,
+        the_code <- fn_cpiE004_code_sectionALL(intro_source_database = input_01_anova()$intro_source_database,
                                                vr_var_name = input_01_anova()$vr_var_name,
                                                factor_var_name = input_01_anova()$factor_var_name,
                                                alpha_value = input_01_anova()$alpha_value)
@@ -1078,7 +1107,7 @@ module_cpiE001_s02_rscience_server <- function(id, input_general, input_01_anova
 
 
         # Vector con nombres de elementos a ver
-        selected_objs <- c("df_kw_test")
+        selected_objs <- c("df_friedman_test")
 
 
         # Usar lapply para mostrar los elementos deseados
@@ -1134,6 +1163,7 @@ module_cpiE001_s02_rscience_server <- function(id, input_general, input_01_anova
           fontSize = "26px"
         ) %>% formatRound(columns=colnames(mi_tabla)[dt_cambio], digits=4)
 
+
       })
 
 
@@ -1147,7 +1177,7 @@ module_cpiE001_s02_rscience_server <- function(id, input_general, input_01_anova
 
 
         # Vector con nombres de elementos a ver
-        selected_objs <- c("df_kw_groups_fisher")
+        selected_objs <- c("df_friedman_groups_nemeneyi")
 
 
         # Usar lapply para mostrar los elementos deseados
@@ -1216,7 +1246,7 @@ module_cpiE001_s02_rscience_server <- function(id, input_general, input_01_anova
 
 
         # Vector con nombres de elementos a ver
-        selected_objs <- c("df_kw_comparations")
+        selected_objs <- c("df_friedman_comparations")
 
 
         # Usar lapply para mostrar los elementos deseados
@@ -1309,11 +1339,11 @@ module_cpiE001_s02_rscience_server <- function(id, input_general, input_01_anova
           # h2("1) Requeriment - Summary - Normality"),
 
           br(), br(), br(),
-          h2("3) Kruskal-Wallis Test"),
+          h2("3) Friedman Test"),
           DTOutput(ns("tab03_analysis_anova_obj22_Bextra")),
           br(), br(), br(),
 
-          h2("4) Multiple Comparation Test - Fisher"),
+          h2("4) Multiple Comparation - Nemeneyi Test"),
           DTOutput(ns("tab03_analysis_anova_obj22_fisher")),
           br(), br(), br(),
           #h2("5) Original R results for t Test"),
@@ -1672,6 +1702,51 @@ module_cpiE001_s02_rscience_server <- function(id, input_general, input_01_anova
           # # # Create a new plot...
           # # # Create a new plot...
           # # # Create a new plot...
+          #plot001 <- plotly::plot_ly()
+
+          plot001 <-  df_table_plot001 %>%
+            group_by(FACTOR)  %>%
+            plot_ly(x = ~BLOCK,
+                    y = ~mean,
+                    type = 'scatter',
+                    mode = 'lines+markers',
+                    color = ~FACTOR,
+                    colors =~color_factor,
+                    line = list(width = 4),
+                    marker = list(size = 20, opacity = 0.7))
+
+          # # # Plot output
+          plot001 <- plotly::layout(p = plot001,
+                                    xaxis = list(title = "BLOCK"),
+                                    yaxis = list(title = "VR"),
+                                    title = "Plot 001 - Interacción Factor-Bloque",
+                                    font = list(size = 20),
+                                    margin = list(t = 100))
+
+
+
+          plot001 <- plotly::layout(p = plot001,
+                                    xaxis = list(zeroline = FALSE),
+                                    yaxis = list(zeroline = FALSE))
+
+          # Mostrar el gráfico interactivo
+          plot001
+
+        })
+
+        new_plot
+      })
+
+      output$el_plot2 <- renderPlotly({
+
+
+        mi_lista <- RR_general()
+
+
+        new_plot <-  with(mi_lista,{
+          # # # Create a new plot...
+          # # # Create a new plot...
+          # # # Create a new plot...
           plot001_factor <- plotly::plot_ly()
 
           # # # Plot001 - Scatter plot for VR and FACTOR on minibase_mod *****************
@@ -1688,7 +1763,7 @@ module_cpiE001_s02_rscience_server <- function(id, input_general, input_01_anova
           plot001_factor <-   plotly::layout(p = plot001_factor,
                                              xaxis = list(title = "FACTOR"),
                                              yaxis = list(title = "RV"),
-                                             title = "Plot 001 - Scatterplot",
+                                             title = "Plot 002 - Scatterplot",
                                              font = list(size = 20),
                                              margin = list(t = 100))
 
@@ -1708,7 +1783,7 @@ module_cpiE001_s02_rscience_server <- function(id, input_general, input_01_anova
         new_plot
       })
 
-      output$el_plot2 <- renderPlotly({
+      output$el_plot3 <- renderPlotly({
 
 
         mi_lista <- RR_general()
@@ -1741,7 +1816,7 @@ module_cpiE001_s02_rscience_server <- function(id, input_general, input_01_anova
           plot002_factor <- plotly::layout(p = plot002_factor,
                                            xaxis = list(title = "FACTOR"),
                                            yaxis = list(title = "RV"),
-                                           title = "Plot 002 - Mean and Standard Deviation",
+                                           title = "Plot 003 - Mean and Standard Deviation",
                                            font = list(size = 20),
                                            margin = list(t = 100))
 
@@ -1759,7 +1834,7 @@ module_cpiE001_s02_rscience_server <- function(id, input_general, input_01_anova
         new_plot
       })
 
-      output$el_plot3 <- renderPlotly({
+      output$el_plot4 <- renderPlotly({
 
 
         mi_lista <- RR_general()
@@ -1792,7 +1867,7 @@ module_cpiE001_s02_rscience_server <- function(id, input_general, input_01_anova
           plot003_factor <- plotly::layout(p = plot003_factor,
                                            xaxis = list(title = "FACTOR"),
                                            yaxis = list(title = "RV"),
-                                           title = "Plot 003 - Mean and Standard Error",
+                                           title = "Plot 004 - Mean and Standard Error",
                                            font = list(size = 20),
                                            margin = list(t = 100))
 
@@ -1810,7 +1885,7 @@ module_cpiE001_s02_rscience_server <- function(id, input_general, input_01_anova
         new_plot
       })
 
-      output$el_plot4 <- renderPlotly({
+      output$el_plot5 <- renderPlotly({
 
 
         mi_lista <- RR_general()
@@ -1840,7 +1915,7 @@ module_cpiE001_s02_rscience_server <- function(id, input_general, input_01_anova
 
           # Title and labels for axis
           plot004_factor <- plotly::layout(p = plot004_factor,
-                                           title = "Plot 004 - Boxplot and means",
+                                           title = "Plot 005 - Boxplot and means",
                                            xaxis = list(title = "FACTOR"),
                                            yaxis = list(title = "RV"),
                                            font = list(size = 20),
@@ -1927,6 +2002,24 @@ module_cpiE001_s02_rscience_server <- function(id, input_general, input_01_anova
 
         # Vector con nombres de elementos a ver
         selected_objs <- c("df_table_plot004")
+
+
+        # Usar lapply para mostrar los elementos deseados
+        mi_lista[selected_objs]
+
+      })
+
+      output$tabla05 <- renderPrint({
+
+        req(control_user_02())
+
+        mi_lista <- RR_general()
+
+
+
+
+        # Vector con nombres de elementos a ver
+        selected_objs <- c("df_table_plot005")
 
 
         # Usar lapply para mostrar los elementos deseados
@@ -2050,7 +2143,7 @@ module_cpiE001_s02_rscience_server <- function(id, input_general, input_01_anova
                              # tabPanel("Analysis",  # 05
                              #          fluidRow(
                              #            column(12,
-                             #                   h1("Kruskal-Wallis Test"),
+                             #                   h1("Friedman Test"),
                              #                   uiOutput(ns("tab03_analysis_anova_FULL"))
                              #            )
                              #          )
@@ -2058,7 +2151,7 @@ module_cpiE001_s02_rscience_server <- function(id, input_general, input_01_anova
                              tabPanel("Analysis",  # 05
                                       fluidRow(
                                         column(12,
-                                               h1("Kruskal-Wallis Test"),
+                                               h1("Friedman Test"),
                                                uiOutput(ns("tab03_analysis_anova_FULL_B"))
                                         )
                                       )
@@ -2066,7 +2159,7 @@ module_cpiE001_s02_rscience_server <- function(id, input_general, input_01_anova
                              # tabPanel("Requeriments",  # 05
                              #          fluidRow(
                              #            column(12,
-                             #                   h1("Kruskal-Wallis Test")
+                             #                   h1("Friedman Test")
                              #            )
                              #          ),
                              #          h2("1) Requeriment - Summary - Normality"),
@@ -2103,7 +2196,7 @@ module_cpiE001_s02_rscience_server <- function(id, input_general, input_01_anova
                              # ),
                              tabPanel("Summary",
                                       fluidRow(
-                                        column(12, h1("Kruskal-Wallis Test"))
+                                        column(12, h1("Friedman Test"))
                                       ),
 
                                       fluidRow(
@@ -2126,7 +2219,7 @@ module_cpiE001_s02_rscience_server <- function(id, input_general, input_01_anova
 
                              ),
                              tabPanel("Plots - Raw Data",  # 05,
-                                      fluidRow(column(12, h1("Kruskal-Wallis Test"))),
+                                      fluidRow(column(12, h1("Friedman Test"))),
                                       fluidRow(
                                         #column(1),
                                         column(6, plotlyOutput(ns("el_plot1"), height = "40vh", width = "70vh")),
@@ -2151,12 +2244,18 @@ module_cpiE001_s02_rscience_server <- function(id, input_general, input_01_anova
                                         #column(1),
                                         column(6, plotlyOutput(ns("el_plot4"), height = "40vh", width = "70vh")),
                                         column(6, verbatimTextOutput(ns("tabla04"))),
+                                      ),
+                                      br(),br(),br(),
+                                      fluidRow(
+                                        #column(1),
+                                        column(6, plotlyOutput(ns("el_plot5"), height = "40vh", width = "70vh")),
+                                        column(6, verbatimTextOutput(ns("tabla05"))),
                                       )
 
                                       #shinycssloaders::withSpinner(uiOutput(ns("plot_outputs33"))),
                              ),
                              # tabPanel("Plots - Residuals",  # 05,
-                             #          fluidRow(column(12, h1("Kruskal-Wallis Testy"))),
+                             #          fluidRow(column(12, h1("Friedman Testy"))),
                              #          fluidRow(
                              #            #column(1),
                              #            column(12,
@@ -2169,7 +2268,7 @@ module_cpiE001_s02_rscience_server <- function(id, input_general, input_01_anova
                              #          )
                              # ),
                              # tabPanel("Plots - Factor",  # 05,
-                             #          fluidRow(h1("Kruskal-Wallis Testy")),
+                             #          fluidRow(h1("Friedman Testy")),
                              #          fluidRow(
                              #            #column(1),
                              #            column(12,
@@ -2182,7 +2281,7 @@ module_cpiE001_s02_rscience_server <- function(id, input_general, input_01_anova
                              #          )
                              # ),
                              # tabPanel("Plots - Residuals",  # 05,
-                             #          fluidRow(h1("Kruskal-Wallis Testy")),
+                             #          fluidRow(h1("Friedman Testy")),
                              #          fluidRow(
                              #            #column(1),
                              #            column(12,
@@ -2195,7 +2294,7 @@ module_cpiE001_s02_rscience_server <- function(id, input_general, input_01_anova
                              #          )
                              # ),
                              # tabPanel("Plots2",  # 05,
-                             #          fluidRow(h1("Kruskal-Wallis Testy")),
+                             #          fluidRow(h1("Friedman Testy")),
                              #          fluidRow(
                              #            #column(1),
                              #            column(12,
@@ -2208,7 +2307,7 @@ module_cpiE001_s02_rscience_server <- function(id, input_general, input_01_anova
                              tabPanel("Full Results",  # 05
                                       fluidRow(
                                         column(12,
-                                               h1("Kruskal-Wallis Test"),
+                                               h1("Friedman Test"),
                                                verbatimTextOutput(ns("tab01_all_anova_results"))
                                         )
                                       )
@@ -2219,7 +2318,7 @@ module_cpiE001_s02_rscience_server <- function(id, input_general, input_01_anova
                              # tabPanel("R code",  # 05
                              #          fluidRow(
                              #            column(10,
-                             #                   h1("Kruskal-Wallis Test"),
+                             #                   h1("Friedman Test"),
                              #                   verbatimTextOutput(ns("tab05_code"))
                              #            ),
                              #            br(), br(),

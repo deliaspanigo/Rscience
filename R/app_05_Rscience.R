@@ -39,7 +39,9 @@ app_05_Rscience <- function(){
         shinydashboard::menuItem(text = "database", tabName = "tab01_database", icon = shiny::icon("th")),
         shinydashboard::menuItem(text = "Summary", tabName = "tab03_anova", icon = shiny::icon("th")),
 
-        shinydashboard::menuItem(text = "Kruskal-Wallis", tabName = "tab02_anova", icon = shiny::icon("th"))
+        shinydashboard::menuItem(text = "Kruskal-Wallis", tabName = "tab02_anova", icon = shiny::icon("th")),
+        shinydashboard::menuItem(text = "Friedman", tabName = "tab04_anova", icon = shiny::icon("th"))
+
 
       )
     ),
@@ -329,6 +331,45 @@ app_05_Rscience <- function(){
                                   )
                                 ),
                                 br(), br(), br()
+        ),
+
+        # 2) ANOVA
+        shinydashboard::tabItem(tabName = "tab04_anova",
+                                h1("Friedman test"),
+                                fluidRow(
+                                  column(12,
+                                         box(
+                                           title = "Database info",
+                                           status = "primary",
+                                           id = "my_box04A",
+                                           solidHeader = TRUE,
+                                           collapsible = TRUE,
+                                           collapsed = TRUE,
+                                           #closable = TRUE,# Colapsado por defecto
+                                           width = 12,
+                                           tableOutput("intro_source_database4")
+                                         )
+                                  )
+                                ),
+                                # https://cran.r-project.org/web/packages/shinydashboardPlus/vignettes/improved-boxes.html
+                                box(
+
+
+                                  title = "Var selection",
+                                  status = "primary",
+                                  id = "my_box04B",
+                                  solidHeader = TRUE,
+                                  collapsible = TRUE,
+                                  closable = FALSE,# Colapsado por defecto
+                                  collapsed = FALSE,
+                                  width = 12,
+                                  module_cpiE004_s01_varselection_ui(id = "anova05_A"),
+                                  #actionButton("toggle_box", "Toggle Box"),
+                                  br(), br(), br()),
+                                fluidRow(
+                                  column(12, module_cpiE004_s02_rscience_ui(id = "anova05_B")
+                                  )),
+                                br(), br(), br()
         )
 
       )
@@ -399,6 +440,18 @@ app_05_Rscience <- function(){
 
 
     })
+
+    output$intro_source_database4 <- renderTable({
+
+
+      list_intro <- input_general()$intro_source_database
+      df_output <- as.data.frame(list_intro)
+      colnames(df_output) <- names(list_intro)
+      df_output
+
+
+
+    })
     ##################################################################################
     input_01_anova <- module_cpiE001_s01_varselection_server(id = "anova01_A",
                                                              input_general = input_general)
@@ -427,6 +480,17 @@ app_05_Rscience <- function(){
     module_cpiE003_s02_rscience_server(id = "anova04_B",
                                        input_general = input_general,
                                        input_01_anova = input_04_anova)
+    ##################################################################################
+    input_05_anova <- module_cpiE004_s01_varselection_server(id = "anova05_A",
+                                                             input_general = input_general)
+
+
+
+    module_cpiE004_s02_rscience_server(id = "anova05_B",
+                                       input_general = input_general,
+                                       input_01_anova = input_05_anova)
+
+    ##################################################################################
   }
 
 
