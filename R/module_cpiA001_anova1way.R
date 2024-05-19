@@ -704,6 +704,72 @@ module02_anova_s02_rscience_server <- function(id, input_general, input_01_anova
       })
 
       ##########################################################################
+      output$tab22_contrasts <- renderDT({
+
+        req(control_user_02())
+
+        mi_lista <- RR_general()
+
+
+
+
+        # Vector con nombres de elementos a ver
+        selected_objs <- c("df_contrast")
+
+
+        # Usar lapply para mostrar los elementos deseados
+
+        mi_tabla <- mi_lista[[selected_objs]]
+        #https://rstudio.github.io/DT/functions.html
+        vector_pos <- 1:nrow(mi_tabla)
+        vector_color <- rep(NA, length(vector_pos))
+        vector_color[c(T, F)] <- "lightblue"#'red'#
+        vector_color[c(F, T)] <- "lightgreen"#'blue'#
+        vector_color <- vector_color[vector_pos]
+
+        dt_cambio <-  sapply(1:ncol(mi_tabla),function(x){
+
+          if(is.numeric(mi_tabla[1,x])) {
+            if(!is.infinite(mi_tabla[1,x])){
+              if(mi_tabla[1,x] != floor(mi_tabla[1,x])) {
+                TRUE
+              } else FALSE
+            } else FALSE
+          } else FALSE
+        })
+        vector_cambio <- (1:length(dt_cambio))[dt_cambio]
+
+        datatable(
+          mi_tabla,
+          rownames = FALSE,
+          options = list(
+
+            headerCallback = DT::JS(
+              "function(thead) {",
+              "  $(thead).css('font-size', '2em');",
+              "}"
+            ),
+            columnDefs = list(list(className = 'dt-center', targets = "_all")),
+            #pageLength = 5,
+            dom = "t",
+            scrollX = TRUE,
+            searching = FALSE,
+            scrollCollapse = TRUE,  # Permitir colapsar el scroll
+            fixedColumns = list(leftColumns = 3),  # Fijar las primeras 3 columnas
+            #lengthMenu = list(c(-1), c("All")), # Todas las filas
+            style = list(
+              'font-size' = '20px'  # Tamaño de letra para el nombre de las columnas
+            )
+          )
+
+        ) %>%formatStyle(
+          colnames(mi_tabla),
+          backgroundColor = styleRow(vector_pos, vector_color),#,
+          target = 'row',
+          fontSize = "26px"
+        )  %>% formatRound(columns=colnames(mi_tabla)[dt_cambio], digits=4)
+      })
+      ##########################################################################
 
       # # # Tab 05 - Analysis resume...
       output$tab03_analysis_anova_obj01 <- renderPrint({
@@ -973,6 +1039,18 @@ module02_anova_s02_rscience_server <- function(id, input_general, input_01_anova
                                                #br()
 
                                                shinycssloaders::withSpinner(uiOutput(ns("plot_outputs66"))),
+                                        )
+                                      )
+                             ),
+                             tabPanel("Contrasts",  # 05,
+                                      fluidRow(column(12, h1("Anova 1 way"))),
+                                      fluidRow(
+                                        #column(1),
+                                        column(12,
+                                               #plotOutput(ns("tab04_plots")),
+                                               br(),
+                                               #br()
+                                          shinycssloaders::withSpinner(DTOutput(ns("tab22_contrasts"))),
                                         )
                                       )
                              ),

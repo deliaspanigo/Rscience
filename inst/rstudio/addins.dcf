@@ -27,3 +27,11 @@ Name: Rscience - 05) Free Distribution
 Description: R for Science.
 Binding: app_05_Rscience
 Interactive: true
+
+
+
+
+Name: Rscience - 06) Aleatorized Models and Mixed Models
+Description: R for Science.
+Binding: app_06_Rscience
+Interactive: true

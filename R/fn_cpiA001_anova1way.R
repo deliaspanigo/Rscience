@@ -755,10 +755,94 @@ cpiA001_anova1way_results <- function(database, vr_var_name, factor_var_name, al
   mean_residuals <- mean(minibase_mod$residuals)
   mean_residuals
 
+  cantidad_niveles <- nlevels(minibase$FACTOR)
+
+  # Todas las combinaciones
+  matrix_filtrado <- expand.grid(rep(list(c(-1:1)), cantidad_niveles))
+  matrix_filtrado <- as.matrix(matrix_filtrado)
 
 
+  # Filtramos...
+  # Al que tienen al menos un valor positivo
+  dt_cantidad_pos <- rowSums(matrix_filtrado > 0) > 0
+  matrix_filtrado <- matrix_filtrado[dt_cantidad_pos, ]
+
+  # Filtramos...
+  # Al que tienen al menos un valor negativo
+  dt_cantidad_neg <- rowSums(matrix_filtrado < 0) > 0
+  matrix_filtrado <- matrix_filtrado[dt_cantidad_neg, ]
+  rownames(matrix_filtrado) <- 1:nrow(matrix_filtrado)
+
+  #matrix_filtrado
+  #k <- 1
+  for(k in 1:nrow(matrix_filtrado)){
+
+    selected_fila <- as.vector(as.matrix(matrix_filtrado[k,]))
+    if(sum(selected_fila) != 0){
+
+      cantidad_pos <- sum(selected_fila > 0)
+      cantidad_neg <- sum(selected_fila < 0)
+
+      new_fila <- selected_fila
+      new_fila[new_fila > 0] <- (new_fila[new_fila > 0]*cantidad_neg)#/length(selected_fila)
+      new_fila[new_fila < 0] <- (new_fila[new_fila < 0]*cantidad_pos)#/length(selected_fila)
+
+      matrix_filtrado[k,] <- new_fila
+    }
+
+  }
+
+  vector_original_collapse <- apply(X = matrix_filtrado, MARGIN = 1, FUN = paste0, collapse = "")
+  dt_original <- rep(T, length(vector_original_collapse))
+  pos_duplicado <- c()
+
+  for(k in 1:nrow(matrix_filtrado)){
+
+    if(is.na(match(k, pos_duplicado))){
+
+      selected_fila <- matrix_filtrado[k,]
+      selected_fila <- -selected_fila
+      rejunte <- paste0(selected_fila, collapse = "")
+      pos_nueva <- match(rejunte, vector_original_collapse)
+      if(!is.na(pos_nueva)) pos_duplicado <- c(pos_duplicado, pos_nueva)
+
+    }
+  }
+
+  matrix_filtrado <- matrix_filtrado[-pos_duplicado,]
+
+  # Cambiamos el nombre de filas
 
 
+  confidence_value <- 1 - alpha_value
+
+  # Hacemos todos los contrastes
+  list_contrast_full <- lapply(1:nrow(matrix_filtrado), function(x){
+    gmodels::fit.contrast(model = aov_anova,
+                          varname = "FACTOR",
+                          coeff = matrix_filtrado[x,], conf.int = confidence_value,
+                          df = T)
+
+    #aver <- as.data.frame(as.matrix(aver))
+    #aver
+  })
+
+  df_contrast <- as.data.frame(do.call(rbind, list_contrast_full))
+  df_contrast <- cbind.data.frame(1:nrow(df_contrast), rownames(df_contrast), df_contrast)
+  colnames(df_contrast)[c(1,2)] <- c("order", "details")
+
+  df_info_contrast <- data.frame(
+    "amount_of_levels" = ncol(matrix_filtrado),
+    "amount_of_contrasts" = nrow(matrix_filtrado),
+    "max_contrasts_selection" = ncol(matrix_filtrado) - 1
+  )
+
+  phrase_contrast01 <- "With k=_a_ levels there are posible _b_ differents contrast."
+  phrase_contrast01 <- gsub(pattern = "_a_", replacement = ncol(matrix_filtrado), x = phrase_contrast01)
+  phrase_contrast01 <- gsub(pattern = "_b_", replacement = nrow(matrix_filtrado), x = phrase_contrast01)
+
+  phrase_contrast02 <- "It is only allowed to select (k-1)= _c_ contrasts."
+  phrase_contrast02 <- gsub(pattern = "_c_", replacement = nrow(matrix_filtrado), x = phrase_contrast02)
   # # # # # Section 09 - Tukey --------------------------------------------------
   # # # Tukey test - Tukey with groups - Full version
   tukey01_full_groups <- agricolae::HSD.test(y = lm_anova,
