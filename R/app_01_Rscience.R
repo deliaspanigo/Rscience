@@ -7,7 +7,7 @@
 app_01_Rscience <- function(){
 
 
-  library("Rscience")
+
   library("bslib")
   library("dplyr")
   library("DT")
@@ -25,7 +25,8 @@ app_01_Rscience <- function(){
   library("shinyWidgets")
   library("stringr")
   library("tools")
-
+  library("gmodels")
+  library("Rscience")
 
 ui <- shinydashboard::dashboardPage(
 
