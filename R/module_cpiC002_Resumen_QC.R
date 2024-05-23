@@ -144,14 +144,15 @@ module_cpiC002_s01_varselection_server <- function(id, input_general){
                                           choices = set_options,
                                           selected = set_options[1])
                        ))),
-              column(4,
-                     fluidRow(
-                       column(12,
-                              selectInput(inputId = ns("alpha_value"), label = "Alpha value",
-                                          choices = c(0.10, 0.05, 0.01),
-                                          #choices = c(0.05),
-                                          selected = 0.05)
-                       ))),
+              column(4#,
+                     # fluidRow(
+                     #   column(12,
+                     #          selectInput(inputId = ns("alpha_value"), label = "Alpha value",
+                     #                      choices = c(0.10, 0.05, 0.01),
+                     #                      #choices = c(0.05),
+                     #                      selected = 0.05)
+                     #   ))
+                     ),
               column(4, uiOutput(ns("action_buttons"))),
             ),
             fluidRow(
@@ -199,20 +200,20 @@ module_cpiC002_s01_varselection_server <- function(id, input_general){
 
         validate(
           need(!is.null(input$vr_var_name), "Error 09: Module t test s01 - input$vr_var_name can not be NULL."),
-          need(!is.null(input$factor_var_name), "Error 10: Module t test s01 - input$factor_var_name can not be NULL."),
-          need(!is.null(input$alpha_value), "Error 11: Module t test s01 - input$alpha_value can not be NULL.")
+          need(!is.null(input$factor_var_name), "Error 10: Module t test s01 - input$factor_var_name can not be NULL.")
+          #need(!is.null(input$alpha_value), "Error 11: Module t test s01 - input$alpha_value can not be NULL.")
         )
 
         validate(
           need(is.vector(input$vr_var_name), "Error 12: Module t test s01 - input$vr_var_name must be a vector."),
-          need(is.vector(input$factor_var_name), "Error 13: Module t test s01 - input$vr_var_name must be a vector."),
-          need(is.vector(input$alpha_value), "Error 14: Module t test s01 - input$alpha_value must be a vector.")
+          need(is.vector(input$factor_var_name), "Error 13: Module t test s01 - input$vr_var_name must be a vector.")
+          #need(is.vector(input$alpha_value), "Error 14: Module t test s01 - input$alpha_value must be a vector.")
         )
 
         validate(
           need(length(input$vr_var_name) == 1, "Error 15: Module t test s01 - input$vr_var_name has length 1."),
-          need(length(input$factor_var_name) == 1, "Error 16: Module t test s01 - input$factor_var_name has length 1."),
-          need(length(input$alpha_value) == 1, "Error 17: Module t test s01 - input$alpha_value has length 1.")
+          need(length(input$factor_var_name) == 1, "Error 16: Module t test s01 - input$factor_var_name has length 1.")
+          #need(length(input$alpha_value) == 1, "Error 17: Module t test s01 - input$alpha_value has length 1.")
         )
 
 
@@ -339,8 +340,11 @@ module_cpiC002_s01_varselection_server <- function(id, input_general){
 
       alpha_value <- reactive({
         req(action_button_show())
-        output_value <- as.numeric(as.character(input$alpha_value))
+        #output_value <- as.numeric(as.character(input$alpha_value))
+        #output_value
+        output_value <- 0.05
         output_value
+
       })
 
 
