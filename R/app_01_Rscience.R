@@ -202,7 +202,31 @@ ui <- shinydashboard::dashboardPage(
       font-size: 28px; /* Cambia el tamaño de letra de los mensajes de validación */
     }
   ")),
-
+    tags$style(HTML("
+    .custom-checkbox-group input[type='checkbox'] {
+      font-size: 20px; /* Cambia el tamaño de la fuente */
+      transform: scale(2);
+    }
+  ")),
+    # tags$style("input[type=checkbox] {
+    #             transform: scale(2);
+    #             font-size: 20px;
+    #             padding: 0.1rem;
+    #             border: 0.25rem solid green;
+    #             border-radius: 0.5rem;
+    #        }"),
+  #   tags$style(HTML("
+  #   .custom-checkbox-group label {
+  #     font-size: 20px; /* Cambia el tamaño de la fuente */
+  #        /* Agrega espacio alrededor de los checkboxes */
+  #   }
+  #   .custom-checkbox-group input[type='checkbox'] {
+  #     font-size: 20px; /* Cambia el tamaño de la fuente */
+  #     width: 20px; /* Cambia el tamaño del checkbox */
+  #     height: 20px;
+  #     margin-right: 10px; /* Espacio entre el checkbox y el texto */
+  #   }
+  # ")),
     # # # Tab items
     shinydashboard::tabItems(
       # 1) Data base selection

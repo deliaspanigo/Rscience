@@ -1,4 +1,5 @@
 
+# book.url <- "https://stat.ethz.ch/~meier/teaching/book-anova"
 
 # # # # Special Functions
 # Take the original code from a function

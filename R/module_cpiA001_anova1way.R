@@ -494,6 +494,72 @@ module02_anova_s02_rscience_server <- function(id, input_general, input_01_anova
         the_code
       })
 
+      RR_g02_contrastes_A <- reactive({
+
+        minibase <- RR_general()$minibase
+        selected_k <- nlevels(minibase$"FACTOR")
+
+        df_info_acum_contrastes <- info_acum_general_contrastes(k = selected_k)
+        df_info_contrastes <- info_general_contrastes(k = selected_k)
+        texto_contrastes <- "
+        Para k=_total00_ se tienen _total01_ diferentes contrastes posibles.
+        De ellos se pueden tomar hasta (k-1)=_total02_ contrastes ortogonales de maner simultánea.
+        Tomando _total02_ contrastes de _total01_ posibles hay _total03_ combinaciones posibles,
+        de las cuales _total04_ son combinaciones ortogonales y _total05_ son combinaciones no ortogonales."
+
+        texto_contrastes <- gsub(pattern = "_total00_", replacement = df_info_contrastes[[1]], x = texto_contrastes)
+        texto_contrastes <- gsub(pattern = "_total01_", replacement = df_info_contrastes[[2]], x = texto_contrastes)
+        texto_contrastes <- gsub(pattern = "_total02_", replacement = df_info_contrastes[[3]], x = texto_contrastes)
+        texto_contrastes <- gsub(pattern = "_total03_", replacement = df_info_contrastes[[4]], x = texto_contrastes)
+        texto_contrastes <- gsub(pattern = "_total04_", replacement = df_info_contrastes[[5]], x = texto_contrastes)
+        texto_contrastes <- gsub(pattern = "_total05_", replacement = df_info_contrastes[[6]], x = texto_contrastes)
+
+
+        list_output <- Hmisc::llist(texto_contrastes, df_info_contrastes)
+        list_output
+      })
+
+      RR_g02_contrastes_B <- reactive({
+
+        req(check_vector_contraste())
+
+        minibase <- RR_general()$minibase
+
+        #RR_general()
+        list_contrastes <- list()
+        #list_contrastes[[1]] <- c(2,  -1, -1)
+        #list_contrastes[[2]] <- c(0,   1, -1)
+        list_contrastes[[1]] <- vector_contraste()
+
+        # df_contraste <- do.call(rbind.data.frame, list_contrastes)
+        # colnames(df_contraste) <- levels(minibase$"FACTOR")
+        # rownames(df_contraste) <- paste0("C", 1:nrow(df_contraste))
+
+        mat.contrast   <- do.call(cbind, list_contrastes)
+        mat_info_contrastes <- mat.contrast
+        colnames(mat_info_contrastes) <- paste0("C", 1:ncol(mat.contrast))
+        rownames(mat_info_contrastes) <- levels(minibase$"FACTOR")
+
+        contrasts(minibase$"FACTOR") <- mat.contrast
+
+        model_contrastes <- aov(VR ~ FACTOR,
+                     contrasts = list(FACTOR = mat.contrast),
+                     data = minibase)
+
+
+        vector_armado <- 1:ncol(mat.contrast)
+        names(vector_armado) <- colnames(mat.contrast)
+
+        selected_k <- nlevels(minibase$"FACTOR")
+        df_info_contrastes <- info_acum_general_contrastes(k = selected_k)
+
+        list_contrastes <- summary.aov(model_contrastes, split = list(FACTOR = as.list(vector_armado)))
+
+        list_output <- Hmisc::llist(df_info_contrastes, mat_info_contrastes, list_contrastes)
+        list_output
+      })
+
+
       ####################################################################################
 
 
@@ -704,71 +770,125 @@ module02_anova_s02_rscience_server <- function(id, input_general, input_01_anova
       })
 
       ##########################################################################
-      output$tab22_contrasts <- renderDT({
+      output$contrasts_dynamic_selects <- renderUI({
+        ns <- shiny::NS(id)
+        mis_niveles <- levels(RR_general()$minibase$"FACTOR")
+        cantidad_niveles <- length(mis_niveles)
+
+        lapply(1:cantidad_niveles, function(i) {
+          selectInput(ns(paste0(ns("select"), i)),
+                      label = mis_niveles[i],#paste("Select Input", i),
+                      choices = c("Select group..." = "", "g1", "g2", "---"))
+        })
+      })
+
+      contrasts_selected_groups <- reactive({
+        ns <- shiny::NS(id)
+        mis_niveles <- levels(RR_general()$minibase$"FACTOR")
+        cantidad_niveles <- length(mis_niveles)
+
+        lapply(1:cantidad_niveles, function(i) {
+          input[[paste0(ns("select"), i)]]
+        })
+      })
+
+      vector_contraste <- reactive({
+
+        vector_grupos <- unlist(contrasts_selected_groups())
+        new_vector01 <- rep(NA, length(vector_grupos))
+        dt_g1_pos <- vector_grupos == "g1"
+        dt_g2_neg <- vector_grupos == "g2"
+        dt_sin_grupo <- vector_grupos == "---"
+
+        new_vector01[dt_g1_pos] <-    1
+        new_vector01[dt_g2_neg] <-   -1
+        new_vector01[dt_sin_grupo] <- 0
+        cantidad_pos <- sum(new_vector01 > 0)
+        cantidad_neg <- sum(new_vector01 < 0)
+
+        new_vector02 <- rep(NA, length(new_vector01))
+        new_vector02[dt_g2_neg] <- -cantidad_pos
+        new_vector02[dt_g1_pos] <-  cantidad_neg
+        new_vector02[dt_sin_grupo] <- 0
+
+        #print( new_vector02)
+        new_vector02
+      })
+
+      check_vector_contraste <- reactive({
+
+        req(vector_contraste())
+
+        #print(vector_contraste())
+
+        check_cantidad_na <- sum(is.na(vector_contraste())) == 0
+        validate(
+          need(check_cantidad_na, "Elija una categoría para cada nivel del factor.")
+        )
+
+        check_cantidad_positivos <- sum(vector_contraste() > 0) > 0
+        validate(
+          need(check_cantidad_positivos, "Debe armar dos grupos.")
+        )
+
+        check_cantidad_negativos <- sum(vector_contraste() < 0) > 0
+        validate(
+          need(check_cantidad_negativos, "Debe armar dos grupos.")
+        )
+
+        return(TRUE)
+
+      })
+      # output$tab22_contrasts_menu <- renderUI({
+      #   ns <- shiny::NS(id)
+      #
+      #   print( vector_contraste())
+      #   div(
+      #     fluidRow(
+      #       column(12,
+      #              #"hola"
+      #       #uiOutput(ns("contrasts_dynamic_selects"))
+      #       )
+      #     )
+      #   )
+      #
+      # })
+
+      output$tab22_contrastsA <- renderPrint({
 
         req(control_user_02())
 
-        mi_lista <- RR_general()
+        mi_lista <-  RR_g02_contrastes_A()
+
+
+
+
+        #Vector con nombres de elementos a ver
+        #selected_objs <- c("df_info_contrastes", "texto_contrastes")
+        selected_objs <- c("texto_contrastes")
+
+        # Usar lapply para mostrar los elementos deseados
+        cat(mi_lista[selected_objs][[1]])
+
+      })
+      output$tab22_contrastsB <- renderPrint({
+
+        req(control_user_02())
+
+        mi_lista <- RR_g02_contrastes_B()
 
 
 
 
         # Vector con nombres de elementos a ver
-        selected_objs <- c("df_contrast")
+        selected_objs <- c("mat_info_contrastes", "list_contrastes")
 
 
         # Usar lapply para mostrar los elementos deseados
+        mi_lista[selected_objs]
 
-        mi_tabla <- mi_lista[[selected_objs]]
-        #https://rstudio.github.io/DT/functions.html
-        vector_pos <- 1:nrow(mi_tabla)
-        vector_color <- rep(NA, length(vector_pos))
-        vector_color[c(T, F)] <- "lightblue"#'red'#
-        vector_color[c(F, T)] <- "lightgreen"#'blue'#
-        vector_color <- vector_color[vector_pos]
-
-        dt_cambio <-  sapply(1:ncol(mi_tabla),function(x){
-
-          if(is.numeric(mi_tabla[1,x])) {
-            if(!is.infinite(mi_tabla[1,x])){
-              if(mi_tabla[1,x] != floor(mi_tabla[1,x])) {
-                TRUE
-              } else FALSE
-            } else FALSE
-          } else FALSE
-        })
-        vector_cambio <- (1:length(dt_cambio))[dt_cambio]
-
-        datatable(
-          mi_tabla,
-          rownames = FALSE,
-          options = list(
-
-            headerCallback = DT::JS(
-              "function(thead) {",
-              "  $(thead).css('font-size', '2em');",
-              "}"
-            ),
-            columnDefs = list(list(className = 'dt-center', targets = "_all")),
-            #pageLength = 5,
-            dom = "t",
-            scrollX = TRUE,
-            searching = FALSE,
-            scrollCollapse = TRUE,  # Permitir colapsar el scroll
-            fixedColumns = list(leftColumns = 3),  # Fijar las primeras 3 columnas
-            #lengthMenu = list(c(-1), c("All")), # Todas las filas
-            style = list(
-              'font-size' = '20px'  # Tamaño de letra para el nombre de las columnas
-            )
-          )
-
-        ) %>%formatStyle(
-          colnames(mi_tabla),
-          backgroundColor = styleRow(vector_pos, vector_color),#,
-          target = 'row',
-          fontSize = "26px"
-        )  %>% formatRound(columns=colnames(mi_tabla)[dt_cambio], digits=4)
       })
+
       ##########################################################################
 
       # # # Tab 05 - Analysis resume...
@@ -1044,15 +1164,28 @@ module02_anova_s02_rscience_server <- function(id, input_general, input_01_anova
                              ),
                              tabPanel("Contrasts",  # 05,
                                       fluidRow(column(12, h1("Anova 1 way"))),
-                                      fluidRow(
+
+                                      h2("1) Information"),
+                                      shinycssloaders::withSpinner(verbatimTextOutput(ns("tab22_contrastsA"))),
+                                      br(), br(),
+
+                                      h2("2) Level selection to contrast"),
+                                      uiOutput(ns("contrasts_dynamic_selects")),
+                                      br(), br(),
+
+                                      h2("3) Contrast"),
+                                      #uiOutput(ns("tab22_contrasts_menu")),
+
                                         #column(1),
                                         column(12,
                                                #plotOutput(ns("tab04_plots")),
                                                br(),
                                                #br()
-                                          shinycssloaders::withSpinner(DTOutput(ns("tab22_contrasts"))),
+
+                                          shinycssloaders::withSpinner(verbatimTextOutput(ns("tab22_contrastsB"))),
+                                          br(), br(), br(),br(),br()
                                         )
-                                      )
+
                              ),
                              # tabPanel("Plots - Factor",  # 05,
                              #          fluidRow(h1("Anova 1 way")),
