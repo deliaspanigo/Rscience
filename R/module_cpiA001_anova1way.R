@@ -521,21 +521,11 @@ module02_anova_s02_rscience_server <- function(id, input_general, input_01_anova
 
       RR_g02_contrastes_B <- reactive({
 
-        req(check_vector_contraste())
+        req(check_matrix_contraste_mod())
 
         minibase <- RR_general()$minibase
 
-        #RR_general()
-        list_contrastes <- list()
-        #list_contrastes[[1]] <- c(2,  -1, -1)
-        #list_contrastes[[2]] <- c(0,   1, -1)
-        list_contrastes[[1]] <- vector_contraste()
-
-        # df_contraste <- do.call(rbind.data.frame, list_contrastes)
-        # colnames(df_contraste) <- levels(minibase$"FACTOR")
-        # rownames(df_contraste) <- paste0("C", 1:nrow(df_contraste))
-
-        mat.contrast   <- do.call(cbind, list_contrastes)
+        mat.contrast   <- matrix_contrasts_mod()
         mat_info_contrastes <- mat.contrast
         colnames(mat_info_contrastes) <- paste0("C", 1:ncol(mat.contrast))
         rownames(mat_info_contrastes) <- levels(minibase$"FACTOR")
@@ -774,66 +764,137 @@ module02_anova_s02_rscience_server <- function(id, input_general, input_01_anova
         ns <- shiny::NS(id)
         mis_niveles <- levels(RR_general()$minibase$"FACTOR")
         cantidad_niveles <- length(mis_niveles)
+        cantidad_contrastes <- cantidad_niveles-1
 
-        lapply(1:cantidad_niveles, function(i) {
-          selectInput(ns(paste0(ns("select"), i)),
-                      label = mis_niveles[i],#paste("Select Input", i),
-                      choices = c("Select group..." = "", "g1", "g2", "---"))
-        })
-      })
+        armado_panel <-  lapply(1:cantidad_contrastes, function(x) {
 
-      contrasts_selected_groups <- reactive({
+           armado_niveles <-  lapply(1:cantidad_niveles, function(i) {
+              selectInput(ns(paste0("select_", x, "_", i)),
+                          label = mis_niveles[i],#paste("Select Input", i),
+                          choices = c("Select group..." = "", "g1", "g2", "---"))
+            })
+
+           intro_contrast <- paste0("Orthogonal Contrast ", x, " of ", cantidad_contrastes)
+           tabPanel(paste0("C",x),
+                    br(),
+                    h3(intro_contrast),
+                    armado_niveles)
+
+            })
+
+        do.call(tabsetPanel, armado_panel)
+
+    })
+
+      list_vector_contrasts_original <- reactive({
+
         ns <- shiny::NS(id)
         mis_niveles <- levels(RR_general()$minibase$"FACTOR")
         cantidad_niveles <- length(mis_niveles)
+        cantidad_contrastes <- cantidad_niveles-1
 
-        lapply(1:cantidad_niveles, function(i) {
-          input[[paste0(ns("select"), i)]]
+      aver_rejunte <-   lapply(1:cantidad_contrastes, function(x) {
+
+        vector_contraste <-   lapply(1:cantidad_niveles, function(i) {
+
+          input[[paste0("select_", x, "_", i)]]
         })
+        vector_contraste
       })
 
-      vector_contraste <- reactive({
+      #print(aver_rejunte)
+       aver_rejunte
 
-        vector_grupos <- unlist(contrasts_selected_groups())
-        new_vector01 <- rep(NA, length(vector_grupos))
-        dt_g1_pos <- vector_grupos == "g1"
-        dt_g2_neg <- vector_grupos == "g2"
-        dt_sin_grupo <- vector_grupos == "---"
-
-        new_vector01[dt_g1_pos] <-    1
-        new_vector01[dt_g2_neg] <-   -1
-        new_vector01[dt_sin_grupo] <- 0
-        cantidad_pos <- sum(new_vector01 > 0)
-        cantidad_neg <- sum(new_vector01 < 0)
-
-        new_vector02 <- rep(NA, length(new_vector01))
-        new_vector02[dt_g2_neg] <- -cantidad_pos
-        new_vector02[dt_g1_pos] <-  cantidad_neg
-        new_vector02[dt_sin_grupo] <- 0
-
-        #print( new_vector02)
-        new_vector02
       })
 
-      check_vector_contraste <- reactive({
+      matrix_contrasts_original <- reactive({
 
-        req(vector_contraste())
+        new_matrix <- do.call(cbind, list_vector_contrasts_original())
+        colnames(new_matrix) <- paste0("C", 1:ncol(new_matrix))
+        new_matrix
+      })
+
+      matrix_contrasts_mod <- reactive({
+
+        selected_matrix <- matrix_contrasts_original()
+        new_matrix <- apply(selected_matrix, 2, function(vector_grupos){
+
+          #vector_grupos <- unlist(contrasts_selected_groups())
+          new_vector01 <- rep(NA, length(vector_grupos))
+          dt_g1_pos <- vector_grupos == "g1"
+          dt_g2_neg <- vector_grupos == "g2"
+          dt_sin_grupo <- vector_grupos == "---"
+
+          new_vector01[dt_g1_pos] <-    1
+          new_vector01[dt_g2_neg] <-   -1
+          new_vector01[dt_sin_grupo] <- 0
+          cantidad_pos <- sum(new_vector01 > 0)
+          cantidad_neg <- sum(new_vector01 < 0)
+
+          new_vector02 <- rep(NA, length(new_vector01))
+          new_vector02[dt_g2_neg] <- -cantidad_pos
+          new_vector02[dt_g1_pos] <-  cantidad_neg
+          new_vector02[dt_sin_grupo] <- 0
+
+          if(sum(is.na(new_vector02)) == 0){
+            if(cantidad_pos > cantidad_neg) new_vector02 <- -new_vector02
+          }
+          #print( new_vector02)
+          new_vector02
+        })
+
+
+        colnames(new_matrix) <- paste0("C", 1:ncol(new_matrix))
+        new_matrix
+      })
+
+      output$output_matrix_contrasts_final <- renderPrint({
+
+        #matrix_contrasts_original()
+        matrix_contrasts_mod()
+      })
+
+      output$output_matrix_contrasts_original <- renderPrint({
+
+        #matrix_contrasts_original()
+        matrix_contrasts_original()
+      })
+
+
+      check_matrix_contraste_mod <- reactive({
+
+        req(matrix_contrasts_mod())
 
         #print(vector_contraste())
 
-        check_cantidad_na <- sum(is.na(vector_contraste())) == 0
+        check_cantidad_na <- sum(is.na(matrix_contrasts_original())) == 0
         validate(
-          need(check_cantidad_na, "Elija una categoría para cada nivel del factor.")
+          need(check_cantidad_na, "Elija una categoría para cada nivel del factor en cada contraste ortogonal.")
         )
 
-        check_cantidad_positivos <- sum(vector_contraste() > 0) > 0
+        check_cantidad_positivos <- sum(matrix_contrasts_mod() > 0) > 0
         validate(
-          need(check_cantidad_positivos, "Debe armar dos grupos.")
+          need(check_cantidad_positivos, "Debe armar dos grupos en cada contraste.")
         )
 
-        check_cantidad_negativos <- sum(vector_contraste() < 0) > 0
+        check_cantidad_negativos <- sum(matrix_contrasts_mod() < 0) > 0
         validate(
-          need(check_cantidad_negativos, "Debe armar dos grupos.")
+          need(check_cantidad_negativos, "Debe armar dos grupos en cada contraste.")
+        )
+
+        check_ortogonalidad <- check_mat_full_orthogonality(matrix_contrasts_mod())
+        validate(
+          need(check_ortogonalidad, "Cambie la elección. Hay contrastes no ortogonales entre si.")
+        )
+
+        only_col_cero <- apply(matrix_contrasts_mod(), 2, function(x){
+          sum(x == 0) == length(x)
+        })
+
+        check_no_cero <- sum(only_col_cero) == 0
+
+        validate(
+          need(check_no_cero, "Debe armar dos grupos en cada contraste.")
         )
 
         return(TRUE)
@@ -1170,7 +1231,17 @@ module02_anova_s02_rscience_server <- function(id, input_general, input_01_anova
                                       br(), br(),
 
                                       h2("2) Level selection to contrast"),
-                                      uiOutput(ns("contrasts_dynamic_selects")),
+                                      fluidRow(
+                                        column(6,
+                                               h2("Contrast Matrix"),
+                                               verbatimTextOutput(ns("output_matrix_contrasts_original")),
+                                               verbatimTextOutput(ns("output_matrix_contrasts_final"))),
+
+                                        column(6,
+                                               h2("Contrast Selection"),
+                                               uiOutput(ns("contrasts_dynamic_selects")))
+                                      ),
+
                                       br(), br(),
 
                                       h2("3) Contrast"),
