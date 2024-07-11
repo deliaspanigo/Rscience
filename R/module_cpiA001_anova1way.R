@@ -502,10 +502,12 @@ module02_anova_s02_rscience_server <- function(id, input_general, input_01_anova
         df_info_acum_contrastes <- info_acum_general_contrastes(k = selected_k)
         df_info_contrastes <- info_general_contrastes(k = selected_k)
         texto_contrastes <- "
-        Para k=_total00_ se tienen _total01_ diferentes contrastes posibles.
-        De ellos se pueden tomar hasta (k-1)=_total02_ contrastes ortogonales de maner simultánea.
-        Tomando _total02_ contrastes de _total01_ posibles hay _total03_ combinaciones posibles,
-        de las cuales _total04_ son combinaciones ortogonales y _total05_ son combinaciones no ortogonales."
+        For k=_total00_ there are _total01_ different possible contrasts.
+        From them you can take up to (k-1)=_total02_ orthogonal contrasts simultaneously."
+
+
+        #Tomando _total02_ contrastes de _total01_ posibles hay _total03_ combinaciones posibles,
+        #de las cuales _total04_ son combinaciones ortogonales y _total05_ son combinaciones no ortogonales.
 
         texto_contrastes <- gsub(pattern = "_total00_", replacement = df_info_contrastes[[1]], x = texto_contrastes)
         texto_contrastes <- gsub(pattern = "_total01_", replacement = df_info_contrastes[[2]], x = texto_contrastes)
@@ -867,24 +869,24 @@ module02_anova_s02_rscience_server <- function(id, input_general, input_01_anova
 
         #print(vector_contraste())
 
-        check_cantidad_na <- sum(is.na(matrix_contrasts_original())) == 0
+        check_cantidad_vacios <- sum(matrix_contrasts_original() == "") == 0
         validate(
-          need(check_cantidad_na, "Elija una categoría para cada nivel del factor en cada contraste ortogonal.")
+          need(check_cantidad_vacios, "Assign a category for each factor level in each orthogonal contrast.")
         )
 
         check_cantidad_positivos <- sum(matrix_contrasts_mod() > 0) > 0
         validate(
-          need(check_cantidad_positivos, "Debe armar dos grupos en cada contraste.")
+          need(check_cantidad_positivos, "You must put together two groups in each contrast.")
         )
 
         check_cantidad_negativos <- sum(matrix_contrasts_mod() < 0) > 0
         validate(
-          need(check_cantidad_negativos, "Debe armar dos grupos en cada contraste.")
+          need(check_cantidad_negativos, "You must put together two groups in each contrast.")
         )
 
         check_ortogonalidad <- check_mat_full_orthogonality(matrix_contrasts_mod())
         validate(
-          need(check_ortogonalidad, "Cambie la elección. Hay contrastes no ortogonales entre si.")
+          need(check_ortogonalidad, "Change your choice made. There are contrasts that are not orthogonal to each other.")
         )
 
         only_col_cero <- apply(matrix_contrasts_mod(), 2, function(x){

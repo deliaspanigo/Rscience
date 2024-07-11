@@ -676,13 +676,23 @@ module_cpiD001_s02_rscience_server <- function(id, input_general, input_01_anova
 
 
         # Vector con nombres de elementos a ver
-        selected_objs <- c("matrix_distances03")
+        selected_objs <- c("matrix_distances02")
 
 
         # Usar lapply para mostrar los elementos deseados
         #mi_lista[selected_objs]
 
         mi_tabla <- mi_lista[[selected_objs]]
+        mi_tabla <-  as.matrix(mi_tabla)
+
+        for(k1 in 1:ncol(mi_tabla)){
+          for(k2 in 1:nrow(mi_tabla)){
+            if(k1 > k2) mi_tabla[k2, k1] <- ""
+          }
+        }
+
+        mi_tabla <- as.data.frame(mi_tabla)
+
         #https://rstudio.github.io/DT/functions.html
         vector_pos <- 1:nrow(mi_tabla)
         vector_color <- rep(NA, length(vector_pos))
@@ -729,19 +739,19 @@ module_cpiD001_s02_rscience_server <- function(id, input_general, input_01_anova
         ns <- shiny::NS(id)
 
         div(
-          h2("1) Matrix triangular inferior - Distancias Euclideas"),
-          verbatimTextOutput(ns("tab02_analysis_df01")),
-          br(), br(), br(),
+          # h2("1) Matrix triangular inferior - Distancias Euclideas"),
+          # verbatimTextOutput(ns("tab02_analysis_df01")),
+          # br(), br(), br(),
+          #
+          # h2("2) Matriz triangular con diagonal - Distancias Euclideas"),
+          # verbatimTextOutput(ns("tab02_analysis_df02")),
+          # br(), br(), br(),
+          #
+          # h2("3) Matriz completa - Distancias Euclideas"),
+          # verbatimTextOutput(ns("tab02_analysis_df03")),
+          # br(), br(), br(),
 
-          h2("2) Matriz triangular con diagonal - Distancias Euclideas"),
-          verbatimTextOutput(ns("tab02_analysis_df02")),
-          br(), br(), br(),
-
-          h2("3) Matriz completa - Distancias Euclideas"),
-          verbatimTextOutput(ns("tab02_analysis_df03")),
-          br(), br(), br(),
-
-          h2("4) Matriz completa - Distancias Euclideas"),
+          h2("1) Matriz triangular inferior y diagonal - Distancias Euclideas"),
           DTOutput(ns("tab02_analysis_df04")),
           br(), br(), br()
 
@@ -934,10 +944,10 @@ module_cpiD001_s02_rscience_server <- function(id, input_general, input_01_anova
 
 
 
-
+        #matrix_cor_cophenetic
         # Vector con nombres de elementos a ver
-        selected_objs <- c("matrix_distances02")
-
+        # selected_objs <- c("matrix_distances02")
+        selected_objs <- c("matrix_cor_cophenetic", "cor_pearson_value")
 
         # Usar lapply para mostrar los elementos deseados
         mi_lista[selected_objs]
@@ -1117,18 +1127,18 @@ module_cpiD001_s02_rscience_server <- function(id, input_general, input_01_anova
                                           )
                                       )
                                       ),
-                             tabPanel("AnalysisB",  # 05
-                                      fluidRow(
-                                        column(12,
-                                               h1("Cluster - Binomial vars"),
-                                               h3("Method: ward.D2"),
-                                               h3("Distance: Euclidean"),
-                                        )),
-                                      fluidRow(
-                                        column(12, uiOutput(ns("tab02_analysisB_FULL"))
-                                        )
-                                      )
-                             ),
+                             # tabPanel("AnalysisB",  # 05
+                             #          fluidRow(
+                             #            column(12,
+                             #                   h1("Cluster - Binomial vars"),
+                             #                   h3("Method: ward.D2"),
+                             #                   h3("Distance: Euclidean"),
+                             #            )),
+                             #          fluidRow(
+                             #            column(12, uiOutput(ns("tab02_analysisB_FULL"))
+                             #            )
+                             #          )
+                             # ),
                              tabPanel("Analysis",  # 05
                                       fluidRow(
                                         column(12,
@@ -1158,7 +1168,8 @@ module_cpiD001_s02_rscience_server <- function(id, input_general, input_01_anova
 
                                       fluidRow(
                                         #column(1),
-                                        column(6, plotOutput(ns("el_plot2"), height = "40vh", width = "70vh")),
+                                        #column(6, plotOutput(ns("el_plot2"), height = "40vh", width = "70vh")),
+                                        column(6),
                                         column(6, verbatimTextOutput(ns("tabla02"))),
                                       ),
                                       br(),br(),br()
