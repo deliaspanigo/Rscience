@@ -659,7 +659,8 @@ module_cpiD003_s02_rscience_server <- function(id, input_general, input_01_anova
           backgroundColor = styleRow(vector_pos, vector_color),#,
           target = 'row',
           fontSize = "26px"
-        )
+        ) %>%
+          formatRound(columns = names(mi_tabla), digits = 4)
 
       })
 
@@ -715,7 +716,8 @@ module_cpiD003_s02_rscience_server <- function(id, input_general, input_01_anova
           backgroundColor = styleRow(vector_pos, vector_color),#,
           target = 'row',
           fontSize = "26px"
-        )
+        ) %>%
+          formatRound(columns = names(mi_tabla), digits = 4)
 
       })
 
@@ -771,7 +773,8 @@ module_cpiD003_s02_rscience_server <- function(id, input_general, input_01_anova
           backgroundColor = styleRow(vector_pos, vector_color),#,
           target = 'row',
           fontSize = "26px"
-        )
+        )%>%
+          formatRound(columns = names(mi_tabla), digits = 4)
 
       })
 
@@ -827,7 +830,8 @@ module_cpiD003_s02_rscience_server <- function(id, input_general, input_01_anova
           backgroundColor = styleRow(vector_pos, vector_color),#,
           target = 'row',
           fontSize = "26px"
-        )
+        )%>%
+          formatRound(columns = names(mi_tabla), digits = 4)
 
       })
 
@@ -883,7 +887,8 @@ module_cpiD003_s02_rscience_server <- function(id, input_general, input_01_anova
           backgroundColor = styleRow(vector_pos, vector_color),#,
           target = 'row',
           fontSize = "26px"
-        )
+        )%>%
+          formatRound(columns = names(mi_tabla), digits = 4)
 
       })
 
@@ -940,7 +945,8 @@ module_cpiD003_s02_rscience_server <- function(id, input_general, input_01_anova
           backgroundColor = styleRow(vector_pos, vector_color),#,
           target = 'row',
           fontSize = "26px"
-        )
+        )%>%
+          formatRound(columns = names(mi_tabla), digits = 4)
 
       })
 
@@ -1197,7 +1203,7 @@ module_cpiD003_s02_rscience_server <- function(id, input_general, input_01_anova
 
         new_plot <-  with(mi_lista,{
           factoextra::fviz_pca_var(X = list_pca,
-                                   title = "Plot 005 PCA - Variables",
+                                   title = "Plot 008 PCA - Variables",
                                    col.var = "red")
 
 
@@ -1249,7 +1255,7 @@ module_cpiD003_s02_rscience_server <- function(id, input_general, input_01_anova
                                       repel =T,
                                       addEllipses = F,
                                       habillage = "none",
-                                      title = "Plot 007 - PCA - Biplot - Units")
+                                      title = "Plot 005 - PCA - Biplot - Units")
 
 
         })
@@ -1257,7 +1263,7 @@ module_cpiD003_s02_rscience_server <- function(id, input_general, input_01_anova
         new_plot
       })
 
-      output$el_plot8<- renderPlot({
+      output$el_plot8 <- renderPlot({
 
 
         mi_lista <- RR_general()
@@ -1273,7 +1279,7 @@ module_cpiD003_s02_rscience_server <- function(id, input_general, input_01_anova
                                       col.var = "red",
                                       repel =T, addEllipses = F,
                                       habillage = "none",
-                                      title = "Plot 008 - PCA - Biplot - Variables + Units")
+                                      title = "Plot 007 - PCA - Biplot - Variables + Units")
 
 
         })
@@ -1491,7 +1497,7 @@ module_cpiD003_s02_rscience_server <- function(id, input_general, input_01_anova
 
 
         # Vector con nombres de elementos a ver
-        selected_objs <- c("df_autovalores")
+        selected_objs <- c("df_eigenvalues")
 
 
         # Usar lapply para mostrar los elementos deseados
@@ -1509,7 +1515,7 @@ module_cpiD003_s02_rscience_server <- function(id, input_general, input_01_anova
 
 
         # Vector con nombres de elementos a ver
-        selected_objs <- c("df_autovalores")
+        selected_objs <- c("df_eigenvalues")
 
 
         # Usar lapply para mostrar los elementos deseados
@@ -1546,7 +1552,7 @@ module_cpiD003_s02_rscience_server <- function(id, input_general, input_01_anova
 
 
         # Vector con nombres de elementos a ver
-        selected_objs <- c("df_autovalores")
+        selected_objs <- c("df_table01_coord_var")
 
 
         # Usar lapply para mostrar los elementos deseados
@@ -1565,7 +1571,7 @@ module_cpiD003_s02_rscience_server <- function(id, input_general, input_01_anova
 
 
         # Vector con nombres de elementos a ver
-        selected_objs <- c("df_autovalores")
+        selected_objs <- c("df_table04_coord_ind")
 
 
         # Usar lapply para mostrar los elementos deseados
@@ -1808,8 +1814,8 @@ module_cpiD003_s02_rscience_server <- function(id, input_general, input_01_anova
 
                                         fluidRow(
                                           #column(1),
-                                          column(6, plotOutput(ns("el_plot5"), height = "40vh", width = "70vh")),
-                                          column(6, verbatimTextOutput(ns("tabla05"))),
+                                          column(6, plotOutput(ns("el_plot7"), height = "40vh", width = "70vh")),
+                                          column(6, verbatimTextOutput(ns("tabla07"))),
                                         ),
                                         br(),br(),br(),
 
@@ -1820,19 +1826,22 @@ module_cpiD003_s02_rscience_server <- function(id, input_general, input_01_anova
                                         ),
                                         br(),br(),br(),
 
+
+
                                         fluidRow(
                                           #column(1),
-                                          column(6, plotOutput(ns("el_plot7"), height = "40vh", width = "70vh")),
-                                          column(6, verbatimTextOutput(ns("tabla07"))),
+                                          column(12, plotOutput(ns("el_plot8"), height = "40vh", width = "70vh"))#,
+                                          #column(6, verbatimTextOutput(ns("tabla08"))),
                                         ),
                                         br(),br(),br(),
 
                                         fluidRow(
                                           #column(1),
-                                          column(6, plotOutput(ns("el_plot8"), height = "40vh", width = "70vh")),
-                                          column(6, verbatimTextOutput(ns("tabla08"))),
+                                          column(12, plotOutput(ns("el_plot5"), height = "40vh", width = "70vh"))#,
+                                          #column(6, verbatimTextOutput(ns("tabla05"))),
                                         ),
                                         br(),br(),br(),
+
                                         fluidRow(
                                           #column(1),
                                           column(12, plotlyOutput(ns("el_plot9"), height = "100vh", width = "140vh"))#,

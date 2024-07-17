@@ -646,7 +646,7 @@ fn_cpiD003_results <- function(database, selected_var_name, selected_var_labels,
   # Tabla01
   # Nombre de la tabla????????
   # valores de cada variable sobre los autovectores (da diferente que InfoStat)
-  df_table01_coord_var <- as.data.frame(list_pca$var$coord)
+  df_table01_coord_var <- as.data.frame(round(list_pca$var$coord,4))
   colnames(df_table01_coord_var) <- vector_names_pc
   df_table01_coord_var <- cbind.data.frame(rownames(df_table01_coord_var), df_table01_coord_var)
   colnames(df_table01_coord_var)[1] <- "variables"
@@ -677,7 +677,7 @@ fn_cpiD003_results <- function(database, selected_var_name, selected_var_labels,
   # Tabla 04
   # Nombre tabla????
   # valor de cada Unidad sobre los ejes
-  df_table04_coord_ind <- as.data.frame(list_pca$ind$coord)
+  df_table04_coord_ind <- as.data.frame(round(list_pca$ind$coord, 4))
   colnames(df_table04_coord_ind) <- vector_names_pc
   df_table04_coord_ind
 
