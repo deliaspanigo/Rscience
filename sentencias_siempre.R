@@ -28,3 +28,5 @@ library("remotes")
 # Instalar Rscience desde la librería desde GitHub
 remotes::install_github("deliaspanigo/Rscience", force = T)
 
+Rscience::app_01_Rscience()
+

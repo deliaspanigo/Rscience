@@ -70,9 +70,9 @@ fn_cpiE004_control_previous <- function(database, vr_var_name, factor_var_name, 
     return(Hmisc::llist(dt_ok, text_output))
   }
 
-  # 3) Database must has at least 2 columns
-  if(!(ncol(database) >= 2)){
-    text_output <- "Control pre test 003: Object 'database' must has al least 2 columns."
+  # 3) Database must has at least 3 columns
+  if(!(ncol(database) >= 3)){
+    text_output <- "Control pre test 003: Object 'database' must has al least 3 columns."
     return(Hmisc::llist(dt_ok, text_output))
   }
 
@@ -277,8 +277,8 @@ fn_cpiE004_control_previous <- function(database, vr_var_name, factor_var_name, 
 
   # # # # # # # # # # # minibase
   minibase <- na.omit(database[vector_var_names])
-  minibase[,2] <- as.factor(minibase[,2])
-  minibase[,3] <- as.factor(minibase[,3])
+  minibase[,2] <- as.factor(as.character(minibase[,2]))
+  minibase[,3] <- as.factor(as.character(minibase[,3]))
   colnames(minibase) <- c("RV", "FACTOR", "BLOCK")
 
 
@@ -341,9 +341,9 @@ fn_cpiE004_control_previous <- function(database, vr_var_name, factor_var_name, 
   }
 
 
-  # Al least 2 levels in minibase$FACTOR
-  if(!(nlevels(minibase$BLOCK) == 2)){
-    text_output <- "Control pre test 033: for t Test BLOCK must has at least 2 levels."
+  # Al least 2 levels in minibase$BLOCK
+  if(!(nlevels(minibase$BLOCK) >= 2)){
+    text_output <- "Control pre test 034: for t Friedman BLOCK must has at least 2 levels."
     return(Hmisc::llist(dt_ok, text_output))
   }
 
