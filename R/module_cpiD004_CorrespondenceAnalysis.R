@@ -192,6 +192,13 @@ module_cpiD004_s01_varselection_server <- function(id, input_general){
                        column(8, uiOutput(ns("action_buttons"))))),
             ),
             fluidRow(
+              column(4,
+                     shiny::selectInput(inputId = ns("amount_dim"),
+                                        label ="Amount of dimentions",
+                                        choices = 2:100,#length(set_options),
+                                        selected = 100)#length(set_options))
+              )),
+            fluidRow(
               column(12, textOutput(ns("calling_help")))
             )
         )
@@ -283,9 +290,21 @@ module_cpiD004_s01_varselection_server <- function(id, input_general){
         action_button_load(FALSE)
         action_button_show(FALSE)
 
+        shiny::updateSelectInput(inputId = "amount_dim",
+                                 label ="Amount of dimentions",
+                                 choices = 1:length(input$selected_var_name),
+                                 selected = length(input$selected_var_name))
       })
 
+      observeEvent(input$amount_dim, {
 
+        # Not show yet
+        color_button_load(hardcorded_initial_color)
+        color_button_show(hardcorded_initial_color)
+        action_button_load(FALSE)
+        action_button_show(FALSE)
+
+      })
 
       observeEvent(input$alpha_value, {
 
@@ -345,6 +364,13 @@ module_cpiD004_s01_varselection_server <- function(id, input_general){
         return(output_value)
       })
 
+      selected_amount_dim <- reactive({
+
+        #req(action_button_show())
+
+        output_value <- as.numeric(as.character(input$amount_dim))
+        return(output_value)
+      })
 
 
       alpha_value <- reactive({
@@ -352,6 +378,8 @@ module_cpiD004_s01_varselection_server <- function(id, input_general){
         output_value <- as.numeric(as.character(input$alpha_value))
         output_value
       })
+
+
 
 
       output$calling_help <- renderText({
@@ -368,9 +396,11 @@ module_cpiD004_s01_varselection_server <- function(id, input_general){
         req(action_button_show())
 
 
-        the_list <- list(selected_var_name(), selected_var_labels(), alpha_value(), intro_source_database())
+        the_list <- list(selected_var_name(), selected_var_labels(),
+                         alpha_value(), intro_source_database(), selected_amount_dim())
 
-        names(the_list) <- c("selected_var_name", "selected_var_labels", "alpha_value", "intro_source_database")
+        names(the_list) <- c("selected_var_name", "selected_var_labels",
+                             "alpha_value", "intro_source_database", "selected_amount_dim")
         the_list
       })
 
@@ -455,7 +485,8 @@ module_cpiD004_s02_rscience_server <- function(id, input_general, input_01_anova
         the_output <- fn_cpiD004_results(database = input_general()$database,
                                          selected_var_name = input_01_anova()$selected_var_name,
                                          selected_var_labels = input_01_anova()$selected_var_labels,
-                                         alpha_value = input_01_anova()$alpha_value)
+                                         alpha_value = input_01_anova()$alpha_value,
+                                         selected_amount_dim = input_01_anova()$selected_amount_dim)
 
 
         the_output
@@ -680,12 +711,14 @@ module_cpiD004_s02_rscience_server <- function(id, input_general, input_01_anova
         #mi_lista[selected_objs]
 
         mi_tabla <- mi_lista[[selected_objs]]
+        mi_tabla <- mi_tabla[,-1]
         #https://rstudio.github.io/DT/functions.html
         vector_pos <- 1:nrow(mi_tabla)
         vector_color <- rep(NA, length(vector_pos))
         vector_color[c(T, F)] <- "lightblue"#'red'#
         vector_color[c(F, T)] <- "lightgreen"#'blue'#
         vector_color <- vector_color[vector_pos]
+        vector_pos_numeric <- apply(mi_tabla, 2, is.numeric)
 
         datatable(
           mi_tabla,
@@ -715,7 +748,8 @@ module_cpiD004_s02_rscience_server <- function(id, input_general, input_01_anova
           backgroundColor = styleRow(vector_pos, vector_color),#,
           target = 'row',
           fontSize = "26px"
-        )
+        )%>%
+          formatRound(columns = names(mi_tabla)[vector_pos_numeric], digits = 4)
 
       })
 
@@ -742,6 +776,7 @@ module_cpiD004_s02_rscience_server <- function(id, input_general, input_01_anova
         vector_color[c(T, F)] <- "lightblue"#'red'#
         vector_color[c(F, T)] <- "lightgreen"#'blue'#
         vector_color <- vector_color[vector_pos]
+        vector_pos_numeric <- apply(mi_tabla, 2, is.numeric)
 
         datatable(
           mi_tabla,
@@ -771,7 +806,8 @@ module_cpiD004_s02_rscience_server <- function(id, input_general, input_01_anova
           backgroundColor = styleRow(vector_pos, vector_color),#,
           target = 'row',
           fontSize = "26px"
-        )
+        )%>%
+          formatRound(columns = names(mi_tabla)[vector_pos_numeric], digits = 4)
 
       })
 
@@ -798,6 +834,7 @@ module_cpiD004_s02_rscience_server <- function(id, input_general, input_01_anova
         vector_color[c(T, F)] <- "lightblue"#'red'#
         vector_color[c(F, T)] <- "lightgreen"#'blue'#
         vector_color <- vector_color[vector_pos]
+        vector_pos_numeric <- apply(mi_tabla, 2, is.numeric)
 
         datatable(
           mi_tabla,
@@ -827,7 +864,8 @@ module_cpiD004_s02_rscience_server <- function(id, input_general, input_01_anova
           backgroundColor = styleRow(vector_pos, vector_color),#,
           target = 'row',
           fontSize = "26px"
-        )
+        )%>%
+          formatRound(columns = names(mi_tabla)[vector_pos_numeric], digits = 4)
 
       })
 
@@ -854,6 +892,7 @@ module_cpiD004_s02_rscience_server <- function(id, input_general, input_01_anova
         vector_color[c(T, F)] <- "lightblue"#'red'#
         vector_color[c(F, T)] <- "lightgreen"#'blue'#
         vector_color <- vector_color[vector_pos]
+        vector_pos_numeric <- apply(mi_tabla, 2, is.numeric)
 
         datatable(
           mi_tabla,
@@ -883,7 +922,8 @@ module_cpiD004_s02_rscience_server <- function(id, input_general, input_01_anova
           backgroundColor = styleRow(vector_pos, vector_color),#,
           target = 'row',
           fontSize = "26px"
-        )
+        )%>%
+          formatRound(columns = names(mi_tabla)[vector_pos_numeric], digits = 4)
 
       })
 
@@ -911,6 +951,7 @@ module_cpiD004_s02_rscience_server <- function(id, input_general, input_01_anova
         vector_color[c(T, F)] <- "lightblue"#'red'#
         vector_color[c(F, T)] <- "lightgreen"#'blue'#
         vector_color <- vector_color[vector_pos]
+        vector_pos_numeric <- apply(mi_tabla, 2, is.numeric)
 
         datatable(
           mi_tabla,
@@ -940,7 +981,8 @@ module_cpiD004_s02_rscience_server <- function(id, input_general, input_01_anova
           backgroundColor = styleRow(vector_pos, vector_color),#,
           target = 'row',
           fontSize = "26px"
-        )
+        )%>%
+          formatRound(columns = names(mi_tabla)[vector_pos_numeric], digits = 4)
 
       })
 
@@ -969,6 +1011,8 @@ module_cpiD004_s02_rscience_server <- function(id, input_general, input_01_anova
         vector_color[c(T, F)] <- "lightblue"#'red'#
         vector_color[c(F, T)] <- "lightgreen"#'blue'#
         vector_color <- vector_color[vector_pos]
+        vector_pos_numeric <- apply(mi_tabla, 2, is.numeric)
+
 
         datatable(
           mi_tabla,
@@ -998,7 +1042,8 @@ module_cpiD004_s02_rscience_server <- function(id, input_general, input_01_anova
           backgroundColor = styleRow(vector_pos, vector_color),#,
           target = 'row',
           fontSize = "26px"
-        )
+        )%>%
+          formatRound(columns = names(mi_tabla)[vector_pos_numeric], digits = 4)
 
       })
 
@@ -1027,6 +1072,7 @@ module_cpiD004_s02_rscience_server <- function(id, input_general, input_01_anova
         vector_color[c(T, F)] <- "lightblue"#'red'#
         vector_color[c(F, T)] <- "lightgreen"#'blue'#
         vector_color <- vector_color[vector_pos]
+        vector_pos_numeric <- apply(mi_tabla, 2, is.numeric)
 
         datatable(
           mi_tabla,
@@ -1056,7 +1102,8 @@ module_cpiD004_s02_rscience_server <- function(id, input_general, input_01_anova
           backgroundColor = styleRow(vector_pos, vector_color),#,
           target = 'row',
           fontSize = "26px"
-        )
+        )%>%
+          formatRound(columns = names(mi_tabla)[vector_pos_numeric], digits = 4)
 
       })
 
@@ -1076,46 +1123,46 @@ module_cpiD004_s02_rscience_server <- function(id, input_general, input_01_anova
           # verbatimTextOutput(ns("tab02_analysis_df02")),
           # br(), br(), br(),
 
-          h2("1) EiginValues"),
+          h2("1) EigenValues"),
           h3("R object: df_eigenvalues"),
           DTOutput(ns("tab02_analysis_df01")),
           br(), br(), br(),
 
 
-          h2("2) Cramer test"),
+          h2("2) Chi Squared Test"),
           h3("R object: df_cramer"),
           DTOutput(ns("tab02_analysis_df02")),
           br(), br(), br(),
 
-          h2("3) Coords by rows"),
+          h2("3) Row coordinates"),
           h3("R object: df_table01_row_coord"),
           DTOutput(ns("tab02_analysis_df03")),
           br(), br(), br(),
 
-          h2("4) Quality representation by rows"),
-          h3("R df_table02_row_cos2"),
-          DTOutput(ns("tab02_analysis_df04")),
-          br(), br(), br(),
+          #h2("4) Quality representation by rows"),
+          #h3("R df_table02_row_cos2"),
+          #DTOutput(ns("tab02_analysis_df04")),
+          #br(), br(), br(),
 
-          h2("5) Contribution by rows"),
-          h3("R object: df_table03_row_contrib"),
-          DTOutput(ns("tab02_analysis_df05")),
-          br(), br(), br(),
+          #h2("5) Contribution by rows"),
+          #h3("R object: df_table03_row_contrib"),
+          #DTOutput(ns("tab02_analysis_df05")),
+          #br(), br(), br(),
 
-          h2("6) Coords by cols"),
+          h2("4) Column coordinates"),
           h3("R object: df_table04_col_coord"),
           DTOutput(ns("tab02_analysis_df06")),
           br(), br(), br(),
 
-          h2("7) Quality representation by cols"),
-          h3("R object: df_table05_col_cos2"),
-          DTOutput(ns("tab02_analysis_df07")),
-          br(), br(), br(),
+          #h2("7) Quality representation by cols"),
+          #h3("R object: df_table05_col_cos2"),
+          #DTOutput(ns("tab02_analysis_df07")),
+          #br(), br(), br(),
 
-          h2("8) Contribution by cols"),
-          h3("R object: df_table06_col_contrib"),
-          DTOutput(ns("tab02_analysis_df08")),
-          br(), br(), br()
+          #h2("8) Contribution by cols"),
+          #h3("R object: df_table06_col_contrib"),
+          #DTOutput(ns("tab02_analysis_df08")),
+          #br(), br(), br()
         )
 
       })
@@ -1200,7 +1247,7 @@ module_cpiD004_s02_rscience_server <- function(id, input_general, input_01_anova
           barplot(height = df_eigenvalues$acum_porc_eigenvalue,
                   names.arg = df_eigenvalues$dimention,
                   xlab = "PC",
-                  ylab = "Acumulative Eigenvalue (Acumulative Variance)",
+                  ylab = "Eigenvalue (Variance)",
                   main = "Plot 002 - Acumulative Eigenvalues",
                   ylim = c(0, 120),
                   las = 1,
@@ -1246,8 +1293,8 @@ module_cpiD004_s02_rscience_server <- function(id, input_general, input_01_anova
           barplot(height = df_eigenvalues$porc_eigenvalue,
                   names.arg = df_eigenvalues$dimention,
                   xlab = "Dimention",
-                  ylab = "Porcentaje Eigenvalue (Porcentaje Variance)",
-                  main = "Plot 003 - Porcentaje Eigenvalues",
+                  ylab = "Percentage",
+                  main = "Plot 003 - Percentage Eigenvalues",
                   ylim = c(0, 120),
                   las = 1,
                   axes = F,
@@ -1287,8 +1334,8 @@ module_cpiD004_s02_rscience_server <- function(id, input_general, input_01_anova
           barplot(height = df_eigenvalues$acum_porc_eigenvalue,
                   names.arg = df_eigenvalues$dimention,
                   xlab = "Dimention",
-                  ylab = "Acumulative Porcentaje Eigenvalue (Acumulative Porcentaje Variance)",
-                  main = "Plot 004 - Acumulative Porcentaje Eigenvalues",
+                  ylab = "Percentage",
+                  main = "Plot 004 - Acumulative Percentage Eigenvalues",
                   ylim = c(0, 120),
                   las = 1,
                   axes = F,
@@ -1329,7 +1376,7 @@ module_cpiD004_s02_rscience_server <- function(id, input_general, input_01_anova
           #                          col.var = "red")
 
           factoextra::fviz_ca_biplot(list_ca, map = "symbiplot",
-                                     title = "Plot 005 - CA - Biplot simétrico",
+                                     title = "Plot 005 - CA - Simetric Biplot",
                                      col.row = "blue",
                                      col.col = "red",
                                      repel = TRUE)
@@ -1907,27 +1954,27 @@ module_cpiD004_s02_rscience_server <- function(id, input_general, input_01_anova
                                         br(),br(),br(),
 
                                         fluidRow(
-                                          fluidRow(column(12, h2("5) Biplot simétrico"))),
+                                          #fluidRow(column(12, h2("5) Biplot simétrico"))),
                                           column(6, plotOutput(ns("el_plot5"), height = "40vh", width = "70vh")),
                                           column(6, verbatimTextOutput(ns("tabla05"))),
                                         ),
                                         br(),br(),br(),
 
-                                        fluidRow(column(12, h2("6) Biplot Asimétrico con vectores de columnas en el espacio de las filas"))),
-                                        fluidRow(
-                                          column(6, plotOutput(ns("el_plot6"), height = "40vh", width = "70vh")),
-                                          column(6, verbatimTextOutput(ns("tabla06"))),
-                                        ),
-                                        br(),br(),br(),
+                                        #fluidRow(column(12, h2("6) Biplot Asimétrico con vectores de columnas en el espacio de las filas"))),
+                                        #fluidRow(
+                                        #  column(6, plotOutput(ns("el_plot6"), height = "40vh", width = "70vh")),
+                                        #  column(6, verbatimTextOutput(ns("tabla06"))),
+                                        #),
+                                        #br(),br(),br(),
 
 
-                                        fluidRow(column(12, h2("7) Biplot Asimétrico con vectores de filas en el espacio de las columnas"))),
-                                        fluidRow(
+                                        #fluidRow(column(12, h2("7) Biplot Asimétrico con vectores de filas en el espacio de las columnas"))),
+                                        #fluidRow(
                                           #column(1),
 
-                                          column(6, plotOutput(ns("el_plot7"), height = "40vh", width = "70vh")),
-                                          column(6, verbatimTextOutput(ns("tabla07"))),
-                                        ),
+                                         # column(6, plotOutput(ns("el_plot7"), height = "40vh", width = "70vh")),
+                                         # column(6, verbatimTextOutput(ns("tabla07"))),
+                                        #),
                                         br(),br(),br()
 
                                         # fluidRow(column(12, h2("8) Biplot Asimétrico con vectores de filas en el espacio de las columnas"))),

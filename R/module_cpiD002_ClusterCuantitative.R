@@ -449,26 +449,26 @@ module_cpiD002_s02_rscience_server <- function(id, input_general, input_01_anova
 
       k_groups_01 <- reactive({ 6 })
 
-      output$k_selection2 <- renderUI({
-
-        req(k_groups_01())
-        ns <- shiny::NS(id)
-
-        vector_g <- 2:k_groups_01()
-        vector_g <- c("Select one..." = "", vector_g)
-        vector_g <- 4
-        div(
-        selectInput(inputId = ns("k_groups_02"),
-                    label = "Estudio previo de grupos",
-                    choices = vector_g)
-        )
-      })
-
-      k_groups_02 <- reactive({
-        req(input$k_groups_02)
-
-        as.numeric(as.character(input$k_groups_02))
-      })
+      # output$k_selection2 <- renderUI({
+      #
+      #   req(k_groups_01())
+      #   ns <- shiny::NS(id)
+      #
+      #   vector_g <- 2:k_groups_01()
+      #   vector_g <- c("Select one..." = "", vector_g)
+      #   vector_g <- 4
+      #   div(
+      #   selectInput(inputId = ns("k_groups_02"),
+      #               label = "Estudio previo de grupos",
+      #               choices = vector_g)
+      #   )
+      # })
+      #
+      # k_groups_02 <- reactive({
+      #   req(input$k_groups_02)
+      #
+      #   as.numeric(as.character(input$k_groups_02))
+      # })
 
 
       RR01 <- reactive({
@@ -508,7 +508,7 @@ module_cpiD002_s02_rscience_server <- function(id, input_general, input_01_anova
 
         # correlación cofenética:
         matrix_cophenetic <- cophenetic(clusterA)
-        pearson_cor_value <- cor(matrix_cophenetic, S, method = "pearson")
+        cophenetic_correlation_value <- cor(matrix_cophenetic, S, method = "pearson")
 
 
         ############ Agrupamiento jerarquico  (MODO R_ Variables) ############
@@ -522,7 +522,7 @@ module_cpiD002_s02_rscience_server <- function(id, input_general, input_01_anova
         output_list <- Hmisc::llist(vector_all_vars, minibase, minibase2,
                                     k_groups_01,  k_colors_01, z, N,
                                     S, clusterA,
-                                    matrix_cophenetic, pearson_cor_value,
+                                    matrix_cophenetic, cophenetic_correlation_value,
                                     t_z, t_N, t_S, t_clusterA
                                     )
 
@@ -535,7 +535,8 @@ module_cpiD002_s02_rscience_server <- function(id, input_general, input_01_anova
 
       RR02 <- reactive({
 
-        req(control_user_01(), input$k_groups_02)
+        req(control_user_01())
+        #req(control_user_01(), input$k_groups_02)
 
         #if(input$k_groups_01 == "") return(NULL)
 
@@ -543,7 +544,7 @@ module_cpiD002_s02_rscience_server <- function(id, input_general, input_01_anova
         selected_var_name = input_01_anova()$selected_var_name
         selected_var_labels = input_01_anova()$selected_var_labels
         alpha_value = input_01_anova()$alpha_value
-        k_groups_02 <- as.numeric(as.character(input$k_groups_02)) #k_groups_02()
+        #k_groups_02 <- as.numeric(as.character(input$k_groups_02)) #k_groups_02()
 
         ##############################################
 
@@ -555,13 +556,34 @@ module_cpiD002_s02_rscience_server <- function(id, input_general, input_01_anova
 
         minibase2 <- minibase[selected_var_name]
 
-        k_colors_02 <- rainbow(k_groups_02)
+        #k_colors_02 <- rainbow(k_groups_02)
         #################################################
         # Realiza la estandarizacion:
         z <- scale(minibase2)
         #z <- scale(minibase2[, -1])
         N <- ncol(z)
         S <- dist(z, method = "euclidean")/sqrt(N)
+
+        df_z <- as.data.frame(z)
+
+
+        matrix_distances01 <- as.matrix(S)
+        colnames(matrix_distances01) <- 1:ncol(matrix_distances01)
+        rownames(matrix_distances01) <- 1:nrow(matrix_distances01)
+
+        dt_pos <- lower.tri(matrix_distances01, diag = TRUE)
+        matrix_distances02 <- round(matrix_distances01,4)
+        matrix_distances02[!dt_pos] <- ""
+        matrix_distances02 <- as.data.frame(matrix_distances02)
+        colnames(matrix_distances02) <- 1:ncol(matrix_distances02)
+        rownames(matrix_distances02) <- 1:nrow(matrix_distances02)
+
+        matrix_distances03 <- as.data.frame(matrix_distances01)
+        colnames(matrix_distances03) <- 1:ncol(matrix_distances03)
+        rownames(matrix_distances03) <- 1:nrow(matrix_distances03)
+
+
+
         #clusterS <- hclust(S, method = "single")
         #clusterC <- hclust(S, method = "complete")
         clusterA <- hclust(d = S, method = "average")
@@ -570,7 +592,7 @@ module_cpiD002_s02_rscience_server <- function(id, input_general, input_01_anova
 
         # correlación cofenética:
         matrix_cophenetic <- cophenetic(clusterA)
-        pearson_cor_value <- cor(matrix_cophenetic, S, method = "pearson")
+        cophenetic_correlation_value <- cor(matrix_cophenetic, S, method = "pearson")
 
 
         ############ Agrupamiento jerarquico  (MODO R_ Variables) ############
@@ -580,11 +602,14 @@ module_cpiD002_s02_rscience_server <- function(id, input_general, input_01_anova
         t_clusterA <- hclust(t_S, method = "average")
 
 
-
+        k_groups_02 <- NA
+        k_colors_02 <- NA
         output_list <- Hmisc::llist(vector_all_vars, minibase, minibase2,
                                     k_groups_02,  k_colors_02, z, N,
-                                    S, clusterA,
-                                    matrix_cophenetic, pearson_cor_value,
+                                    S, matrix_distances01, matrix_distances02,
+                                    matrix_distances03, df_z,
+                                    clusterA,
+                                    matrix_cophenetic, cophenetic_correlation_value,
                                     t_z, t_N, t_S, t_clusterA
         )
 
@@ -771,7 +796,7 @@ module_cpiD002_s02_rscience_server <- function(id, input_general, input_01_anova
         mi_lista <- RR02()
 
 
-        nombres_a_ver <- c("S")
+        nombres_a_ver <- c("matrix_distances01")
         # Vector con nombres de elementos a ver
         #nombres_a_ver <- c("matrix_distances")
 
@@ -789,7 +814,7 @@ module_cpiD002_s02_rscience_server <- function(id, input_general, input_01_anova
 
 
         mi_lista <- RR02()
-        nombres_a_ver <- c("S")
+        nombres_a_ver <- c("matrix_distances02")
 
         # Vector con nombres de elementos a ver
         #nombres_a_ver <- c("matrix_distances02")
@@ -809,7 +834,7 @@ module_cpiD002_s02_rscience_server <- function(id, input_general, input_01_anova
         mi_lista <- RR02()
 
 
-        nombres_a_ver <- c("S")
+        nombres_a_ver <- c("matrix_distances03")
 
 
         # Vector con nombres de elementos a ver
@@ -829,8 +854,8 @@ module_cpiD002_s02_rscience_server <- function(id, input_general, input_01_anova
         mi_lista <- RR02()
 
 
-        nombres_a_ver <- c("S")
-
+        #nombres_a_ver <- c("S")
+        nombres_a_ver <- c("matrix_distances02")
 
         # Vector con nombres de elementos a ver
         #nombres_a_ver <- c("matrix_distances03")
@@ -840,7 +865,7 @@ module_cpiD002_s02_rscience_server <- function(id, input_general, input_01_anova
         #mi_lista[nombres_a_ver]
 
         mi_tabla <- mi_lista[[nombres_a_ver]]
-        mi_tabla <- as.data.frame(as.matrix(mi_tabla))
+        #mi_tabla <- as.data.frame(as.matrix(mi_tabla))
         #https://rstudio.github.io/DT/functions.html
         vector_pos <- 1:nrow(mi_tabla)
         vector_color <- rep(NA, length(vector_pos))
@@ -876,7 +901,8 @@ module_cpiD002_s02_rscience_server <- function(id, input_general, input_01_anova
           backgroundColor = styleRow(vector_pos, vector_color),#,
           target = 'row',
           fontSize = "26px"
-        )
+        )%>%
+          formatRound(columns = names(mi_tabla), digits = 4)
 
       })
 
@@ -887,19 +913,20 @@ module_cpiD002_s02_rscience_server <- function(id, input_general, input_01_anova
         ns <- shiny::NS(id)
 
         div(
-          h2("1) Requeriment - Normality test - Residuals"),
-          verbatimTextOutput(ns("tab02_analysis_df01")),
-          br(), br(), br(),
+          # h2("1) Requeriment - Normality test - Residuals"),
+          # verbatimTextOutput(ns("tab02_analysis_df01")),
+          # br(), br(), br(),
+          #
+          # h2("1) Requeriment - Normality test - Residuals"),
+          # verbatimTextOutput(ns("tab02_analysis_df02")),
+          # br(), br(), br(),
+          #
+          # h2("1) Requeriment - Normality test - Residuals"),
+          # verbatimTextOutput(ns("tab02_analysis_df03")),
+          # br(), br(), br(),
 
-          h2("1) Requeriment - Normality test - Residuals"),
-          verbatimTextOutput(ns("tab02_analysis_df02")),
-          br(), br(), br(),
-
-          h2("1) Requeriment - Normality test - Residuals"),
-          verbatimTextOutput(ns("tab02_analysis_df03")),
-          br(), br(), br(),
-
-          h2("1) References"),
+          h2("1) Lower triangular and diagonal matrix - Euclidean Distance"),
+          h3("R object: matrix_distances02"),
           DTOutput(ns("tab02_analysis_df04")),
           br(), br(), br()
 
@@ -927,26 +954,26 @@ module_cpiD002_s02_rscience_server <- function(id, input_general, input_01_anova
 
       #############################################################
 
-      output$el_plot1 <- renderPlot({
-
-        req(RR01())
-
-        mi_lista <- RR01()
-        new_plot <-  with(mi_lista,{
-          # # # Create a new plot...
-          # # # Create a new plot...
-          # # # Create a new plot...
-          factoextra::fviz_nbclust(x = z, FUN = hcut,
-                                   diss = S, method = "wss",
-                                   #nboot = TRUE,
-                                   k.max = k_groups_01,
-                                   linecolor = "black")
-
-        })
-
-        new_plot
-      })
-
+      # output$el_plot1 <- renderPlot({
+      #
+      #   req(RR01())
+      #
+      #   mi_lista <- RR01()
+      #   new_plot <-  with(mi_lista,{
+      #     # # # Create a new plot...
+      #     # # # Create a new plot...
+      #     # # # Create a new plot...
+      #     factoextra::fviz_nbclust(x = z, FUN = hcut,
+      #                              diss = S, method = "wss",
+      #                              #nboot = TRUE,
+      #                              k.max = k_groups_01,
+      #                              linecolor = "black")
+      #
+      #   })
+      #
+      #   new_plot
+      # })
+      #
 
 
       output$el_plot2 <- renderPlot({
@@ -957,9 +984,9 @@ module_cpiD002_s02_rscience_server <- function(id, input_general, input_01_anova
         new_plot <-  with(mi_lista,{
           # # # Plot 002
           plot(clusterA, hang = -1,
-               main = "Plot 002 - Cluster o Conglomerado",
-               xlab="Muestra",
-               ylab="Distancia")
+               main = "Plot 001 - Cluster",
+               xlab="Label",
+               ylab="Distance")
 
         })
 
@@ -992,7 +1019,7 @@ module_cpiD002_s02_rscience_server <- function(id, input_general, input_01_anova
         mi_lista <- RR02()
         new_plot <-  with(mi_lista,{
           # # # Plot 003
-          plot(t_clusterA, hang = -1, main = "Plot 004 - Agrupamiento Jerárquico")
+          plot(t_clusterA, hang = -1, main = "Plot 002 - Hierarchical Grouping")
 
 
         })
@@ -1010,7 +1037,7 @@ module_cpiD002_s02_rscience_server <- function(id, input_general, input_01_anova
           # # # Plot 004
 
           stats::heatmap(z, col = rev(heat.colors(256)),
-                         main = "Plot 005 - Heatmap")
+                         main = "Plot 003 - Heatmap")
           leyenda <- as.raster(matrix(heat.colors(256), ncol = 1))
           graphics::rasterImage(leyenda, xleft = 0.85, xright = 0.9, ybottom = 0.85,
                       ytop = 0.95)
@@ -1153,7 +1180,7 @@ module_cpiD002_s02_rscience_server <- function(id, input_general, input_01_anova
         mi_lista <- RR02()
 
 
-        nombres_a_ver <- c("S")
+        nombres_a_ver <- c("matrix_distances03")
 
 
         # Vector con nombres de elementos a ver
@@ -1195,7 +1222,7 @@ module_cpiD002_s02_rscience_server <- function(id, input_general, input_01_anova
         mi_lista <- RR02()
 
 
-        nombres_a_ver <- c("S")
+        nombres_a_ver <- c("matrix_cophenetic", "cophenetic_correlation_value")
 
 
         # Vector con nombres de elementos a ver
@@ -1217,7 +1244,7 @@ module_cpiD002_s02_rscience_server <- function(id, input_general, input_01_anova
         mi_lista <- RR02()
 
 
-        nombres_a_ver <- c("S")
+        nombres_a_ver <- c("df_z")
 
         # Vector con nombres de elementos a ver
         #nombres_a_ver <- c("matrix_distances02")
@@ -1385,7 +1412,7 @@ module_cpiD002_s02_rscience_server <- function(id, input_general, input_01_anova
             rclipboardSetup(),
             textOutput(ns("calling_help")),
 
-            fluidRow(column(12,plotOutput(ns("el_plot1")))),
+            #fluidRow(column(12,plotOutput(ns("el_plot1")))),
 
             fluidRow(column(12, uiOutput(ns("k_selection2")))),
 
@@ -1432,12 +1459,12 @@ module_cpiD002_s02_rscience_server <- function(id, input_general, input_01_anova
                                         br(),br(),br(),
 
 
-                                        fluidRow(
-                                          #column(1),
-                                          column(6, plotOutput(ns("el_plot3"), height = "40vh", width = "70vh")),
-                                          column(6, verbatimTextOutput(ns("tabla03"))),
-                                        ),
-                                        br(),br(),br(),
+                                        # fluidRow(
+                                        #   #column(1),
+                                        #   column(6, plotOutput(ns("el_plot3"), height = "40vh", width = "70vh")),
+                                        #   column(6, verbatimTextOutput(ns("tabla03"))),
+                                        # ),
+                                        # br(),br(),br(),
 
                                         fluidRow(
                                           #column(1),

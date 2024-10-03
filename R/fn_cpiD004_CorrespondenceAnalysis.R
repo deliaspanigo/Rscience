@@ -596,7 +596,8 @@ fn_cpiD004_control_post <- function(list_results_from_fn_cpiD004){
 # # For sections 01 to 03 there are no action in R. The actions its on Shiny.
 # # We need the input objects from shiny to.
 
-fn_cpiD004_results <- function(database, selected_var_name, selected_var_labels, alpha_value){
+fn_cpiD004_results <- function(database, selected_var_name, selected_var_labels,
+                               alpha_value, selected_amount_dim){
 
 
 

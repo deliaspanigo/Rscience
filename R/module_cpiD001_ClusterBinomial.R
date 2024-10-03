@@ -753,6 +753,7 @@ module_cpiD001_s02_rscience_server <- function(id, input_general, input_01_anova
 
           #h2("1) Matriz triangular inferior y diagonal - Distancias Euclideas"),
           h2("1) Lower triangular and diagonal matrix - Simple Matching Distance"),
+          h3("R object: matrix_distances02"),
           DTOutput(ns("tab02_analysis_df04")),
           br(), br(), br()
 
