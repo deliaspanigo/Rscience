@@ -183,10 +183,10 @@ module_cpiD001_s01_varselection_server <- function(id, input_general){
               column(4,
                      fluidRow(
                        column(4,
-                              selectInput(inputId = ns("alpha_value"), label = "Alpha value",
-                                          choices = c(0.10, 0.05, 0.01),
-                                          #choices = c(0.05),
-                                          selected = 0.05)
+                              # selectInput(inputId = ns("alpha_value"), label = "Alpha value",
+                              #             choices = c(0.10, 0.05, 0.01),
+                              #             #choices = c(0.05),
+                              #             selected = 0.05)
                        ),
 
                        column(8, uiOutput(ns("action_buttons"))))),
@@ -589,7 +589,7 @@ module_cpiD001_s02_rscience_server <- function(id, input_general, input_01_anova
         nombres_a_ver <- c("matrix_distances", "matrix_distances02",
                            "matrix_distances03", "amount_tde",
                            "list_cluster", "matrix_cor_cophenetic",
-                           "cor_pearson_value")
+                           "cophenetic_correlation_value")
 
         # Usar lapply para mostrar los elementos deseados
         mi_lista[nombres_a_ver]
@@ -751,7 +751,8 @@ module_cpiD001_s02_rscience_server <- function(id, input_general, input_01_anova
           # verbatimTextOutput(ns("tab02_analysis_df03")),
           # br(), br(), br(),
 
-          h2("1) Matriz triangular inferior y diagonal - Distancias Euclideas"),
+          #h2("1) Matriz triangular inferior y diagonal - Distancias Euclideas"),
+          h2("1) Lower triangular and diagonal matrix - Simple Matching Distance"),
           DTOutput(ns("tab02_analysis_df04")),
           br(), br(), br()
 
@@ -786,9 +787,9 @@ module_cpiD001_s02_rscience_server <- function(id, input_general, input_01_anova
           # # # Create a new plot...
           # # # Create a new plot...
           plot(list_cluster, las = 1,
-               main="Cluster o conglomerado",
-               xlab="Muestra",
-               ylab="Distancia")
+               main="Cluster",
+               xlab="Labels",
+               ylab="Distance")
 
         })
 
@@ -947,7 +948,7 @@ module_cpiD001_s02_rscience_server <- function(id, input_general, input_01_anova
         #matrix_cor_cophenetic
         # Vector con nombres de elementos a ver
         # selected_objs <- c("matrix_distances02")
-        selected_objs <- c("matrix_cor_cophenetic", "cor_pearson_value")
+        selected_objs <- c("matrix_cor_cophenetic", "cophenetic_correlation_value")
 
         # Usar lapply para mostrar los elementos deseados
         mi_lista[selected_objs]
@@ -1117,7 +1118,7 @@ module_cpiD001_s02_rscience_server <- function(id, input_general, input_01_anova
                                         column(12,
                                                h1("Cluster - Binomial vars"),
                                                h3("Method: ward.D2"),
-                                               h3("Distance: Euclidean"),
+                                               h3("Distance: Simple Matching Distance"),
                                         )),
                                         fluidRow(
                                           column(12,
@@ -1144,7 +1145,7 @@ module_cpiD001_s02_rscience_server <- function(id, input_general, input_01_anova
                                         column(12,
                                                h1("Cluster - Binomial vars"),
                                                h3("Method: ward.D2"),
-                                               h3("Distance: Euclidean"),
+                                               h3("Distance: Simple Matching Distance"),
                                         )),
                                       fluidRow(
                                         column(12, uiOutput(ns("tab02_analysis_FULL"))
@@ -1157,7 +1158,7 @@ module_cpiD001_s02_rscience_server <- function(id, input_general, input_01_anova
                                         column(12,
                                                h1("Cluster - Binomial vars"),
                                                h3("Method: ward.D2"),
-                                               h3("Distance: Euclidean"),
+                                               h3("Distance: Simple Matching Distance"),
                                         )),
                                       fluidRow(
                                         #column(1),
@@ -1241,7 +1242,7 @@ module_cpiD001_s02_rscience_server <- function(id, input_general, input_01_anova
                              tabPanel("Full Results",  # 05
                                       fluidRow(
                                         column(12,
-                                               h1("t Test - 2 Independent Samples"),
+                                               h1("Cluster - Binomial vars"),
                                                verbatimTextOutput(ns("tab01_all_anova_results"))
                                         )
                                       )
@@ -1252,7 +1253,7 @@ module_cpiD001_s02_rscience_server <- function(id, input_general, input_01_anova
                              tabPanel("R code",  # 05
                                       fluidRow(
                                         column(10,
-                                               h1("t Test - 2 independent samplesy"),
+                                               h1("Cluster - Binomial vars"),
                                                verbatimTextOutput(ns("tab05_code"))
                                         ),
                                         br(), br(),

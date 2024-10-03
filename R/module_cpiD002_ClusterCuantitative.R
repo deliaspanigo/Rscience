@@ -558,8 +558,8 @@ module_cpiD002_s02_rscience_server <- function(id, input_general, input_01_anova
         k_colors_02 <- rainbow(k_groups_02)
         #################################################
         # Realiza la estandarizacion:
-
-        z <- scale(minibase2[, -1])
+        z <- scale(minibase2)
+        #z <- scale(minibase2[, -1])
         N <- ncol(z)
         S <- dist(z, method = "euclidean")/sqrt(N)
         #clusterS <- hclust(S, method = "single")

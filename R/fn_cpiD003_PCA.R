@@ -596,7 +596,8 @@ fn_cpiD003_control_post <- function(list_results_from_fn_cpiD003){
 # # For sections 01 to 03 there are no action in R. The actions its on Shiny.
 # # We need the input objects from shiny to.
 
-fn_cpiD003_results <- function(database, selected_var_name, selected_var_labels, alpha_value){
+fn_cpiD003_results <- function(database, selected_var_name, selected_var_labels,
+                               alpha_value, selected_method, selected_amount_pc){
 
 
 
@@ -605,6 +606,7 @@ fn_cpiD003_results <- function(database, selected_var_name, selected_var_labels,
   # # # # Script de Rscience
   # All selected vars
   vector_all_vars <- c(selected_var_labels, selected_var_name)
+  vector_pc <- 1:selected_amount_pc
 
   # Minibase
   minibase <- na.omit(database[vector_all_vars])
@@ -617,7 +619,8 @@ fn_cpiD003_results <- function(database, selected_var_name, selected_var_labels,
 
   # List PCA results
   list_pca <- FactoMineR::PCA(X = minibase2,
-                              scale.unit = TRUE, graph = F)
+                              scale.unit = selected_method, #TRUE,
+                              graph = F)
 
 
 
@@ -628,6 +631,7 @@ fn_cpiD003_results <- function(database, selected_var_name, selected_var_labels,
   df_rotation_matrix <- as.data.frame(list_pca$svd$V) #list_pca2$rotation
   colnames(df_rotation_matrix) <- vector_names_pc
   rownames(df_rotation_matrix) <- colnames(minibase2)
+  df_rotation_matrix <- df_rotation_matrix[vector_pc]
   df_rotation_matrix
 
   # EigenValues
@@ -640,37 +644,42 @@ fn_cpiD003_results <- function(database, selected_var_name, selected_var_labels,
     "acum_porc_eigenvalue" = round(list_pca$eig[,3], 4)
   )
   rownames(df_eigenvalues) <- 1:nrow(df_eigenvalues)
-
+  df_eigenvalues <- df_eigenvalues[,-1]
+  df_eigenvalues <- df_eigenvalues[vector_pc,]
   value_total_variance <- df_eigenvalues$acum_eigenvalue[nrow(df_eigenvalues)]
 
   # Tabla01
   # Nombre de la tabla????????
   # valores de cada variable sobre los autovectores (da diferente que InfoStat)
+  #df_table01_coord_var <- as.data.frame(round(list_pca$var$coord,4))
   df_table01_coord_var <- as.data.frame(round(list_pca$var$coord,4))
   colnames(df_table01_coord_var) <- vector_names_pc
   df_table01_coord_var <- cbind.data.frame(rownames(df_table01_coord_var), df_table01_coord_var)
   colnames(df_table01_coord_var)[1] <- "variables"
   rownames(df_table01_coord_var) <- 1:nrow(df_table01_coord_var)
+  df_table01_coord_var <- df_table01_coord_var[1:(selected_amount_pc+1)]
   df_table01_coord_var
 
   # Tabla02
   # Nombre de la tabla?????
   #Del 100% de cada variable cuanto aporta a cada Dimension nueva
-  df_table02 <- as.data.frame(list_pca$var$cos2*100)
+  df_table02 <- as.data.frame(round(list_pca$var$cos2*100, 4))
   colnames(df_table02) <- vector_names_pc
   df_table02 <- cbind.data.frame(rownames(df_table02), df_table02)
   colnames(df_table02)[1] <- "variables"
   rownames(df_table02) <- 1:nrow(df_table02)
+  df_table02 <- df_table02[1:(selected_amount_pc+1)]
   df_table02
 
   # Tabla 03
   # Nombre tabla?????
   # Del 100% de cada dimensión cuanto aporta a cada variable
-  df_table03 <- as.data.frame(list_pca$var$contrib)
+  df_table03 <- as.data.frame(round(list_pca$var$contrib, 4))
   colnames(df_table03) <- vector_names_pc
   df_table03 <- cbind.data.frame(rownames(df_table03), df_table03)
   colnames(df_table03)[1] <- "variables"
   rownames(df_table03) <- 1:nrow(df_table03)
+  df_table03 <- df_table03[1:(selected_amount_pc+1)]
   df_table03
 
 
@@ -679,6 +688,8 @@ fn_cpiD003_results <- function(database, selected_var_name, selected_var_labels,
   # valor de cada Unidad sobre los ejes
   df_table04_coord_ind <- as.data.frame(round(list_pca$ind$coord, 4))
   colnames(df_table04_coord_ind) <- vector_names_pc
+  df_table04_coord_ind <- df_table04_coord_ind[vector_pc]
+
   df_table04_coord_ind
 
 

@@ -650,7 +650,8 @@ fn_cpiD001_results <- function(database, selected_var_name, selected_var_labels,
 
   # Correlacion cofenetica
   matrix_cor_cophenetic <- cophenetic(x = list_cluster)
-  cor_pearson_value <- cor(matrix_cor_cophenetic, matrix_distances, method = "pearson")
+  #cor_pearson_value <- cor(matrix_cor_cophenetic, matrix_distances, method = "pearson")
+  cophenetic_correlation_value <- cor(matrix_cor_cophenetic, matrix_distances, method = "pearson")
 
 
 

@@ -192,6 +192,19 @@ module_cpiD003_s01_varselection_server <- function(id, input_general){
                        column(8, uiOutput(ns("action_buttons"))))),
             ),
             fluidRow(
+              column(4,
+                     radioButtons(inputId = ns("method_pc"), label = "Method",
+                                  choices = c("Variance/Covariance Matrix" = T,
+                                              "Correlation Matrix" = F)
+                     )
+              ),
+              column(4,
+              shiny::selectInput(inputId = ns("amount_pc"),
+                                 label ="Amount of PC",
+                                 choices = 2:100,#length(set_options),
+                                 selected = 100)#length(set_options))
+              )),
+            fluidRow(
               column(12, textOutput(ns("calling_help")))
             )
         )
@@ -283,11 +296,39 @@ module_cpiD003_s01_varselection_server <- function(id, input_general){
         action_button_load(FALSE)
         action_button_show(FALSE)
 
+        #ns <- shiny::NS(id)
+
+        shiny::updateSelectInput(inputId = "amount_pc",
+                           label ="Amount of PC",
+                           choices = 1:length(input$selected_var_name),
+                           selected = length(input$selected_var_name))
+
+        #updateSelectInput(session = session(),inputId = ns())
       })
 
 
 
       observeEvent(input$alpha_value, {
+
+        # Not show yet
+        color_button_load(hardcorded_initial_color)
+        color_button_show(hardcorded_initial_color)
+        action_button_load(FALSE)
+        action_button_show(FALSE)
+
+      })
+
+      observeEvent(input$method_pc, {
+
+        # Not show yet
+        color_button_load(hardcorded_initial_color)
+        color_button_show(hardcorded_initial_color)
+        action_button_load(FALSE)
+        action_button_show(FALSE)
+
+      })
+
+      observeEvent(input$amount_pc, {
 
         # Not show yet
         color_button_load(hardcorded_initial_color)
@@ -354,6 +395,19 @@ module_cpiD003_s01_varselection_server <- function(id, input_general){
       })
 
 
+      selected_method <- reactive({
+        req(action_button_show())
+        output_value <- as.logical(as.character(input$method_pc))
+        output_value
+      })
+
+
+      selected_amount_pc <- reactive({
+        req(action_button_show())
+        output_value <- as.numeric(as.character(input$amount_pc))
+        output_value
+      })
+
       output$calling_help <- renderText({
 
         req(control_user_99())
@@ -368,9 +422,13 @@ module_cpiD003_s01_varselection_server <- function(id, input_general){
         req(action_button_show())
 
 
-        the_list <- list(selected_var_name(), selected_var_labels(), alpha_value(), intro_source_database())
+        the_list <- list(selected_var_name(), selected_var_labels(),
+                         alpha_value(), intro_source_database(),
+                         selected_method(), selected_amount_pc())
 
-        names(the_list) <- c("selected_var_name", "selected_var_labels", "alpha_value", "intro_source_database")
+        names(the_list) <- c("selected_var_name", "selected_var_labels",
+                             "alpha_value", "intro_source_database",
+                             "selected_method", "selected_amount_pc")
         the_list
       })
 
@@ -455,7 +513,9 @@ module_cpiD003_s02_rscience_server <- function(id, input_general, input_01_anova
         the_output <- fn_cpiD003_results(database = input_general()$database,
                                          selected_var_name = input_01_anova()$selected_var_name,
                                          selected_var_labels = input_01_anova()$selected_var_labels,
-                                         alpha_value = input_01_anova()$alpha_value)
+                                         alpha_value = input_01_anova()$alpha_value,
+                                         selected_method = input_01_anova()$selected_method,
+                                         selected_amount_pc = input_01_anova()$selected_amount_pc)
 
 
         the_output
@@ -687,6 +747,7 @@ module_cpiD003_s02_rscience_server <- function(id, input_general, input_01_anova
         vector_color[c(T, F)] <- "lightblue"#'red'#
         vector_color[c(F, T)] <- "lightgreen"#'blue'#
         vector_color <- vector_color[vector_pos]
+        vector_pos_numeric <- apply(mi_tabla, 2, is.numeric)
 
         datatable(
           mi_tabla,
@@ -717,7 +778,7 @@ module_cpiD003_s02_rscience_server <- function(id, input_general, input_01_anova
           target = 'row',
           fontSize = "26px"
         ) %>%
-          formatRound(columns = names(mi_tabla), digits = 4)
+          formatRound(columns = names(mi_tabla)[vector_pos_numeric], digits = 4)
 
       })
 
@@ -744,6 +805,7 @@ module_cpiD003_s02_rscience_server <- function(id, input_general, input_01_anova
         vector_color[c(T, F)] <- "lightblue"#'red'#
         vector_color[c(F, T)] <- "lightgreen"#'blue'#
         vector_color <- vector_color[vector_pos]
+        vector_pos_numeric <- apply(mi_tabla, 2, is.numeric)
 
         datatable(
           mi_tabla,
@@ -774,7 +836,7 @@ module_cpiD003_s02_rscience_server <- function(id, input_general, input_01_anova
           target = 'row',
           fontSize = "26px"
         )%>%
-          formatRound(columns = names(mi_tabla), digits = 4)
+          formatRound(columns = names(mi_tabla)[vector_pos_numeric], digits = 4)
 
       })
 
@@ -801,6 +863,7 @@ module_cpiD003_s02_rscience_server <- function(id, input_general, input_01_anova
         vector_color[c(T, F)] <- "lightblue"#'red'#
         vector_color[c(F, T)] <- "lightgreen"#'blue'#
         vector_color <- vector_color[vector_pos]
+        vector_pos_numeric <- apply(mi_tabla, 2, is.numeric)
 
         datatable(
           mi_tabla,
@@ -831,7 +894,7 @@ module_cpiD003_s02_rscience_server <- function(id, input_general, input_01_anova
           target = 'row',
           fontSize = "26px"
         )%>%
-          formatRound(columns = names(mi_tabla), digits = 4)
+          formatRound(columns = names(mi_tabla)[vector_pos_numeric], digits = 4)
 
       })
 
@@ -858,6 +921,7 @@ module_cpiD003_s02_rscience_server <- function(id, input_general, input_01_anova
         vector_color[c(T, F)] <- "lightblue"#'red'#
         vector_color[c(F, T)] <- "lightgreen"#'blue'#
         vector_color <- vector_color[vector_pos]
+        vector_pos_numeric <- apply(mi_tabla, 2, is.numeric)
 
         datatable(
           mi_tabla,
@@ -888,7 +952,7 @@ module_cpiD003_s02_rscience_server <- function(id, input_general, input_01_anova
           target = 'row',
           fontSize = "26px"
         )%>%
-          formatRound(columns = names(mi_tabla), digits = 4)
+          formatRound(columns = names(mi_tabla)[vector_pos_numeric], digits = 4)
 
       })
 
@@ -1117,15 +1181,15 @@ module_cpiD003_s02_rscience_server <- function(id, input_general, input_01_anova
           # # # Create a new plot...
           # # # Create a new plot...
           # # # Create a new plot...
-          # # # Plot 003 - Porcentaje eigenvalues
+          # # # Plot 003 - Percentage eigenvalues
           set_width03 <- 1
           set_space03 <- 0.2
 
           barplot(height = df_eigenvalues$porc_eigenvalue,
                   names.arg = df_eigenvalues$PC,
                   xlab = "PC",
-                  ylab = "Porcentaje Eigenvalue (Porcentaje Variance)",
-                  main = "Plot 003 - Porcentaje Eigenvalues",
+                  ylab = "Percentage Eigenvalue (Percentage Variance)",
+                  main = "Plot 003 - Percentage Eigenvalues",
                   ylim = c(0, 120),
                   las = 1,
                   axes = F,
@@ -1158,15 +1222,15 @@ module_cpiD003_s02_rscience_server <- function(id, input_general, input_01_anova
 
 
         new_plot <-  with(mi_lista,{
-          # # # Plot 004 - Acumulative Porcentaje eigenvalues
+          # # # Plot 004 - Acumulative Percentage eigenvalues
           set_width04 <- 1
           set_space04 <- 0.2
 
           barplot(height = df_eigenvalues$acum_porc_eigenvalue,
                   names.arg = df_eigenvalues$PC,
                   xlab = "PC",
-                  ylab = "Acumulative Porcentaje Eigenvalue (Acumulative Porcentaje Variance)",
-                  main = "Plot 004 - Acumulative Porcentaje Eigenvalues",
+                  ylab = "Acumulative Percentage Eigenvalue (Acumulative Percentage Variance)",
+                  main = "Plot 004 - Acumulative Percentage Eigenvalues",
                   ylim = c(0, 120),
                   las = 1,
                   axes = F,
@@ -1291,6 +1355,9 @@ module_cpiD003_s02_rscience_server <- function(id, input_general, input_01_anova
 
 
         mi_lista <- RR_general()
+        mi_objeto <- mi_lista["mi_lista"][[1]]
+        req(mi_objeto)
+        req(ncol(mi_objeto)>=3)
 
 
         new_plot <-  with(mi_lista,{
@@ -1752,6 +1819,9 @@ module_cpiD003_s02_rscience_server <- function(id, input_general, input_01_anova
             rclipboardSetup(),
             textOutput(ns("calling_help")),
 
+
+
+            br(),
             shiny::tabsetPanel(id = ns("super_tabset_panel"),
                                selected = "Analysis",
                                tabPanel("minibase",
