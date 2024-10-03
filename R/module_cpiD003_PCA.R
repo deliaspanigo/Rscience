@@ -1029,32 +1029,32 @@ module_cpiD003_s02_rscience_server <- function(id, input_general, input_01_anova
           # verbatimTextOutput(ns("tab02_analysis_df02")),
           # br(), br(), br(),
 
-          h2("1) EigenVectors (Rotation Matrix)"),
+          h2("1) EigenVectors"),
           h3("R object: df_rotation_matrix"),
           DTOutput(ns("tab02_analysis_df01")),
           br(), br(), br(),
 
-          h2("2) EiginValues"),
+          h2("2) EigenValues"),
           h3("R object: df_eigenvalues"),
           DTOutput(ns("tab02_analysis_df02")),
           br(), br(), br(),
 
-          h2("3) Table01 - Variable Coords"),
+          h2("3) Variables Coordinates"),
           h3("R object: df_table01_coord_var"),
           DTOutput(ns("tab02_analysis_df03")),
           br(), br(), br(),
 
-          h2("4) Table02 - ???"),
-          h3("R object: df_table02"),
-          DTOutput(ns("tab02_analysis_df04")),
-          br(), br(), br(),
+          #h2("4) Table02 - ???"),
+          #h3("R object: df_table02"),
+          #DTOutput(ns("tab02_analysis_df04")),
+          #br(), br(), br(),
 
-          h2("5) Table03 - ???"),
+          h2("4) Percentage weight of the variables in each component"),
           h3("R object: df_table03"),
           DTOutput(ns("tab02_analysis_df05")),
           br(), br(), br(),
 
-          h2("6) Table04 - Unit Coords"),
+          h2("5) Units Coordinates"),
           h3("R object: df_table04_coord_ind"),
           DTOutput(ns("tab02_analysis_df06")),
           br(), br(), br(),
@@ -1142,7 +1142,7 @@ module_cpiD003_s02_rscience_server <- function(id, input_general, input_01_anova
           barplot(height = df_eigenvalues$acum_porc_eigenvalue,
                   names.arg = df_eigenvalues$PC,
                   xlab = "PC",
-                  ylab = "Acumulative Eigenvalue (Acumulative Variance)",
+                  ylab = "Eigenvalue (Variance)",
                   main = "Plot 002 - Acumulative Eigenvalues",
                   ylim = c(0, 120),
                   las = 1,
@@ -1188,7 +1188,7 @@ module_cpiD003_s02_rscience_server <- function(id, input_general, input_01_anova
           barplot(height = df_eigenvalues$porc_eigenvalue,
                   names.arg = df_eigenvalues$PC,
                   xlab = "PC",
-                  ylab = "Percentage Eigenvalue (Percentage Variance)",
+                  ylab = "Percentage",
                   main = "Plot 003 - Percentage Eigenvalues",
                   ylim = c(0, 120),
                   las = 1,
@@ -1229,7 +1229,7 @@ module_cpiD003_s02_rscience_server <- function(id, input_general, input_01_anova
           barplot(height = df_eigenvalues$acum_porc_eigenvalue,
                   names.arg = df_eigenvalues$PC,
                   xlab = "PC",
-                  ylab = "Acumulative Percentage Eigenvalue (Acumulative Percentage Variance)",
+                  ylab = "Percentage",
                   main = "Plot 004 - Acumulative Percentage Eigenvalues",
                   ylim = c(0, 120),
                   las = 1,
@@ -1355,9 +1355,9 @@ module_cpiD003_s02_rscience_server <- function(id, input_general, input_01_anova
 
 
         mi_lista <- RR_general()
-        mi_objeto <- mi_lista["mi_lista"][[1]]
-        req(mi_objeto)
-        req(ncol(mi_objeto)>=3)
+        # mi_objeto <- mi_lista["mi_lista"][[1]]
+        # req(mi_objeto)
+        # req(ncol(mi_objeto)>=3)
 
 
         new_plot <-  with(mi_lista,{
