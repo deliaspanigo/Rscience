@@ -192,6 +192,14 @@ module_cpiD002_s01_varselection_server <- function(id, input_general){
                        column(8, uiOutput(ns("action_buttons"))))),
             ),
             fluidRow(
+              column(4,
+                     radioButtons(inputId = ns("method_cluster"), label = "Method",
+                                  choices = c("Variance/Covariance Matrix" = F,
+                                              "Correlation Matrix" = T)
+                     )
+              )
+            ),
+            fluidRow(
               column(12, textOutput(ns("calling_help")))
             )
         )
@@ -285,7 +293,15 @@ module_cpiD002_s01_varselection_server <- function(id, input_general){
 
       })
 
+      observeEvent(input$method_cluster, {
 
+        # Not show yet
+        color_button_load(hardcorded_initial_color)
+        color_button_show(hardcorded_initial_color)
+        action_button_load(FALSE)
+        action_button_show(FALSE)
+
+      })
 
       observeEvent(input$alpha_value, {
 
@@ -345,7 +361,13 @@ module_cpiD002_s01_varselection_server <- function(id, input_general){
         return(output_value)
       })
 
+      selected_method <- reactive({
 
+        req(action_button_show())
+
+        output_value <- as.logical(as.character(input$method_cluster))
+        return(output_value)
+      })
 
       alpha_value <- reactive({
         req(action_button_show())
@@ -368,9 +390,13 @@ module_cpiD002_s01_varselection_server <- function(id, input_general){
         req(action_button_show())
 
 
-        the_list <- list(selected_var_name(), selected_var_labels(), alpha_value(), intro_source_database())
+        the_list <- list(selected_var_name(), selected_var_labels(),
+                         alpha_value(), intro_source_database(),
+                         selected_method())
 
-        names(the_list) <- c("selected_var_name", "selected_var_labels", "alpha_value", "intro_source_database")
+        names(the_list) <- c("selected_var_name", "selected_var_labels",
+                             "alpha_value", "intro_source_database",
+                             "selected_method")
         the_list
       })
 
@@ -482,7 +508,7 @@ module_cpiD002_s02_rscience_server <- function(id, input_general, input_01_anova
         selected_var_labels = input_01_anova()$selected_var_labels
         alpha_value = input_01_anova()$alpha_value
         k_groups_01 <- k_groups_01()
-
+        selected_method <- input_01_anova()$selected_method
         ##############################################
 
         # Rscience code
@@ -493,11 +519,16 @@ module_cpiD002_s02_rscience_server <- function(id, input_general, input_01_anova
 
         minibase2 <- minibase[selected_var_name]
 
+
         k_colors_01 <- rainbow(k_groups_01)
         #################################################
         # Realiza la estandarizacion:
 
-        z <- scale(minibase2[, -1])
+        z <- minibase2[, -1]
+        z <- as.matrix(z)
+
+       if(selected_method) z <- scale(z)
+
         N <- ncol(z)
         S <- dist(z, method = "euclidean")/sqrt(N)
         #clusterS <- hclust(S, method = "single")
@@ -544,6 +575,7 @@ module_cpiD002_s02_rscience_server <- function(id, input_general, input_01_anova
         selected_var_name = input_01_anova()$selected_var_name
         selected_var_labels = input_01_anova()$selected_var_labels
         alpha_value = input_01_anova()$alpha_value
+        selected_method <- input_01_anova()$selected_method
         #k_groups_02 <- as.numeric(as.character(input$k_groups_02)) #k_groups_02()
 
         ##############################################
@@ -559,7 +591,11 @@ module_cpiD002_s02_rscience_server <- function(id, input_general, input_01_anova
         #k_colors_02 <- rainbow(k_groups_02)
         #################################################
         # Realiza la estandarizacion:
-        z <- scale(minibase2)
+        z <- minibase2[, -1]
+        z <- as.matrix(z)
+
+        if(selected_method) z <- scale(z)
+
         #z <- scale(minibase2[, -1])
         N <- ncol(z)
         S <- dist(z, method = "euclidean")/sqrt(N)
@@ -1425,14 +1461,14 @@ module_cpiD002_s02_rscience_server <- function(id, input_general, input_01_anova
                                                  uiOutput(ns("tab01_FULL"))
                                           )
                                         )),
-                               tabPanel("AnalysisB",  # 05
-                                        fluidRow(
-                                          column(12,
-                                                 h1("Cluster - Cuantitative vars"),
-                                                 uiOutput(ns("tab02_analysisB_FULL"))
-                                          )
-                                        )
-                               ),
+                               # tabPanel("AnalysisB",  # 05
+                               #          fluidRow(
+                               #            column(12,
+                               #                   h1("Cluster - Cuantitative vars"),
+                               #                   uiOutput(ns("tab02_analysisB_FULL"))
+                               #            )
+                               #          )
+                               # ),
                                tabPanel("Analysis",  # 05
                                         fluidRow(
                                           column(12,

@@ -194,8 +194,8 @@ module_cpiD003_s01_varselection_server <- function(id, input_general){
             fluidRow(
               column(4,
                      radioButtons(inputId = ns("method_pc"), label = "Method",
-                                  choices = c("Variance/Covariance Matrix" = T,
-                                              "Correlation Matrix" = F)
+                                  choices = c("Variance/Covariance Matrix" = F,
+                                              "Correlation Matrix" = T)
                      )
               ),
               column(4,

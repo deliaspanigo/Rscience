@@ -704,7 +704,7 @@ module_cpiD004_s02_rscience_server <- function(id, input_general, input_01_anova
 
 
         # Vector con nombres de elementos a ver
-        selected_objs <- c("df_cramer")
+        selected_objs <- c("df_chi_squared")
 
 
         # Usar lapply para mostrar los elementos deseados
@@ -1130,7 +1130,7 @@ module_cpiD004_s02_rscience_server <- function(id, input_general, input_01_anova
 
 
           h2("2) Chi Squared Test"),
-          h3("R object: df_cramer"),
+          h3("R object: df_chi_squared"),
           DTOutput(ns("tab02_analysis_df02")),
           br(), br(), br(),
 

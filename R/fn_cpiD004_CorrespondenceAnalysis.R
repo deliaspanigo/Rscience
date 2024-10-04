@@ -652,14 +652,14 @@ fn_cpiD004_results <- function(database, selected_var_name, selected_var_labels,
   p_value <- pchisq(chi_value, df = df_value, lower.tail = FALSE)
   h0_cramer <- ifelse(p_value < alpha_value, "Rejected H0", "No rejected H0")
 
-  df_cramer <- data.frame(
+  df_chi_squared <- data.frame(
     "orden" = 1,
     "inertia_value" = inertia_value,
     "chi_value" = chi_value,
     "df" = df_value,
     "p_value" = p_value,
     "alpha_value" = alpha_value,
-    "h0_cramer" = h0_cramer
+    "h0_chi_squared" = h0_cramer
   )
 
 

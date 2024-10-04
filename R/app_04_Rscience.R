@@ -34,7 +34,7 @@ app_04_Rscience <- function(){
     shinydashboard::dashboardSidebar(
       width = "340px",
       shinydashboard::sidebarMenu(
-        " Multivariate- 0.0.1",br(),br(),
+        " Multivariate- 0.0.2",br(),br(),
         shinydashboard::menuItem(text = "database", tabName = "tab00_database", icon = shiny::icon("th")),
         br(), br(),
         shinydashboard::menuItem(text = "01 - Cluster - Binomial Vars", tabName = "tab01_anova", icon = shiny::icon("th")),
