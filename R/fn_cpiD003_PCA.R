@@ -606,6 +606,7 @@ fn_cpiD003_results <- function(database, selected_var_name, selected_var_labels,
   # # # # Script de Rscience
   # All selected vars
   vector_all_vars <- c(selected_var_labels, selected_var_name)
+  max_ncp <- length(selected_var_name)
   vector_pc <- 1:selected_amount_pc
 
   # Minibase
@@ -620,6 +621,7 @@ fn_cpiD003_results <- function(database, selected_var_name, selected_var_labels,
   # List PCA results
   list_pca <- FactoMineR::PCA(X = minibase2,
                               scale.unit = selected_method, #TRUE,
+                              ncp = max_ncp,
                               graph = F)
 
 
