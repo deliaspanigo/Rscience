@@ -194,7 +194,7 @@ module_cpiD004_s01_varselection_server <- function(id, input_general){
             fluidRow(
               column(4,
                      shiny::selectInput(inputId = ns("amount_dim"),
-                                        label ="Amount of dimentions",
+                                        label ="Number of dimentions",
                                         choices = 2:100,#length(set_options),
                                         selected = 100)#length(set_options))
               )),
@@ -291,7 +291,7 @@ module_cpiD004_s01_varselection_server <- function(id, input_general){
         action_button_show(FALSE)
 
         shiny::updateSelectInput(inputId = "amount_dim",
-                                 label ="Amount of dimentions",
+                                 label ="Number of axis",
                                  choices = 1:length(input$selected_var_name),
                                  selected = length(input$selected_var_name))
       })
@@ -648,7 +648,7 @@ module_cpiD004_s02_rscience_server <- function(id, input_general, input_01_anova
 
 
         # Vector con nombres de elementos a ver
-        selected_objs <- c("df_eigenvalues")
+        selected_objs <- c("df_inertia")
 
 
         # Usar lapply para mostrar los elementos deseados
@@ -1123,8 +1123,8 @@ module_cpiD004_s02_rscience_server <- function(id, input_general, input_01_anova
           # verbatimTextOutput(ns("tab02_analysis_df02")),
           # br(), br(), br(),
 
-          h2("1) EigenValues"),
-          h3("R object: df_eigenvalues"),
+          h2("1) Inertia"),
+          h3("R object: df_inertia"),
           DTOutput(ns("tab02_analysis_df01")),
           br(), br(), br(),
 
@@ -1198,11 +1198,11 @@ module_cpiD004_s02_rscience_server <- function(id, input_general, input_01_anova
           set_width01 <- 1
           set_space01 <- 0.2
 
-          barplot(height = df_eigenvalues$porc_eigenvalue,
-                  names.arg = df_eigenvalues$dimention,
-                  xlab = "PC",
-                  ylab = "Eigenvalue (Variance)",
-                  main = "Plot 001 - Eigenvalues",
+          barplot(height = df_inertia$porc_inertia,
+                  names.arg = df_inertia$axis,
+                  xlab = "Axis",
+                  ylab = "Inertia",
+                  main = "Plot 001 - Inertia",
                   ylim = c(0, 120),
                   las = 1,
                   axes = F,
@@ -1215,9 +1215,9 @@ module_cpiD004_s02_rscience_server <- function(id, input_general, input_01_anova
                at = seq(0, 100, by = 10),
                labels = seq(0, inertia_value, length.out = 11))
 
-          pos_x_text01 <- (set_width01 + set_space01) * (c(1:nrow(df_eigenvalues))) - (set_width01/2)
-          pos_y_text01 <- df_eigenvalues$porc_eigenvalue
-          text_label01 <- df_eigenvalues$eigenvalue
+          pos_x_text01 <- (set_width01 + set_space01) * (c(1:nrow(df_inertia))) - (set_width01/2)
+          pos_y_text01 <- df_inertia$porc_inertia
+          text_label01 <- df_inertia$inertia
           text(x = pos_x_text01,
                y = pos_y_text01,
                labels = text_label01,
@@ -1244,11 +1244,11 @@ module_cpiD004_s02_rscience_server <- function(id, input_general, input_01_anova
           set_width02 <- 1
           set_space02 <- 0.2
 
-          barplot(height = df_eigenvalues$acum_porc_eigenvalue,
-                  names.arg = df_eigenvalues$dimention,
-                  xlab = "PC",
-                  ylab = "Eigenvalue (Variance)",
-                  main = "Plot 002 - Acumulative Eigenvalues",
+          barplot(height = df_inertia$acum_porc_inertia,
+                  names.arg = df_inertia$axis,
+                  xlab = "Axis",
+                  ylab = "Inertia",
+                  main = "Plot 002 - Acumulative Inertia",
                   ylim = c(0, 120),
                   las = 1,
                   axes = F,
@@ -1261,9 +1261,9 @@ module_cpiD004_s02_rscience_server <- function(id, input_general, input_01_anova
                at = seq(0, 100, by = 10),
                labels = seq(0, inertia_value, length.out = 11))
 
-          pos_x_text02 <- (set_width02 + set_space02) * (c(1:nrow(df_eigenvalues))) - (set_width02/2)
-          pos_y_text02 <- df_eigenvalues$acum_porc_eigenvalue
-          text_label02 <- df_eigenvalues$acum_eigenvalue
+          pos_x_text02 <- (set_width02 + set_space02) * (c(1:nrow(df_inertia))) - (set_width02/2)
+          pos_y_text02 <- df_inertia$acum_porc_inertia
+          text_label02 <- df_inertia$acum_inertia
           text(x = pos_x_text02,
                y = pos_y_text02,
                labels = text_label02,
@@ -1290,11 +1290,11 @@ module_cpiD004_s02_rscience_server <- function(id, input_general, input_01_anova
           set_width03 <- 1
           set_space03 <- 0.2
 
-          barplot(height = df_eigenvalues$porc_eigenvalue,
-                  names.arg = df_eigenvalues$dimention,
-                  xlab = "Dimention",
+          barplot(height = df_inertia$porc_inertia,
+                  names.arg = df_inertia$axis,
+                  xlab = "Axis",
                   ylab = "Percentage",
-                  main = "Plot 003 - Percentage Eigenvalues",
+                  main = "Plot 003 - Percentage Inertia",
                   ylim = c(0, 120),
                   las = 1,
                   axes = F,
@@ -1306,9 +1306,9 @@ module_cpiD004_s02_rscience_server <- function(id, input_general, input_01_anova
                col.ticks = "black", at = seq(0, 100, by = 10),
                labels = T)
 
-          pos_x_text03 <- (set_width03 + set_space03) * (c(1:nrow(df_eigenvalues))) - (set_width03/2)
-          pos_y_text03 <- df_eigenvalues$porc_eigenvalue
-          text_label03 <- paste0(df_eigenvalues$porc_eigenvalue, "%")
+          pos_x_text03 <- (set_width03 + set_space03) * (c(1:nrow(df_inertia))) - (set_width03/2)
+          pos_y_text03 <- df_inertia$porc_inertia
+          text_label03 <- paste0(df_inertia$porc_inertia, "%")
           text(x = pos_x_text03,
                y = pos_y_text03,
                labels = text_label03,
@@ -1331,11 +1331,11 @@ module_cpiD004_s02_rscience_server <- function(id, input_general, input_01_anova
           set_width04 <- 1
           set_space04 <- 0.2
 
-          barplot(height = df_eigenvalues$acum_porc_eigenvalue,
-                  names.arg = df_eigenvalues$dimention,
-                  xlab = "Dimention",
+          barplot(height = df_inertia$acum_porc_inertia,
+                  names.arg = df_inertia$axis,
+                  xlab = "Axis",
                   ylab = "Percentage",
-                  main = "Plot 004 - Acumulative Percentage Eigenvalues",
+                  main = "Plot 004 - Acumulative Percentage Inertia",
                   ylim = c(0, 120),
                   las = 1,
                   axes = F,
@@ -1347,9 +1347,9 @@ module_cpiD004_s02_rscience_server <- function(id, input_general, input_01_anova
                col.ticks = "black", at = seq(0, 100, by = 10),
                labels = T)
 
-          pos_x_text04 <- (set_width04 + set_space04) * (c(1:nrow(df_eigenvalues))) - (set_width04/2)
-          pos_y_text04 <- df_eigenvalues$acum_porc_eigenvalue
-          text_label04 <- paste0(df_eigenvalues$acum_porc_eigenvalue, "%")
+          pos_x_text04 <- (set_width04 + set_space04) * (c(1:nrow(df_inertia))) - (set_width04/2)
+          pos_y_text04 <- df_inertia$acum_porc_inertia
+          text_label04 <- paste0(df_inertia$acum_porc_inertia, "%")
           text(x = pos_x_text04,
                y = pos_y_text04,
                labels = text_label04,
@@ -1602,7 +1602,7 @@ module_cpiD004_s02_rscience_server <- function(id, input_general, input_01_anova
 
 
         # Vector con nombres de elementos a ver
-        selected_objs <- c("df_eigenvalues")
+        selected_objs <- c("df_inertia")
 
 
         # Usar lapply para mostrar los elementos deseados
@@ -1620,7 +1620,7 @@ module_cpiD004_s02_rscience_server <- function(id, input_general, input_01_anova
 
 
         # Vector con nombres de elementos a ver
-        selected_objs <- c("df_eigenvalues")
+        selected_objs <- c("df_inertia")
 
 
         # Usar lapply para mostrar los elementos deseados
@@ -1638,7 +1638,7 @@ module_cpiD004_s02_rscience_server <- function(id, input_general, input_01_anova
 
 
         # Vector con nombres de elementos a ver
-        selected_objs <- c("df_autovalores")
+        selected_objs <- c("df_inertia")
 
 
         # Usar lapply para mostrar los elementos deseados
@@ -1656,7 +1656,7 @@ module_cpiD004_s02_rscience_server <- function(id, input_general, input_01_anova
 
 
         # Vector con nombres de elementos a ver
-        selected_objs <- c("df_autovalores")
+        selected_objs <- c("df_inertia")
 
 
         # Usar lapply para mostrar los elementos deseados
@@ -1674,7 +1674,7 @@ module_cpiD004_s02_rscience_server <- function(id, input_general, input_01_anova
 
 
         # Vector con nombres de elementos a ver
-        selected_objs <- c("df_autovalores")
+        selected_objs <- c("df_table01_row_coord")
 
 
         # Usar lapply para mostrar los elementos deseados
@@ -1693,7 +1693,7 @@ module_cpiD004_s02_rscience_server <- function(id, input_general, input_01_anova
 
 
         # Vector con nombres de elementos a ver
-        selected_objs <- c("df_autovalores")
+        selected_objs <- c("df_table04_col_coord")
 
 
         # Usar lapply para mostrar los elementos deseados
@@ -1701,42 +1701,6 @@ module_cpiD004_s02_rscience_server <- function(id, input_general, input_01_anova
 
       })
 
-
-      output$tabla07 <- renderPrint({
-
-        req(control_user_02())
-
-        mi_lista <- RR_general()
-
-
-
-
-        # Vector con nombres de elementos a ver
-        selected_objs <- c("df_autovalores")
-
-
-        # Usar lapply para mostrar los elementos deseados
-        mi_lista[selected_objs]
-
-      })
-
-      output$tabla08 <- renderPrint({
-
-        req(control_user_02())
-
-        mi_lista <- RR_general()
-
-
-
-
-        # Vector con nombres de elementos a ver
-        selected_objs <- c("df_autovalores")
-
-
-        # Usar lapply para mostrar los elementos deseados
-        mi_lista[selected_objs]
-
-      })
       # output$tabla03 <- renderPrint({
       #
       #   req(control_user_02())
@@ -1956,7 +1920,8 @@ module_cpiD004_s02_rscience_server <- function(id, input_general, input_01_anova
                                         fluidRow(
                                           #fluidRow(column(12, h2("5) Biplot simétrico"))),
                                           column(6, plotOutput(ns("el_plot5"), height = "40vh", width = "70vh")),
-                                          column(6, verbatimTextOutput(ns("tabla05"))),
+                                          column(6, verbatimTextOutput(ns("tabla05")), br(),
+                                                    verbatimTextOutput(ns("tabla06"))),
                                         ),
                                         br(),br(),br(),
 

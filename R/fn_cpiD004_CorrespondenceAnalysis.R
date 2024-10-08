@@ -622,19 +622,19 @@ fn_cpiD004_results <- function(database, selected_var_name, selected_var_labels,
   list_ca <- FactoMineR::CA(minibase2, graph = FALSE)
 
   # EigenValues
-  df_eigenvalues <- data.frame(
+  df_inertia <- data.frame(
     "orden" = 1:nrow(list_ca$eig),
-    "dimention" = rownames(list_ca$eig),
-    "eigenvalue" = round(list_ca$eig[,1], 4),
-    "acum_eigenvalue" = round(cumsum(list_ca$eig[,1]), 4),
-    "porc_eigenvalue" = round(list_ca$eig[,2], 4),
-    "acum_porc_eigenvalue" = round(list_ca$eig[,3], 4)
+    "axis" = paste0("axis", 1:nrow(list_ca$eig)),
+    "inertia" = round(list_ca$eig[,1], 4),
+    "acum_inertia" = round(cumsum(list_ca$eig[,1]), 4),
+    "porc_inertia" = round(list_ca$eig[,2], 4),
+    "acum_porc_inertia" = round(list_ca$eig[,3], 4)
   )
-  rownames(df_eigenvalues) <- 1:nrow(df_eigenvalues)
+  rownames(df_inertia) <- 1:nrow(df_inertia)
 
 
   # Inertia value (Total variability)
-  inertia_value <- df_eigenvalues$acum_eigenvalue[nrow(df_eigenvalues)]
+  inertia_value <- df_inertia$acum_inertia[nrow(df_inertia)]
 
 
   # Valor V de Cramer (para interpretar varianza explicada en %)
@@ -665,11 +665,12 @@ fn_cpiD004_results <- function(database, selected_var_name, selected_var_labels,
 
   # Salidas de coordenadas filas (la posicion en el plot de cada fila)
   df_table01_row_coord <- as.data.frame(list_ca$row$coord)
-
+  colnames(df_table01_row_coord) <- paste0("axis", 1:ncol(df_table01_row_coord))
 
   # Cos2 es la calidad de la representacion (Se calcula como las correlaciones
   #al cuadrado, var.cos2 = var.coord ^ 2.)
   df_table02_row_cos2 <- as.data.frame(list_ca$row$cos2)
+  colnames(df_table02_row_cos2) <- paste0("axis", 1:ncol(df_table02_row_cos2))
 
 
   # Es la contribucion de cada variable a un componente principal dado es
@@ -680,6 +681,7 @@ fn_cpiD004_results <- function(database, selected_var_name, selected_var_labels,
 
   # Coordenandas columnas
   df_table04_col_coord <- as.data.frame(list_ca$col$coord)
+  colnames(df_table04_col_coord) <- paste0("axis", 1:ncol(df_table04_col_coord))
 
 
   # Cos2 es la calidad de la representacion
