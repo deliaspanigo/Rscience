@@ -463,6 +463,14 @@ module_cpiA011_s02_rscience_server <- function(id, input_general, input_01_anova
         RR_general()$"out01_analysis"[selected_names]
       })
 
+      output$tab01_analysis_cov_01A <- renderPrint({
+
+        req(control_user_02())
+
+        selected_names <- c("df_position_cov_levels")
+        RR_general()$"out05_full_results"[selected_names]
+      })
+
       output$tab01_analysis_full_01A <- renderUI({
 
         req(control_user_02())
@@ -485,8 +493,12 @@ module_cpiA011_s02_rscience_server <- function(id, input_general, input_01_anova
                    br(), br(), br(),
                    h2("4) Multiple Comparation Test (Tukey)"),
                    verbatimTextOutput(ns("tab01_analysis_tukey_01A")),
+                   br(), br(), br(),
                    h2("5) Slop"),
-                   verbatimTextOutput(ns("tab01_analysis_slop_01A"))
+                   verbatimTextOutput(ns("tab01_analysis_slop_01A")),
+                   br(), br(), br(),
+                   h2("6) Covariable - Position"),
+                   verbatimTextOutput(ns("tab01_analysis_cov_01A"))
             )
           )
         )
@@ -671,6 +683,14 @@ module_cpiA011_s02_rscience_server <- function(id, input_general, input_01_anova
         RR_general()$"out01_analysis"[selected_names]
       })
 
+      output$tab01_analysis_cov_01B <- renderPrint({
+
+        req(control_user_02())
+
+        selected_names <- c("df_position_cov_levels")
+        RR_general()$"out05_full_results"[selected_names]
+      })
+
       output$tab01_analysis_full_01B <- renderUI({
 
         req(control_user_02())
@@ -693,8 +713,12 @@ module_cpiA011_s02_rscience_server <- function(id, input_general, input_01_anova
                    br(), br(), br(),
                    h2("4) Multiple Comparation Test (Tukey)"),
                    verbatimTextOutput(ns("tab01_analysis_tukey_01B")),
+                   br(), br(), br(),
                    h2("5) Slop"),
-                   verbatimTextOutput(ns("tab01_analysis_slop_01B"))
+                   verbatimTextOutput(ns("tab01_analysis_slop_01B")),
+                   br(), br(), br(),
+                   h2("6) Covariable Slope"),
+                   verbatimTextOutput(ns("tab01_analysis_cov_01B"))
             )
           )
         )
@@ -950,6 +974,14 @@ module_cpiA011_s02_rscience_server <- function(id, input_general, input_01_anova
         RR_general_Z()$"out01_analysis"[selected_names]
       })
 
+      output$tab01_analysis_cov_01C <- renderPrint({
+
+        req(control_user_02())
+
+        selected_names <- c("df_position_cov_levels")
+        RR_general_Z()$"out05_full_results"[selected_names]
+      })
+
       output$tab01_analysis_full_01C <- renderUI({
 
         req(control_user_02())
@@ -973,7 +1005,9 @@ module_cpiA011_s02_rscience_server <- function(id, input_general, input_01_anova
                    h2("4) Multiple Comparation Test (Tukey)"),
                    verbatimTextOutput(ns("tab01_analysis_tukey_01C")),
                    h2("5) Slop"),
-                   verbatimTextOutput(ns("tab01_analysis_slop_01C"))
+                   verbatimTextOutput(ns("tab01_analysis_slop_01C")),
+                   h2("6) Covariable - Position"),
+                   verbatimTextOutput(ns("tab01_analysis_cov_01C"))
             )
           )
         )
@@ -1160,6 +1194,14 @@ module_cpiA011_s02_rscience_server <- function(id, input_general, input_01_anova
         RR_general_Z()$"out01_analysis"[selected_names]
       })
 
+      output$tab01_analysis_cov_01D <- renderPrint({
+
+        req(control_user_02())
+
+        selected_names <- c("df_position_cov_levels")
+        RR_general_Z()$"out05_full_results"[selected_names]
+      })
+
       output$tab01_analysis_full_01D <- renderUI({
 
         req(control_user_02())
@@ -1182,8 +1224,12 @@ module_cpiA011_s02_rscience_server <- function(id, input_general, input_01_anova
                    br(), br(), br(),
                    h2("4) Multiple Comparation Test (Tukey)"),
                    verbatimTextOutput(ns("tab01_analysis_tukey_01D")),
+                   br(), br(), br(),
                    h2("5) Slop"),
-                   verbatimTextOutput(ns("tab01_analysis_slop_01D"))
+                   verbatimTextOutput(ns("tab01_analysis_slop_01D")),
+                   br(), br(), br(),
+                   h2("6) Covariable - Position"),
+                   verbatimTextOutput(ns("tab01_analysis_cov_01D"))
             )
           )
         )
@@ -1452,6 +1498,13 @@ module_cpiA011_s02_rscience_server <- function(id, input_general, input_01_anova
                                                  verbatimTextOutput(ns("tab01_analysis_slop_01A"))),
                                           column(6, h2("5) Slop"),
                                                  verbatimTextOutput(ns("tab01_analysis_slop_01C")))
+                                        ),
+                                        br(), br(), br(),
+                                        fluidRow(
+                                          column(6, h2("6) Covariable - Position"),
+                                                 verbatimTextOutput(ns("tab01_analysis_cov_01A"))),
+                                          column(6, h2("6) Covariable - Position"),
+                                                 verbatimTextOutput(ns("tab01_analysis_cov_01C")))
                                         )
                                   )
 

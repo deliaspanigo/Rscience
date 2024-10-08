@@ -958,15 +958,15 @@ fn_cpiA003_code_p02_plot001 <- function(results_p01_test){
                 y = ~mean,
                 type = 'scatter',
                 mode = 'markers',
-                color = ~FACTOR01,
+                color = ~FACTOR02,
                 colors =~color,
                 #line = list(width = 4),
                 marker = list(size = 20, opacity = 0.7))
 
       plot001 <- plotly::layout(p = plot001,
-                                xaxis = list(title = "BLOCK"),
+                                xaxis = list(title = "FACTOR01"),
                                 yaxis = list(title = "VR"),
-                                title = "Plot 001 - Interacción Factor-Bloque",
+                                title = "Plot 001 - Combination FACTOR01-FACTOR02",
                                 font = list(size = 20),
                                 margin = list(t = 100))
 
@@ -1026,7 +1026,7 @@ fn_cpiA003_code_p02_plot002 <- function(results_p01_test){
 
     # # # Title and settings...
     plot002 <- plotly::layout(p = plot002,
-                              xaxis = list(title = "FACTOR"),
+                              xaxis = list(title = "FACTOR01"),
                               yaxis = list(title = "VR"),
                               title = "Plot 002 - Mean y model standard error",
                               font = list(size = 20),

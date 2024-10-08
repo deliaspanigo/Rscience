@@ -1724,7 +1724,8 @@ fn_cpiA011_gen02 <- function(database,  vr_var_name, factor_var_name, cov_var_na
                    "check_unbalanced_reps",
                    "df_table_ancova_with",
                    "df_tukey_table",
-                   "df_slop")
+                   "df_slop",
+                   "df_position_cov_levels")
 
   output_list$"out01_analysis" <- all_results$R_results$p01_test[selection01]
 
