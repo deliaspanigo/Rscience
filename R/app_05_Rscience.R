@@ -35,7 +35,7 @@ app_05_Rscience <- function(){
     shinydashboard::dashboardSidebar(
       width = "340px",
       shinydashboard::sidebarMenu(
-        "Free Distribution - 0.0.1",br(),br(),
+        "Free Distribution - 0.0.3",br(),br(),
         shinydashboard::menuItem(text = "database", tabName = "tab01_database", icon = shiny::icon("th")),
         shinydashboard::menuItem(text = "Summary", tabName = "tab03_anova", icon = shiny::icon("th")),
 

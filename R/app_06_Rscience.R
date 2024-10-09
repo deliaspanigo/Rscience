@@ -38,7 +38,7 @@ app_06_Rscience <- function(){
     shinydashboard::dashboardSidebar(
       width = "340px",
       shinydashboard::sidebarMenu(
-        "Aleatorized and Mix - 0.0.1",br(),br(),
+        "Aleatorized and Mix - 0.0.3",br(),br(),
         shinydashboard::menuItem(text = "database", tabName = "tab01_database", icon = shiny::icon("th")),
         shinydashboard::menuItem(text = "Summary", tabName = "tab03_anova", icon = shiny::icon("th")),
 

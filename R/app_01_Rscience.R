@@ -31,13 +31,13 @@ app_01_Rscience <- function(){
 ui <- shinydashboard::dashboardPage(
 
   # # # Dashboard title
-  shinydashboard::dashboardHeader(title = "R-Science 0.0.2"),
+  shinydashboard::dashboardHeader(title = "R-Science 0.0.3"),
 
   # # # Sidebar content
   shinydashboard::dashboardSidebar(
     width = "340px",
     shinydashboard::sidebarMenu(
-      " General Linear Models - 0.0.1",br(),br(),
+      " General Linear Models - 0.0.3",br(),br(),
       shinydashboard::menuItem(text = "database", tabName = "tab01_database", icon = shiny::icon("th")),
       shinydashboard::menuItem(text = "Anova 1 way", tabName = "tab02_anova", icon = shiny::icon("th")),
       shinydashboard::menuItem(text = "Anova 1 way with block", tabName = "tab03_anova", icon = shiny::icon("th")),
