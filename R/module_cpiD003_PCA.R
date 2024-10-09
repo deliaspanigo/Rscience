@@ -1392,7 +1392,7 @@ module_cpiD003_s02_rscience_server <- function(id, input_general, input_01_anova
                                     scene = list(xaxis = list(title = pos_x_graph , zeroline = TRUE),
                                                  yaxis = list(title = pos_y_graph , zeroline = TRUE),
                                                  zaxis = list(title = pos_z_graph ,  zeroline = TRUE)),
-                                    title = "Plot 009 - Biplot 3D",
+                                    title = "Plot 008 - Biplot 3D",
                                     font = list(size = 20),
                                     margin = list(t = 100))
 
@@ -1905,12 +1905,12 @@ module_cpiD003_s02_rscience_server <- function(id, input_general, input_01_anova
                                         ),
                                         br(),br(),br(),
 
-                                        fluidRow(
-                                          #column(1),
-                                          column(12, plotOutput(ns("el_plot5"), height = "40vh", width = "70vh"))#,
-                                          #column(6, verbatimTextOutput(ns("tabla05"))),
-                                        ),
-                                        br(),br(),br(),
+                                        # fluidRow(
+                                        #   #column(1),
+                                        #   column(12, plotOutput(ns("el_plot5"), height = "40vh", width = "70vh"))#,
+                                        #   #column(6, verbatimTextOutput(ns("tabla05"))),
+                                        # ),
+                                        # br(),br(),br(),
 
                                         fluidRow(
                                           #column(1),

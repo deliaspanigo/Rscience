@@ -591,8 +591,8 @@ module_cpiD002_s02_rscience_server <- function(id, input_general, input_01_anova
         #k_colors_02 <- rainbow(k_groups_02)
         #################################################
         # Realiza la estandarizacion:
-        z <- minibase2[, -1]
-        z <- as.matrix(z)
+        #z <- minibase2[, -1]
+        z <- as.matrix(minibase2)
 
         if(selected_method) z <- scale(z)
 
