@@ -192,6 +192,7 @@ module_cpiD004_s01_varselection_server <- function(id, input_general){
                        column(8, uiOutput(ns("action_buttons"))))),
             ),
             fluidRow(
+              column(4),
               column(4,
                      shiny::selectInput(inputId = ns("amount_dim"),
                                         label ="Number of dimentions",
@@ -291,9 +292,9 @@ module_cpiD004_s01_varselection_server <- function(id, input_general){
         action_button_show(FALSE)
 
         shiny::updateSelectInput(inputId = "amount_dim",
-                                 label ="Number of axis",
-                                 choices = 1:length(input$selected_var_name),
-                                 selected = length(input$selected_var_name))
+                                 label ="Number of axis (max k-1)",
+                                 choices = 1:(length(input$selected_var_name)-1),
+                                 selected = (length(input$selected_var_name)-1))
       })
 
       observeEvent(input$amount_dim, {
@@ -649,6 +650,63 @@ module_cpiD004_s02_rscience_server <- function(id, input_general, input_01_anova
 
         # Vector con nombres de elementos a ver
         selected_objs <- c("df_inertia")
+
+
+        # Usar lapply para mostrar los elementos deseados
+        #mi_lista[selected_objs]
+
+        mi_tabla <- mi_lista[[selected_objs]]
+        #https://rstudio.github.io/DT/functions.html
+        vector_pos <- 1:nrow(mi_tabla)
+        vector_color <- rep(NA, length(vector_pos))
+        vector_color[c(T, F)] <- "lightblue"#'red'#
+        vector_color[c(F, T)] <- "lightgreen"#'blue'#
+        vector_color <- vector_color[vector_pos]
+
+        datatable(
+          mi_tabla,
+          rownames = TRUE,
+          options = list(
+
+            headerCallback = DT::JS(
+              "function(thead) {",
+              "  $(thead).css('font-size', '2em');",
+              "}"
+            ),
+            columnDefs = list(list(className = 'dt-center', targets = "_all")),
+            #pageLength = 5,
+            dom = "t",
+            scrollX = TRUE,
+            searching = FALSE,
+            scrollCollapse = TRUE,  # Permitir colapsar el scroll
+            fixedColumns = list(leftColumns = 3),  # Fijar las primeras 3 columnas
+            #lengthMenu = list(c(-1), c("All")), # Todas las filas
+            style = list(
+              'font-size' = '20px'  # Tamaño de letra para el nombre de las columnas
+            )
+          )
+
+        ) %>%formatStyle(
+          colnames(mi_tabla),
+          backgroundColor = styleRow(vector_pos, vector_color),#,
+          target = 'row',
+          fontSize = "26px"
+        )
+
+      })
+
+      # # # Tab 05 - Analysis resume...
+      output$tab02_analysis_info <- DT::renderDT({
+
+        req(control_user_02())
+
+        mi_lista <- RR_general()
+
+
+
+
+        # Vector con nombres de elementos a ver
+        selected_objs <- c("df_info")
 
 
         # Usar lapply para mostrar los elementos deseados
@@ -1123,18 +1181,23 @@ module_cpiD004_s02_rscience_server <- function(id, input_general, input_01_anova
           # verbatimTextOutput(ns("tab02_analysis_df02")),
           # br(), br(), br(),
 
-          h2("1) Inertia"),
+          h2("1) General Information"),
+          h3("R object: df_info"),
+          DTOutput(ns("tab02_analysis_info")),
+          br(), br(), br(),
+
+          h2("2) Inertia"),
           h3("R object: df_inertia"),
           DTOutput(ns("tab02_analysis_df01")),
           br(), br(), br(),
 
 
-          h2("2) Chi Squared Test"),
+          h2("3) Chi Squared Test"),
           h3("R object: df_chi_squared"),
           DTOutput(ns("tab02_analysis_df02")),
           br(), br(), br(),
 
-          h2("3) Row coordinates"),
+          h2("4) Row coordinates"),
           h3("R object: df_table01_row_coord"),
           DTOutput(ns("tab02_analysis_df03")),
           br(), br(), br(),
@@ -1149,7 +1212,7 @@ module_cpiD004_s02_rscience_server <- function(id, input_general, input_01_anova
           #DTOutput(ns("tab02_analysis_df05")),
           #br(), br(), br(),
 
-          h2("4) Column coordinates"),
+          h2("5) Column coordinates"),
           h3("R object: df_table04_col_coord"),
           DTOutput(ns("tab02_analysis_df06")),
           br(), br(), br(),

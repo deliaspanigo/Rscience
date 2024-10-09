@@ -603,6 +603,12 @@ fn_cpiD004_results <- function(database, selected_var_name, selected_var_labels,
 
   # # # # Script de Rscience
   # Todas las variables elegidas
+  #max_ncp <- 3
+  vector_axis <- 1:selected_amount_dim
+  max_axis <- length(selected_var_name)-1
+
+  # # # # Script de Rscience
+  # Todas las variables elegidas
   vector_all_vars <- c(selected_var_labels, selected_var_name)
 
 
@@ -619,10 +625,10 @@ fn_cpiD004_results <- function(database, selected_var_name, selected_var_labels,
 
   # aqui hace el analisis de correspondencia
 
-  list_ca <- FactoMineR::CA(minibase2, graph = FALSE)
+  list_ca <- FactoMineR::CA(minibase2, ncp = max_axis, graph = FALSE)
 
   # EigenValues
-  df_inertia <- data.frame(
+  df_inertia_full <- data.frame(
     "orden" = 1:nrow(list_ca$eig),
     "axis" = paste0("axis", 1:nrow(list_ca$eig)),
     "inertia" = round(list_ca$eig[,1], 4),
@@ -630,31 +636,45 @@ fn_cpiD004_results <- function(database, selected_var_name, selected_var_labels,
     "porc_inertia" = round(list_ca$eig[,2], 4),
     "acum_porc_inertia" = round(list_ca$eig[,3], 4)
   )
-  rownames(df_inertia) <- 1:nrow(df_inertia)
+  rownames(df_inertia_full) <- 1:nrow(df_inertia_full)
 
+  df_inertia <- df_inertia_full[vector_axis,]
+  df_info <- data.frame(
+       "source" = c("Max Axis Number", "User election"),
+       "number_of_axis" = c(max_axis, selected_amount_dim),
+       "acum_inertia" = df_inertia_full$acum_inertia[c(max_axis, selected_amount_dim)],
+       "acum_porc_inertia" = df_inertia_full$acum_porc_inertia[c(max_axis, selected_amount_dim)]
+  )
+
+  #df_info <- df_inertia
+  # df_info <- data.frame(
+  #   "number_of_axis" = c(max_axis, selected_amount_dim),
+  #   "acum_inertia" = df_inertia_full$acum_inertia[c(max_axis, selected_amount_dim)],
+  #   "acum_porc_inertia" = df_inertia_full$acum_porc_inertia[c(max_axis, selected_amount_dim)],
+  # )
 
   # Inertia value (Total variability)
-  inertia_value <- df_inertia$acum_inertia[nrow(df_inertia)]
+  total_inertia_value <- df_inertia_full$acum_inertia[nrow(df_inertia_full)]
 
 
   # Valor V de Cramer (para interpretar varianza explicada en %)
   # Leer Crisci pg 147
 
-  V_Cramer_value <- (100*inertia_value)/min(dim(minibase2) - 1)
+  V_Cramer_value <- (100*total_inertia_value)/min(dim(minibase2) - 1)
   V_Cramer_value
 
 
   # este valor chi nos dice la probabilidad de obtener un valor de inercia
   #mayor o igual al esperado solo por azar
 
-  chi_value <- inertia_value*sum(minibase2)
+  chi_value <- total_inertia_value*sum(minibase2)
   df_value <- (nrow(minibase2) - 1)*(ncol(minibase2) - 1)
   p_value <- pchisq(chi_value, df = df_value, lower.tail = FALSE)
   h0_cramer <- ifelse(p_value < alpha_value, "Rejected H0", "No rejected H0")
 
   df_chi_squared <- data.frame(
     "orden" = 1,
-    "inertia_value" = inertia_value,
+    "total_inertia_value" = total_inertia_value,
     "chi_value" = chi_value,
     "df" = df_value,
     "p_value" = p_value,
@@ -664,13 +684,15 @@ fn_cpiD004_results <- function(database, selected_var_name, selected_var_labels,
 
 
   # Salidas de coordenadas filas (la posicion en el plot de cada fila)
-  df_table01_row_coord <- as.data.frame(list_ca$row$coord)
-  colnames(df_table01_row_coord) <- paste0("axis", 1:ncol(df_table01_row_coord))
+  df_table01_row_coord_full <- as.data.frame(list_ca$row$coord)
+  df_table01_row_coord <- df_table01_row_coord_full[vector_axis]
+  colnames(df_table01_row_coord) <- paste0("axis", vector_axis)
 
   # Cos2 es la calidad de la representacion (Se calcula como las correlaciones
   #al cuadrado, var.cos2 = var.coord ^ 2.)
-  df_table02_row_cos2 <- as.data.frame(list_ca$row$cos2)
-  colnames(df_table02_row_cos2) <- paste0("axis", 1:ncol(df_table02_row_cos2))
+  df_table02_row_cos2_full <- as.data.frame(list_ca$row$cos2)
+  #df_table02_row_cos2 <- df_table01_row_coord_full[,vector_axis]
+  #colnames(df_table02_row_cos2) <- paste0("axis", ncol(df_table02_row_cos2))
 
 
   # Es la contribucion de cada variable a un componente principal dado es
@@ -680,8 +702,11 @@ fn_cpiD004_results <- function(database, selected_var_name, selected_var_labels,
 
 
   # Coordenandas columnas
-  df_table04_col_coord <- as.data.frame(list_ca$col$coord)
-  colnames(df_table04_col_coord) <- paste0("axis", 1:ncol(df_table04_col_coord))
+  df_table04_col_coord_full <- as.data.frame(list_ca$col$coord)
+  df_table04_col_coord <- df_table04_col_coord_full[vector_axis]
+  colnames(df_table04_col_coord) <- paste0("axis", vector_axis)
+
+  #colnames(df_table04_col_coord) <- paste0("axis", ncol(df_table04_col_coord))
 
 
   # Cos2 es la calidad de la representacion
