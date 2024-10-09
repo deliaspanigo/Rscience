@@ -1276,7 +1276,7 @@ module_cpiD004_s02_rscience_server <- function(id, input_general, input_01_anova
           axis(side = 2, col = "black", las = 1,
                col.ticks = "black",
                at = seq(0, 100, by = 10),
-               labels = seq(0, inertia_value, length.out = 11))
+               labels = seq(0, total_inertia_value, length.out = 11))
 
           pos_x_text01 <- (set_width01 + set_space01) * (c(1:nrow(df_inertia))) - (set_width01/2)
           pos_y_text01 <- df_inertia$porc_inertia
@@ -1322,7 +1322,7 @@ module_cpiD004_s02_rscience_server <- function(id, input_general, input_01_anova
           axis(side = 2, col = "black", las = 1,
                col.ticks = "black",
                at = seq(0, 100, by = 10),
-               labels = seq(0, inertia_value, length.out = 11))
+               labels = seq(0, total_inertia_value, length.out = 11))
 
           pos_x_text02 <- (set_width02 + set_space02) * (c(1:nrow(df_inertia))) - (set_width02/2)
           pos_y_text02 <- df_inertia$acum_porc_inertia
