@@ -292,7 +292,7 @@ module_cpiD004_s01_varselection_server <- function(id, input_general){
         action_button_show(FALSE)
 
         shiny::updateSelectInput(inputId = "amount_dim",
-                                 label ="Number of axis (max k-1)",
+                                 label ="Number of axis (max: p-1)",
                                  choices = 1:(length(input$selected_var_name)-1),
                                  selected = (length(input$selected_var_name)-1))
       })

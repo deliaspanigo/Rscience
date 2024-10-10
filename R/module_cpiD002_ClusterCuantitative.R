@@ -1454,6 +1454,7 @@ module_cpiD002_s02_rscience_server <- function(id, input_general, input_01_anova
 
             br(), br(), br(), br(),
             shiny::tabsetPanel(id = ns("super_tabset_panel"),
+                               selected = "Analysis",
                                tabPanel("Minibase",
                                         fluidRow(
                                           column(12,

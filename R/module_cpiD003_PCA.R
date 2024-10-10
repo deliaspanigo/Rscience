@@ -200,7 +200,7 @@ module_cpiD003_s01_varselection_server <- function(id, input_general){
               ),
               column(4,
               shiny::selectInput(inputId = ns("amount_pc"),
-                                 label ="Number of PC",
+                                 label ="Number of PC (max: p)",
                                  choices = 2:100,#length(set_options),
                                  selected = 100)#length(set_options))
               )),
@@ -299,7 +299,7 @@ module_cpiD003_s01_varselection_server <- function(id, input_general){
         #ns <- shiny::NS(id)
 
         shiny::updateSelectInput(inputId = "amount_pc",
-                           label ="Number of PC",
+                           label ="Number of PC (max: p)",
                            choices = 1:length(input$selected_var_name),
                            selected = length(input$selected_var_name))
 
